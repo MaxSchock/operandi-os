@@ -126,13 +126,14 @@ Lo que aporta este repo encima de Sinapsis:
 
 ## Skills registry (v0.6.0)
 
-Capa 1 = 23 skills core + 1 opcional.
+Capa 1 = 26 skills core + 1 opcional.
 
-### `_meta/` — sistema (10)
+### `_meta/` — sistema (11)
 
 | Skill | Descripción corta |
 |---|---|
 | `meta-skill-creator` | Crea skills nuevas |
+| `skill-creator` | Crea/modifica/evalúa skills, optimiza descriptions para activación (Anthropic upstream) |
 | `meta-onboarding-wizard` | Entrevista express por **4 sub-fases con commits incrementales** (v0.6) |
 | `meta-deep-dive` | Entrevista profunda (22-25 dimensiones) — opcional |
 | `meta-start-here` | Ritual diario de inicio |
@@ -160,12 +161,13 @@ Capa 1 = 23 skills core + 1 opcional.
 | `marketing-content-repurposing` | Distribución multiplataforma |
 | `marketing-email-sequence` | Secuencias de email |
 
-### `automation/` (2)
+### `automation/` (3)
 
 | Skill | Descripción |
 |---|---|
 | `automation-n8n-to-claude` | Migra workflows n8n al ecosistema Claude |
 | `automation-n8n-builder` | Crea workflows n8n vía MCP `n8n-mcp` |
+| `mcp-builder` | Construye servidores MCP en Python (FastMCP) o Node/TS (MCP SDK) — Anthropic upstream |
 
 ### `strategy/` (1)
 
@@ -181,11 +183,12 @@ Capa 1 = 23 skills core + 1 opcional.
 | `tool-humanizer` | Quita patrones AI-tell |
 | `tool-output-verifier` | Gate de calidad |
 
-### `visualization/` (1)
+### `visualization/` (2)
 
 | Skill | Descripción |
 |---|---|
 | `tool-visual-explainer` | HTML autocontenido compartible |
+| `canvas-design` | Posters / arte estático en .png / .pdf con design philosophy (Anthropic upstream) |
 
 ### Plugins Anthropic (instalación vía marketplace)
 
