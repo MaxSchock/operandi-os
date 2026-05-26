@@ -9,7 +9,7 @@ Invoca la skill `meta-start-here` que vive en `.claude/skills/_meta/meta-start-h
 ## Qué hace
 
 1. Lee operator-state global (Sinapsis) y user.md (repo)
-2. Comprueba si hay daily summary de ayer en `synapsis/daily-summaries/`
+2. Comprueba si hay daily summary de ayer en `~/.claude/skills/_daily-summaries/`
 3. Lista proyectos abiertos en `projects/briefs/`
 4. Saluda con resumen + propuesta de tarea para hoy
 

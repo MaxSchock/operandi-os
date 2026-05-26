@@ -71,7 +71,7 @@ Una vez confirmado que la instalación está completa, antes de responder al pri
 2. Lee los 5 archivos sectorizados de `context/` si existen: `me.md`, `work.md`, `team.md`, `current-priorities.md`, `goals.md`.
 3. Lee `context/decisions-log.md` (últimas 5 entradas) para mantener coherencia.
 4. Lee cualquier plan activo en `.claude/plans/` si la carpeta existe (planes en progreso de sesiones anteriores).
-5. Lee `synapsis/daily-summaries/<TODAY>.md` o `<YESTERDAY>.md` (continuidad diaria).
+5. Lee `~/.claude/skills/_daily-summaries/<TODAY>.md` o `<YESTERDAY>.md` (continuidad diaria).
 
 ### Session continuity (operativa diaria)
 

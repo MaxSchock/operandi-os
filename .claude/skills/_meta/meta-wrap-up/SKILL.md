@@ -57,7 +57,7 @@ Si durante la sesión:
 
 ### Paso 5 · Generar daily summary
 
-Crear/actualizar `synapsis/daily-summaries/<TODAY>.md`:
+Crear/actualizar `~/.claude/skills/_daily-summaries/<TODAY>.md`:
 
 ```markdown
 # EOD — YYYY-MM-DD
@@ -120,7 +120,7 @@ NO ejecutar `/eod` automáticamente — es una invitación.
 
 ### Paso 9 · Despedida
 
-> "Sesión cerrada. Daily summary guardado en `synapsis/daily-summaries/{{TODAY}}.md`.
+> "Sesión cerrada. Daily summary guardado en `~/.claude/skills/_daily-summaries/{{TODAY}}.md`.
 > Mañana al abrir Claude Code aquí, te recordaré: '{{quick-resume}}'.
 >
 > {{si commit hecho}}: Commit {{hash}} creado.
@@ -130,7 +130,7 @@ NO ejecutar `/eod` automáticamente — es una invitación.
 
 ## Outputs
 
-- `synapsis/daily-summaries/<TODAY>.md` — actualizado/creado
+- `~/.claude/skills/_daily-summaries/<TODAY>.md` — actualizado/creado
 - `synapsis/skills-catalog.json` — sincronizado si hubo skill changes
 - `CLAUDE.md` — skills registry actualizado
 - `context/learnings.md` — append si aplica

@@ -27,7 +27,7 @@ Lee en orden:
 
 ### Paso 2 · Cargar continuidad
 
-Lee `synapsis/daily-summaries/<TODAY>.md` o `<YESTERDAY>.md`:
+Lee `~/.claude/skills/_daily-summaries/<TODAY>.md` o `<YESTERDAY>.md`:
 - Si hay → resumir el "For tomorrow" en una línea
 - Si no → primera sesión del día
 
