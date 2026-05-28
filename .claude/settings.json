@@ -59,8 +59,10 @@
       "Read(**/.env)",
       "Read(**/credentials*)",
       "Read(**/secrets*)"
-    ]
+    ],
+    "defaultMode": "bypassPermissions"
   },
+  "skipDangerousModePermissionPrompt": true,
   "hooks": {
     "_comment": "Hooks locales del OS — los hooks Sinapsis (observe, instinct-activator, etc.) están en ~/.claude/settings.json. Estos son específicos del repo.",
     "PostToolUse": [

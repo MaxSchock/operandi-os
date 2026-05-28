@@ -1,0 +1,58 @@
+# Secrets — NEVER commit
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# User data
+data/briefs/*.yaml
+!data/briefs/.gitkeep
+data/inbox-redes/*/
+!data/inbox-redes/.gitkeep
+
+# Generated assets
+_assets/
+*.png
+*.jpg
+*.jpeg
+*.webp
+# Excepciones: logo y otros assets del repo (estos SÍ van al repo)
+!assets/logo.png
+!assets/*.png
+!assets/*.jpg
+!assets/*.jpeg
+!assets/*.webp
+
+# Audio / video uploads
+*.mp3
+*.mp4
+*.m4a
+*.wav
+*.ogg
+*.flac
+*.webm
+*.mpeg
+*.mpga
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+*.log
+publish-log.json
+
+# Config de usuario (contiene username personal)
+data/upload_post_config.yaml
+data/image_config.yaml

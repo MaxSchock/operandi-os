@@ -158,3 +158,44 @@ Al cerrar:
   - Credenciales que requiere
   - Cómo testarlo
   - Cómo monitorizar
+
+---
+
+## REST API safety (al modificar workflows existentes)
+
+Cuando usas la REST API de n8n para PATCH/PUT un workflow ya desplegado, dos reglas no negociables.
+
+### Body PUT estricto
+
+`PUT /api/v1/workflows/{id}` requiere un body con **exactamente** estas keys:
+
+```json
+{
+  "name": "...",
+  "nodes": [...],
+  "connections": {...},
+  "settings": {...}
+}
+```
+
+Cualquier key extra (`active`, `id`, `createdAt`, `updatedAt`, `versionId`, `tags`) provoca 400 Bad Request. La instancia n8n acepta solamente esos 4 campos al actualizar. Si lees el workflow con GET primero (que incluye los campos extra), filtra antes de mandar el PUT:
+
+```python
+wf = get_workflow(id)
+body = {k: wf[k] for k in ("name", "nodes", "connections", "settings")}
+put_workflow(id, body)
+```
+
+### NUNCA cambiar el `type` de un trigger node
+
+Cambiar el `type` de un trigger node (`scheduleTrigger` → `manualTrigger`, `webhook` → `scheduleTrigger`, etc.) rompe la automatización: la instancia desregistra el trigger anterior pero el nuevo queda en estado inconsistente. Síntomas: workflow activo pero nunca ejecuta, executions vacías, webhook URLs huérfanas.
+
+Workflow correcto si tienes que migrar de un tipo a otro:
+
+1. Crear un workflow NUEVO con el trigger deseado
+2. Copiar los demás nodes y connections del workflow original
+3. Activar el nuevo
+4. Desactivar el viejo
+5. Borrar el viejo solo cuando confirmas que el nuevo recibe ejecuciones reales
+
+Nunca PATCH `nodes[0].type` directamente sobre un trigger en un workflow productivo.

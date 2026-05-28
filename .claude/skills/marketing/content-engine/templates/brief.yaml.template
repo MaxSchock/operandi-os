@@ -1,0 +1,78 @@
+# content-engine — brief de marca personal
+# Guardado en: data/briefs/<slug>.yaml
+# Edita libremente. La skill lee este archivo en cada ejecución.
+
+slug: ejemplo-marca-personal           # identificador corto en kebab-case
+language: es                           # ISO-639-1: es, en, pt, fr, …
+created_at: 2026-05-09
+updated_at: 2026-05-09
+
+person:
+  name: ""
+  role: ""                             # ej. "Consultor de productividad para PYMEs B2B"
+  company: ""
+
+ideal_client:
+  who: ""                              # un párrafo
+  pains:
+    - ""
+    - ""
+  desired_outcome: ""
+
+differentiator: ""                     # qué te hace diferente, en una frase
+
+tone:
+  primary: directo                     # directo | cercano | técnico | inspiracional | sarcástico
+  notes: ""                            # cualquier matiz
+
+anti_topics:                           # cosas de las que NUNCA publicas
+  - ""
+
+active_networks:                       # redes en las que estás activo
+  - linkedin
+  - instagram
+  # - x
+  # - tiktok
+  # - youtube
+
+format_preferences:
+  text_heavy: true                     # te gustan los posts largos
+  story_led: true                      # te gusta la narrativa
+  data_driven: true                    # te gustan los números concretos
+  conversational: true                 # vs. corporativo
+
+cta:
+  default: "Mándame un DM si quieres una sesión gratis de 15 min"
+  alternatives:
+    - "Comenta si te resuena"
+    - "Link en bio para el desglose completo"
+
+visual_identity:
+  palette: []                          # opcional: lista de hex usados en tu marca
+  style_keywords: []                   # ej. ["minimalista", "corporativo moderno", "cálido"]
+  appears_in_images: prompt            # always | never | prompt (preguntar cada vez)
+
+brand_references:                      # 1-3 marcas que admiras
+  - ""
+
+publishing:
+  # Datos para que la skill publique en nombre de esta marca/cliente.
+  # Si quedan vacíos, la skill preguntará al usuario antes de cada publicación.
+  linkedin_account_id: ""              # ID Unipile (sacar con: python tools/unipile_post.py --list-accounts)
+  linkedin_page_id: ""                 # opcional: si publicas como página de empresa, no perfil
+  linkedin_visibility: PUBLIC          # PUBLIC | CONNECTIONS
+  upload_post_user: ""                 # opcional: solo si publicas fuera de LinkedIn vía Upload-Post
+
+# image_provider_override (OPCIONAL) — solo si este cliente tiene LoRA propio entrenado.
+# Si está set, la skill usa este modelo en lugar del default de data/image_config.yaml.
+# Sigue siendo válido pasar foto de referencia a nano-banana-2 para clientes SIN LoRA.
+# image_provider_override:
+#   provider: replicate
+#   model_slug: "owner/model"          # ej. maxschock/ingolf
+#   trigger_word: "TRIGGER"            # palabra del LoRA — incluir en todos los prompts
+#   default_lora_scale: 1.0            # 0.8-1.2 rango razonable
+#   default_aspect_ratio: "4:5"        # opcional, override del global
+
+# Notas internas (no se usan por la skill, útiles para ti):
+notes: |
+  Edita lo que quieras. La skill respeta este archivo como fuente de verdad.

@@ -150,7 +150,7 @@ Capa 1 = 26 skills core + 1 opcional.
 |---|---|
 | `cognito` | `/install-skill cognito` |
 
-### `marketing/` (6)
+### `marketing/` (7)
 
 | Skill | Descripción |
 |---|---|
@@ -160,6 +160,7 @@ Capa 1 = 26 skills core + 1 opcional.
 | `marketing-copywriting` | Copy con humanizer gate |
 | `marketing-content-repurposing` | Distribución multiplataforma |
 | `marketing-email-sequence` | Secuencias de email |
+| `content-engine` | Idea → 5 piezas + imagen + publica (Fal/OpenAI + Upload-Post). Multi-brief por cliente. Upstream IA Masters Academy. |
 
 ### `automation/` (3)
 
