@@ -95,3 +95,7 @@ yarn.lock
 # Synapsis temporary files (si alguna vez se genera dentro del repo)
 *.tmp
 *.lock
+
+# Vault Obsidian — sub-repo independiente con su propio .git
+# Auto-commit + auto-push a github.com/MaxSchock/iamasters-vault (privado)
+_wiki/
