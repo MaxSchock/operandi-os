@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "evolution": {
+      "command": "node",
+      "args": [
+        "--env-file=/home/max/iamasters-os/.env",
+        "/home/max/mcp-servers/mcp-evo-api/dist/main.js"
+      ]
+    }
+  }
+}

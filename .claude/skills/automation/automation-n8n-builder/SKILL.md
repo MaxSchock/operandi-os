@@ -1,9 +1,9 @@
 ---
 name: automation-n8n-builder
-description: Crea, valida y despliega workflows de n8n desde Claude Code usando el MCP n8n-mcp. Úsala cuando el usuario diga "crea un workflow en n8n", "monta un n8n que haga X", "convierte esta idea en automatización", "diseña un flujo n8n", o describa una secuencia de pasos automatizables (recibir webhook → procesar → enviar a Slack, scheduler diario que lee de Google Sheets, etc.). Activable también con frases como "auto­matización", "n8n", "workflow", "trigger". NO uses esta skill para migrar workflows existentes de n8n a Claude — para eso usa automation-n8n-to-claude.
+description: Crea, valida y despliega workflows de n8n desde Claude Code vía la REST API de n8n (sin MCP). Úsala cuando el usuario diga "crea un workflow en n8n", "monta un n8n que haga X", "convierte esta idea en automatización", "diseña un flujo n8n", o describa una secuencia de pasos automatizables (recibir webhook → procesar → enviar a Slack, scheduler diario que lee de Google Sheets, etc.). Activable también con frases como "auto­matización", "n8n", "workflow", "trigger". NO uses esta skill para migrar workflows existentes de n8n a Claude — para eso usa automation-n8n-to-claude.
 author: IA Masters Academy
-version: 1.0.0
-tags: [n8n, mcp, automatizacion, workflow, builder, claude-code]
+version: 2.0.0
+tags: [n8n, rest-api, automatizacion, workflow, builder, claude-code]
 ---
 
 # automation-n8n-builder — Constructor de workflows n8n desde Claude
@@ -14,12 +14,16 @@ tags: [n8n, mcp, automatizacion, workflow, builder, claude-code]
 
 ## Prerequisitos
 
-1. **MCP `n8n-mcp` instalado y configurado** en `.mcp.json` del repo o en `~/.claude/.mcp.json`.
-   Si no lo tiene, sugerir al usuario: `/install-mcp n8n-mcp`.
-2. **Acceso a una instancia n8n** (self-hosted o cloud) con API key en variable de entorno `N8N_API_KEY` y `N8N_BASE_URL`.
-3. **Permisos**: el MCP requiere que el operador pueda crear/editar/desplegar workflows.
+Todo se opera vía la **REST API de n8n** (`/api/v1/...` con header `X-N8N-API-KEY`). No se usa ningún MCP de n8n; la REST cubre todo el ciclo (crear, editar, activar, ejecutar por webhook, leer ejecuciones).
 
-Si falta cualquiera de los tres, la skill explica al usuario qué falta antes de continuar.
+1. **Credenciales por instancia** en `~/.config/n8n-cli/`:
+   - Operandi (default): `~/.config/n8n-cli/api-key` + `api-url` (= `https://ssn8n.figura-studio.com`).
+   - KIsult Hemmersbach: `~/.config/n8n-cli/kisult/hemmersbach/api-key` + `api-url`.
+   - Otras instancias: misma convención `~/.config/n8n-cli/<empresa>/<cliente>/`.
+2. **Verificar el host ANTES de cualquier POST/PUT.** Cada empresa tiene su n8n; un workflow de cliente KIsult nunca va al n8n de Operandi. Confirma con el usuario a qué instancia va si no es obvio por contexto.
+3. **No existe "run now" en la API pública.** Para disparar un workflow desde fuera, usa un webhook trigger y haz POST a la URL de webhooks de la instancia (Operandi: `https://sswebhook.figura-studio.com/webhook/<path>`).
+
+Si falta la API key de la instancia destino, pedirla antes de continuar (nunca pegarla en el chat; va a archivo chmod 600).
 
 ---
 
@@ -39,7 +43,7 @@ Si la idea es vaga, proponer 2-3 versiones concretas y dejar al usuario elegir.
 
 ### Paso 2 · Diseño visual del flujo
 
-Antes de pedir nada al MCP, mostrar al usuario un **diagrama en texto** del workflow propuesto:
+Antes de tocar la API, mostrar al usuario un **diagrama en texto** del workflow propuesto:
 
 ```
 [Webhook: form-submission]
@@ -55,21 +59,21 @@ Antes de pedir nada al MCP, mostrar al usuario un **diagrama en texto** del work
 
 Pedir confirmación al usuario antes de construir.
 
-### Paso 3 · Construir vía MCP
+### Paso 3 · Construir vía REST
 
-Usar las herramientas del MCP `n8n-mcp`:
+Endpoints (base = contenido de `api-url`, header `X-N8N-API-KEY`):
 
-- `search_nodes` para encontrar nodos relevantes
-- `get_node` para inspeccionar parámetros de un nodo concreto
-- `n8n_create_workflow` para crear el workflow vacío
-- `n8n_update_partial_workflow` para añadir nodos uno a uno con sus conexiones
-- `n8n_validate_workflow` para verificar que el grafo es válido
+- `POST /api/v1/workflows` — crear con el JSON completo (`name`, `nodes`, `connections`, `settings`). Se crea desactivado.
+- `PUT /api/v1/workflows/{id}` — iterar sobre el workflow. Body estricto de 4 keys (ver "REST API safety" abajo).
+- `GET /api/v1/workflows/{id}` — releer el estado actual antes de cada PUT.
+- `POST /api/v1/workflows/{id}/activate` / `.../deactivate`.
+- Para parámetros de nodos que no conoces de memoria: duplicar un nodo equivalente de un workflow existente de la misma instancia (GET + copiar el bloque del nodo) o consultar docs.n8n.io. No inventar `typeVersion`.
 
-Construir el workflow incrementalmente, no de golpe. Tras cada nodo añadido, mostrar progreso al usuario.
+Construir el workflow incrementalmente (GET → modificar JSON → PUT), no de golpe. Tras cada iteración, mostrar progreso al usuario.
 
 ### Paso 4 · Validar antes de desplegar
 
-Ejecutar `n8n_validate_workflow` y revisar:
+No hay endpoint de validación en la API pública: la validación es tuya, sobre el JSON, antes del PUT. Revisar:
 
 - Todos los nodos tienen credenciales asignadas (o aviso si faltan)
 - Las conexiones entre nodos son coherentes
@@ -82,20 +86,21 @@ Si hay errores → mostrarlos al usuario, proponer fixes, no desplegar todavía.
 
 Antes de activar:
 
-- `n8n_test_workflow` con un payload de ejemplo
-- Mostrar al usuario el resultado de cada nodo
-- Si algún nodo falla, proponer fix o ajustar el diseño
+- Si el trigger es webhook: activar, mandar un POST con payload de ejemplo a la URL de webhook, y leer el resultado con `GET /api/v1/executions?workflowId={id}&includeData=true`.
+- Si el trigger es schedule: probar con un webhook trigger temporal en paralelo, o pedir al usuario un "Execute workflow" manual desde la UI.
+- Revisar la ejecución nodo a nodo en la respuesta de executions. Si algún nodo falla, proponer fix o ajustar el diseño.
+- Tests destructivos (DELETE, escrituras sobre datos reales) SIEMPRE sobre recursos `-claude-test` creados ad hoc, nunca sobre prod.
 
 ### Paso 6 · Activar y entregar
 
 Una vez validado:
 
-- Activar el workflow (`active: true`)
+- Activar el workflow (`POST /api/v1/workflows/{id}/activate`)
 - Devolver al usuario:
-  - URL del workflow en n8n
+  - URL del workflow en el editor de la instancia
   - Resumen de qué hace y cuándo se dispara
-  - Cómo monitorizar las ejecuciones (`n8n_executions`)
-  - Sugerencia de mejoras futuras (logs, alertas, etc.)
+  - Cómo monitorizar las ejecuciones (`GET /api/v1/executions?workflowId={id}`)
+  - Si la instancia tiene error-workflow estándar (Operandi: `P7wPxAjFeTbElZvn` → `n8n_errors_inbox`), cablearlo en settings
 
 ---
 
@@ -137,7 +142,7 @@ Nodos clave: `IF` (rama principal) → `Try` (canal A: Slack) → `On error` (ca
 
 ## Cuándo NO usar n8n
 
-Antes de construir el workflow, valorar honestamente si **n8n es la herramienta adecuada**. Casos en los que conviene plantear alternativa:
+Antes de construir el workflow, pasar por el árbol de decisión de [`docs/tech-stack-decision.md`](../../../../docs/tech-stack-decision.md) (n8n vs servicio Python en VPS vs Claude Code + cron vs script puntual). Casos rápidos en los que conviene plantear alternativa:
 
 - **El usuario quiere "una skill que haga X cada día"** → mejor un cron job + skill Claude directa (más simple, no requiere infra n8n).
 - **El flujo es 100% texto** (resumir, reescribir, traducir) → Claude lo hace nativo, no necesita orquestador.
@@ -199,3 +204,41 @@ Workflow correcto si tienes que migrar de un tipo a otro:
 5. Borrar el viejo solo cuando confirmas que el nuevo recibe ejecuciones reales
 
 Nunca PATCH `nodes[0].type` directamente sobre un trigger en un workflow productivo.
+
+---
+
+## Known traps (gotchas confirmados por uso real)
+
+Estos son traps reproducidos en workflows reales. Si construyes o editas un workflow vía REST/UI, asume que se aplican.
+
+### Control de flujo y loops
+
+**`splitInBatches` + `executeWorkflow` rompe el loop.** Cuando un sub-workflow se invoca dentro de un `splitInBatches`, el contador del loop se reinicia: corre 1 batch y para. Si necesitas iterar dentro de un sub-workflow, mete el loop dentro del sub-workflow o expande inline.
+
+**Skip-branches en loops por external-state mismatch DEBEN escribir al tracker antes de volver al loop.** Si la rama "skip" del IF no actualiza el tracker (Sheets, Postgres, etc.) que detecta el mismatch, el loop reentra al mismo item infinitamente.
+
+### Nodos concretos
+
+**Google Sheets v4.5 READ no itera per input item** aunque `documentId` sea una expresión. Corre 1 vez evaluando con el primer item. Si necesitas leer N sheets distintos, usa un sub-workflow + executeWorkflow, o `HTTP Request` directo a Sheets API.
+
+**Code node: `$json` es SIEMPRE el output del nodo inmediatamente anterior.** Si insertas un nodo intermedio (Set, IF, debug), las expresiones `$json.x` downstream se rompen silenciosamente porque apuntan al output del intermedio. Usa `$('Nombre del nodo').item.json.x` cuando quieras anclar a un nodo específico.
+
+**n8n langchain `chainLlm` / `agent` vía REST con `{{ }}` en el prompt: el campo `text` DEBE empezar por `=`.** La UI auto-prefija el `=`, la REST no. Sin el prefix, el `{{ }}` se envía literal y rompe el chain.
+
+**Postgres `executeQuery` con `queryReplacement`: NO uses `JSON.stringify` para inyectar SQL literals.** Produce `"value"` (comillas dobles = identificador) cuando querías `'value'` (comillas simples = string literal). Usa `$1, $2` con parámetros separados, o construye el SQL string manualmente con el quoting correcto.
+
+### Imports y portabilidad
+
+**Workflow JSON exportado de otra instancia: estructura + código sobreviven, NO transfiere:**
+1. Credentials (los IDs son locales).
+2. Google Sheets `documentId` (otro tenant Google).
+3. Hostnames internos (`host.docker.internal`, otros containers del compose origen).
+
+Al importar, audita estos 3 puntos y re-mapea antes de activar.
+
+### Backfill workflows (4 traps recurrentes)
+
+1. Webhook `responseMode=lastNode` aborta ~28s. Para backfills largos usa `onReceived` (responde antes de procesar).
+2. Sheets v4.5 `appendOrUpdate` en `mappingMode=defineBelow` puede saltar filas sin error si los headers no matchean exactamente.
+3. Code nodes que devuelven `[]` rompen el loop downstream silenciosamente. No es lo mismo que devolver `[{}]` o `[{empty: true}]`.
+4. Nada valida orphan connections por ti (la REST acepta el JSON sin quejarse). Audita `connections` manualmente antes del PUT en workflows complejos.
