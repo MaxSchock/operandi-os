@@ -1,7 +1,7 @@
 # iAmasters OS — CLAUDE.md (project root)
 
 > Sistema operativo agéntico para operadores de IA.
-> Sinapsis v4.5 (engine) + capa OS (brand context, agent context, skills curadas, multi-cliente).
+> Sinapsis v4.1 (engine activo en `~/.claude/`, datos reales) + capa OS (brand context, agent context, skills curadas, multi-cliente). El repo trae vendored Sinapsis v4.5.0 en `vendor/sinapsis/` para un futuro upgrade, pero NO está en uso.
 
 ---
 
@@ -85,6 +85,8 @@ Cuando todo está configurado y la instalación está completa:
 
 ## Sobre el sistema
 
+> **Estado del setup (2026-06-13).** Consolidación WSL-first: `~/.claude/CLAUDE.md`, `clients.private.md` y las credenciales n8n son archivos reales en WSL (symlinks inversos en `/mnt/c`). n8n se opera vía REST API, sin n8n-mcp (ver `docs/tech-stack-decision.md` para cuándo n8n y cuándo no). La memoria (Sinapsis + `memory/`) se respalda con historial en el repo privado `MaxSchock/sinapsis-state` (snapshot en el hook Stop) + rsync al VPS como secundario.
+
 ### Sinapsis (engine de memoria)
 Sinapsis es el sistema que hace que Claude Code aprenda de ti. Vive instalado en `~/.claude/` (no en este repo). El repo lo trae vendored en `vendor/sinapsis/` para instalación.
 
@@ -111,7 +113,7 @@ Lo que aporta este repo encima de Sinapsis:
 - `me.md`, `work.md`, `team.md`, `current-priorities.md`, `goals.md`
 - `learnings.md`, `decisions-log.md`
 
-**Skills curadas (`.claude/skills/`)** — 23 skills core (ver registry abajo).
+**Skills curadas (`.claude/skills/`)**: 27 skills core + 1 opcional (ver registry abajo).
 
 **Niveles de proyecto**:
 1. **Single task** — pregunta directa. Output a `projects/<skill-name>/<fecha>-<titulo>/`.
@@ -126,7 +128,7 @@ Lo que aporta este repo encima de Sinapsis:
 
 ## Skills registry (v0.6.0)
 
-Capa 1 = 26 skills core + 1 opcional.
+Capa 1 = 27 skills core + 1 opcional (cognito) = 28 `SKILL.md` en disco. La carpeta `operations/` es un placeholder vacío (solo `.gitkeep`), sin skills.
 
 ### `_meta/` — sistema (11)
 
