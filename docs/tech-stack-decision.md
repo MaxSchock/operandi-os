@@ -1,4 +1,4 @@
-# Tech stack por proyecto — árbol de decisión
+# Tech stack por proyecto · árbol de decisión
 
 > Decidido 2026-06-12 (sesión de optimización del setup). Objetivo: dejar de usar n8n por inercia.
 > Regla transversal: **si el flujo es >50% prompts/LLM y <50% integración, n8n sobra.**
@@ -35,7 +35,7 @@ Pregunta en orden. La primera que encaje, gana.
 |---|---|---|---|
 | Daily digest comercial v4 | strategist (ya tiene cron 09:00) | Bajo | El contenido ya lo genera Claude; n8n solo envuelve |
 | LN Auto-Reply v4 (personal brand, 5 personas) | strategist | Medio | Prompts versionados en git, menos hardcode por persona |
-| Error Notification `P7wPxAjFeTbElZvn` | se queda en n8n | — | Es el productor del inbox; claude-debug ya consume. Revisar solo si falla |
-| Outreach Step 1-5 (27 workflows) | se queda en n8n | — | Queue mode + volumen + safety gates: caso de uso correcto |
+| Error Notification `P7wPxAjFeTbElZvn` | se queda en n8n | - | Es el productor del inbox; claude-debug ya consume. Revisar solo si falla |
+| Outreach Step 1-5 (27 workflows) | se queda en n8n | - | Queue mode + volumen + safety gates: caso de uso correcto |
 
 Las migraciones se ejecutan en sesiones dedicadas, una a una, con periodo de doble-corrida antes de apagar el workflow viejo.

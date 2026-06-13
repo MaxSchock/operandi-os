@@ -1,12 +1,12 @@
 ---
 name: automation-n8n-builder
-description: Crea, valida y despliega workflows de n8n desde Claude Code vía la REST API de n8n (sin MCP). Úsala cuando el usuario diga "crea un workflow en n8n", "monta un n8n que haga X", "convierte esta idea en automatización", "diseña un flujo n8n", o describa una secuencia de pasos automatizables (recibir webhook → procesar → enviar a Slack, scheduler diario que lee de Google Sheets, etc.). Activable también con frases como "auto­matización", "n8n", "workflow", "trigger". NO uses esta skill para migrar workflows existentes de n8n a Claude — para eso usa automation-n8n-to-claude.
+description: Crea, valida y despliega workflows de n8n desde Claude Code vía la REST API de n8n (sin MCP). Úsala cuando el usuario diga "crea un workflow en n8n", "monta un n8n que haga X", "convierte esta idea en automatización", "diseña un flujo n8n", o describa una secuencia de pasos automatizables (recibir webhook → procesar → enviar a Slack, scheduler diario que lee de Google Sheets, etc.). Activable también con frases como "auto­matización", "n8n", "workflow", "trigger". NO uses esta skill para migrar workflows existentes de n8n a Claude · para eso usa automation-n8n-to-claude.
 author: IA Masters Academy
 version: 2.0.0
 tags: [n8n, rest-api, automatizacion, workflow, builder, claude-code]
 ---
 
-# automation-n8n-builder — Constructor de workflows n8n desde Claude
+# automation-n8n-builder · Constructor de workflows n8n desde Claude
 
 > Esta skill convierte una descripción en lenguaje natural ("quiero que cuando llegue un lead por formulario lo meta en Sheets y avise por Slack") en un workflow n8n funcional, validado y desplegado.
 
@@ -63,9 +63,9 @@ Pedir confirmación al usuario antes de construir.
 
 Endpoints (base = contenido de `api-url`, header `X-N8N-API-KEY`):
 
-- `POST /api/v1/workflows` — crear con el JSON completo (`name`, `nodes`, `connections`, `settings`). Se crea desactivado.
-- `PUT /api/v1/workflows/{id}` — iterar sobre el workflow. Body estricto de 4 keys (ver "REST API safety" abajo).
-- `GET /api/v1/workflows/{id}` — releer el estado actual antes de cada PUT.
+- `POST /api/v1/workflows` · crear con el JSON completo (`name`, `nodes`, `connections`, `settings`). Se crea desactivado.
+- `PUT /api/v1/workflows/{id}` · iterar sobre el workflow. Body estricto de 4 keys (ver "REST API safety" abajo).
+- `GET /api/v1/workflows/{id}` · releer el estado actual antes de cada PUT.
 - `POST /api/v1/workflows/{id}/activate` / `.../deactivate`.
 - Para parámetros de nodos que no conoces de memoria: duplicar un nodo equivalente de un workflow existente de la misma instancia (GET + copiar el bloque del nodo) o consultar docs.n8n.io. No inventar `typeVersion`.
 
@@ -106,25 +106,25 @@ Una vez validado:
 
 ## Patrones comunes
 
-### Patrón 1 — Webhook → Procesar → Notificar
+### Patrón 1 · Webhook → Procesar → Notificar
 
 Para captación de leads, formularios, integraciones de CRM ligeras.
 
 Nodos clave: `Webhook` (trigger) → `Code` / `Set` (transformar) → `Slack` / `Email` (notificar) → `Respond to Webhook` (200 OK).
 
-### Patrón 2 — Schedule → Leer → Reportar
+### Patrón 2 · Schedule → Leer → Reportar
 
 Para reportes diarios/semanales, recordatorios, backups.
 
 Nodos clave: `Schedule Trigger` → `HTTP Request` / `Database` (leer datos) → `Code` (formatear) → `Slack` / `Email` (entregar).
 
-### Patrón 3 — Evento de app → Enriquecer → Persistir
+### Patrón 3 · Evento de app → Enriquecer → Persistir
 
 Para mantener bases de datos en sync, enriquecer leads con datos externos.
 
 Nodos clave: `Trigger de app` (Notion, Airtable, etc.) → `HTTP Request` (Clearbit, BORME, etc.) → `Set` (componer) → `Sheets` / `Postgres` (escribir).
 
-### Patrón 4 — Multi-canal con fallback
+### Patrón 4 · Multi-canal con fallback
 
 Para mensajería crítica que NO puede fallar.
 
