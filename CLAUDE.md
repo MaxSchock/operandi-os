@@ -113,7 +113,7 @@ Lo que aporta este repo encima de Sinapsis:
 - `me.md`, `work.md`, `team.md`, `current-priorities.md`, `goals.md`
 - `learnings.md`, `decisions-log.md`
 
-**Skills curadas (`.claude/skills/`)**: 27 skills core + 1 opcional (ver registry abajo).
+**Skills curadas (`.claude/skills/`)**: 28 SKILL.md en disco (ver registry abajo).
 
 **Niveles de proyecto**:
 1. **Single task** — pregunta directa. Output a `projects/<skill-name>/<fecha>-<titulo>/`.
@@ -128,7 +128,7 @@ Lo que aporta este repo encima de Sinapsis:
 
 ## Skills registry (v0.6.0)
 
-Capa 1 = 27 skills core + 1 opcional (cognito) = 28 `SKILL.md` en disco. La carpeta `operations/` es un placeholder vacío (solo `.gitkeep`), sin skills.
+Capa 1 = 28 `SKILL.md` en disco: 23 del manifiesto core original (lo que valida `/doctor` como "23/23 core") + 4 importadas de upstream Anthropic (skill-creator, mcp-builder, canvas-design, content-engine) + 1 opcional (cognito). La carpeta `operations/` es un placeholder vacío (solo `.gitkeep`), sin skills.
 
 ### `_meta/` — sistema (11)
 
