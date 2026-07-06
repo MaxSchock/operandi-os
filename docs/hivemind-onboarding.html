@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Hivemind · Installationsanleitung für das Team</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root{
+  --bg:#0d1117; --bg-card:#161b22; --bg-elevated:#21262d; --border:#30363d; --border-soft:#21262d;
+  --text:#c9d1d9; --text-muted:#8b949e; --text-bright:#f0f6fc;
+  --accent:#4A90E2; --accent-soft:rgba(74,144,226,0.12);
+  --purple:#b794f4; --green:#3fb950; --yellow:#d29922; --red:#f85149; --blue:#58a6ff;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Inter",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;font-size:16px;}
+.container{max-width:880px;margin:0 auto;padding:0 24px;}
+header{background:linear-gradient(180deg,#131a26 0%,var(--bg) 100%);border-bottom:1px solid var(--border);padding:56px 0 36px;}
+.eyebrow{display:inline-block;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:4px 10px;border-radius:4px;margin-bottom:16px;}
+h1{font-size:38px;font-weight:700;color:var(--text-bright);letter-spacing:-0.5px;margin-bottom:10px;}
+.subtitle{font-size:18px;color:var(--text-muted);max-width:640px;}
+main{padding:40px 0 80px;}
+section{margin-bottom:48px;}
+h2{font-size:25px;font-weight:700;color:var(--text-bright);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border-soft);}
+h2 .num{display:inline-block;width:34px;height:34px;line-height:34px;text-align:center;border-radius:8px;background:var(--accent-soft);color:var(--accent);font-size:17px;margin-right:10px;}
+h3{font-size:18px;color:var(--text-bright);margin:18px 0 8px;}
+p{margin-bottom:12px;} ul,ol{margin:0 0 12px 22px;} li{margin-bottom:7px;}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:20px 22px;margin-bottom:16px;}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;}
+.callout.green{border-left-color:var(--green);background:rgba(63,185,80,0.08);}
+.callout.red{border-left-color:var(--red);background:rgba(248,81,73,0.08);}
+.shot{border:1px dashed var(--border);border-radius:8px;background:var(--bg-elevated);color:var(--text-muted);text-align:center;padding:34px 16px;margin:14px 0;font-size:14px;font-style:italic;}
+code,kbd{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:5px;padding:2px 6px;color:var(--accent);}
+pre{background:#0a0d12;border:1px solid var(--border);border-radius:8px;padding:14px 16px;overflow-x:auto;margin:12px 0;}
+pre code{background:none;border:none;padding:0;color:var(--text);}
+.steps{counter-reset:step;list-style:none;margin-left:0;}
+.steps>li{counter-increment:step;position:relative;padding-left:42px;margin-bottom:16px;}
+.steps>li::before{content:counter(step);position:absolute;left:0;top:0;width:28px;height:28px;line-height:28px;text-align:center;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:14px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.rule{display:flex;gap:12px;align-items:flex-start;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.rule .ic{font-size:24px;line-height:1;}
+.badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:12px;font-weight:600;background:rgba(183,148,244,0.12);color:var(--purple);border:1px solid rgba(183,148,244,0.3);}
+footer{border-top:1px solid var(--border);padding:28px 0;color:var(--text-muted);font-size:14px;}
+@media(max-width:640px){.grid{grid-template-columns:1fr;}h1{font-size:30px;}}
+</style>
+</head>
+<body>
+<header><div class="container">
+  <span class="eyebrow">Project Hivemind · KIsult</span>
+  <h1>Willkommen im Team-System</h1>
+  <p class="subtitle">Eine Schritt-für-Schritt-Anleitung, um den KI-Assistenten des Teams zu installieren und loszulegen. Programmierkenntnisse braucht es nicht. Wenn Claude für dich neu ist, ist diese Anleitung genau richtig.</p>
+</div></header>
+
+<main><div class="container">
+
+  <section>
+    <h2><span class="num">1</span>Was ist Hivemind und was bringt es dir</h2>
+    <p>Hivemind ist das "gemeinsame Gehirn" des Teams. Immer wenn du an einem Kunden arbeitest, wird das Gelernte sicher auf dem KIsult-Server gespeichert. So kann jede Kollegin und jeder Kollege, die demselben Kunden zugeordnet sind, den Assistenten fragen <em>"Was wissen wir über Kunde X?"</em> und bekommt sofort das Relevante, ohne jemandem hinterherzuschreiben.</p>
+    <div class="card">
+      <strong>Das Wichtigste in einem Satz:</strong> du arbeitest ganz normal mit dem Assistenten; am Ende speichert er eine <em>saubere Zusammenfassung</em> deiner Arbeit (nie das ganze Gespräch), und nur die Kollegen desselben Kunden sehen sie.
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">2</span>Installiere Claude Desktop</h2>
+    <ol class="steps">
+      <li>Gehe auf <code>claude.ai/download</code> und lade die App für dein System herunter (Windows oder Mac).</li>
+      <li>Installiere sie wie jedes andere Programm und öffne sie.</li>
+      <li>Melde dich mit <strong>deinem persönlichen Claude-Konto</strong> an. Wenn du noch keins hast, erstelle es auf <code>claude.ai</code> (ein Abo Pro oder höher wird empfohlen; kläre die Kostenübernahme mit Max).</li>
+    </ol>
+    <div class="shot">[Screenshot: Hauptfenster von Claude Desktop nach dem Login]</div>
+  </section>
+
+  <section>
+    <h2><span class="num">3</span>Öffne Claude Code (das Terminal, keine Angst)</h2>
+    <p>"Claude Code" ist der Modus des Assistenten, der mit Dateien auf deinem Rechner arbeiten kann. Man benutzt ihn über ein <strong>Terminal</strong>: ein Textfenster, in das man Befehle schreibt. Klingt schlimmer als es ist: hier kopierst du nur 2 oder 3 Zeilen hinein.</p>
+    <div class="grid">
+      <div class="card"><h3>Unter Windows</h3><p>Öffne <strong>WSL</strong> (Ubuntu). Falls du es nicht hast: in PowerShell <code>wsl --install</code> eingeben und neu starten.</p></div>
+      <div class="card"><h3>Auf dem Mac</h3><p>Öffne die App <strong>Terminal</strong> (Cmd+Leertaste, dann "Terminal" tippen).</p></div>
+    </div>
+    <div class="shot">[Screenshot: geöffnetes Terminal, bereit zur Eingabe]</div>
+  </section>
+
+  <section>
+    <h2><span class="num">4</span>Installiere das Team-System (geführt)</h2>
+    <p>Vorher bekommst du von Max zwei Dinge: die <strong>Repo-URL</strong> und deine <strong>Zugangsdaten</strong> (eine kurze Textdatei). Dann kopiere diese Zeilen ins Terminal, eine nach der anderen:</p>
+    <pre><code>git clone &lt;URL-von-Max&gt; kisult-os
+cd kisult-os
+bash scripts/check-prerequisites.sh</code></pre>
+    <p>Wenn alles mit <span style="color:var(--green)">✓</span> durchläuft, weiter mit:</p>
+    <pre><code>bash scripts/install.sh</code></pre>
+    <ol class="steps">
+      <li>Der Installer fragt: <em>"Gehörst du zum KIsult-Team? Hivemind aktivieren?"</em> Antworte mit <code>j</code>.</li>
+      <li>Er fragt dich nach den <strong>Zugangsdaten von Max</strong> (Kürzel, Verbindungs-String, Kunden, zwei Keys). Einfach einfügen; sie werden nur auf deinem Rechner gespeichert.</li>
+      <li>Er erzeugt einen <strong>Zugangsschlüssel</strong> (SSH) und zeigt ihn dir an. Schick diesen öffentlichen Schlüssel an Max, damit er dir Zugriff auf deine Kunden gibt.</li>
+      <li>Danach übergibt der Installer an den Assistenten: ein <strong>kurzes Interview</strong> (dein Name, deine Rolle, deine Kunden). Antworte einfach natürlich.</li>
+    </ol>
+    <div class="callout green">Unterbrochen worden? Kein Problem: <code>bash scripts/install.sh --resume</code> macht genau dort weiter, wo du warst.</div>
+  </section>
+
+  <section>
+    <h2><span class="num">5</span>Deine ersten 15 Minuten</h2>
+    <ul>
+      <li>Schreibe <code>/start-here</code>, damit der Assistent deinen Kontext lädt und dir sagt, wo du warst.</li>
+      <li>Frag ihn: <em>"Was wissen wir über Kunde [Name]?"</em>. Er bringt dir Zusammenfassungen und Verweise, nur von deinen zugeordneten Kunden.</li>
+      <li>Arbeite eine echte Aufgabe. Beim Abschluss speichert das System nur eine <strong>Zusammenfassung</strong> im gemeinsamen Gehirn (du siehst eine Meldung wie "Indexed summary").</li>
+    </ul>
+    <div class="shot">[Screenshot: der Assistent antwortet auf "Was wissen wir über Kunde X?"]</div>
+  </section>
+
+  <section>
+    <h2><span class="num">6</span>Goldene Sicherheitsregeln</h2>
+    <div class="grid">
+      <div class="rule"><div class="ic">🔑</div><div><strong>Niemals Passwörter oder Keys</strong> in den Chat oder in Projektdateien einfügen. Das System blockt vieles ab, aber die Verantwortung bleibt bei dir.</div></div>
+      <div class="rule"><div class="ic">📁</div><div><strong>Kundendaten nur im Ordner des Kunden.</strong> Keine Informationen zwischen Kunden mischen.</div></div>
+      <div class="rule"><div class="ic">📝</div><div><strong>Das System lädt Zusammenfassungen hoch, keine Gespräche.</strong> Der komplette Chat bleibt auf deinem Rechner.</div></div>
+      <div class="rule"><div class="ic">👁️</div><div><strong>Du siehst nur deine Kunden.</strong> Das ist Absicht (Datenschutz). Brauchst du einen weiteren, frag Max.</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">7</span>Wenn etwas schiefgeht</h2>
+    <ul>
+      <li>Führe <code>bash scripts/install.sh --resume</code> erneut aus: es macht weiter, ohne etwas kaputt zu machen.</li>
+      <li>Die Prüfung schlägt fehl? Lies, was mit <span style="color:var(--red)">✗</span> markiert ist; dort steht genau, was zu installieren ist.</li>
+      <li>Geht immer noch nicht? Schreib an <span class="badge">Max</span> mit einem Screenshot des Fehlers. Nicht mit wilden Befehlen improvisieren.</li>
+    </ul>
+  </section>
+
+</div></main>
+
+<footer><div class="container">
+  Project Hivemind · das Team-System von KIsult · Onboarding für Einsteiger.
+  Kundenzugriff pro Kunde, Zusammenfassungen statt Gespräche, Daten auf europäischem Server.
+</div></footer>
+</body>
+</html>
