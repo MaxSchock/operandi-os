@@ -134,11 +134,16 @@ EOF
 
 install_python_deps() {
     info "Instalando dependencias Python (mcp, psycopg, openai, anthropic)…"
-    if python3 -m pip install --user --quiet --disable-pip-version-check \
-        "mcp" "psycopg[binary]" "openai" "anthropic" 2>/dev/null; then
+    local pkgs=("mcp" "psycopg[binary]" "openai" "anthropic")
+    if python3 -m pip install --user --quiet --disable-pip-version-check "${pkgs[@]}" 2>/dev/null; then
         ok "Dependencias Python instaladas."
+    # PEP 668 (Ubuntu 23.04+/Debian 12 marks the system env as externally managed).
+    # User-site install is still the least invasive option for a non-technical machine.
+    elif python3 -m pip install --user --quiet --disable-pip-version-check \
+        --break-system-packages "${pkgs[@]}" 2>/dev/null; then
+        ok "Dependencias Python instaladas (user site, PEP 668 override)."
     else
-        warn "pip install falló (¿sin red o sin pip?). Instala a mano: python3 -m pip install --user mcp 'psycopg[binary]' openai anthropic"
+        warn "pip install falló (¿sin red o sin pip?). Instala a mano: python3 -m pip install --user --break-system-packages mcp 'psycopg[binary]' openai anthropic"
     fi
 }
 

@@ -120,7 +120,8 @@ def llm_summary(turns, tools):
     prompt = (
         "Summarize this work session for a team knowledge base. Output STRICT JSON with keys "
         '"summary" (3-5 sentences, what was done), "decisions" (bullet list as text), '
-        '"next_steps" (bullet list as text). Do NOT include credentials, personal emails or '
+        '"next_steps" (bullet list as text). Write the values in the same language the session '
+        "was held in. Do NOT include credentials, personal emails or "
         "phone numbers. Keep client/business facts but omit personal contact data.\n\n" + transcript
     )
     try:
