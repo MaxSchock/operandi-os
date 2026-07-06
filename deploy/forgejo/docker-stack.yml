@@ -1,0 +1,56 @@
+# Project Hivemind — Forgejo on ki-prod-01 (Docker Swarm).
+# Deploy:  docker stack deploy -c deploy/forgejo/docker-stack.yml hivemind-git
+# Traefik labels verified against the live ki-prod-01 Traefik on 2026-07-06
+# (entrypoint `websecure`, certresolver `letsencrypt`, network `traefik-public`).
+# Git-over-SSH is exposed on host port 2222.
+#
+# Tier-3 action: run by a technician.
+
+version: "3.8"
+
+services:
+  forgejo:
+    # Pinned to the latest stable verified 2026-07-06 (the old `:9` line is EOL;
+    # upgrades are deliberate: bump this pin, then docker service update --image).
+    image: codeberg.org/forgejo/forgejo:15.0.3
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      FORGEJO__server__DOMAIN: git.kisult.com
+      FORGEJO__server__ROOT_URL: https://git.kisult.com/
+      FORGEJO__server__SSH_DOMAIN: git.kisult.com
+      FORGEJO__server__SSH_PORT: "2222"
+      FORGEJO__service__DISABLE_REGISTRATION: "true"        # admins create accounts
+      FORGEJO__service__REQUIRE_SIGNIN_VIEW: "true"          # no anonymous reads
+      FORGEJO__repository__DEFAULT_PRIVATE: "private"
+      FORGEJO__security__INSTALL_LOCK: "true"
+      # DB: SQLite is sufficient for a small team. To use base_postgres instead,
+      # set FORGEJO__database__DB_TYPE=postgres + HOST/NAME/USER/PASSWD.
+    volumes:
+      - forgejo-data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - traefik-public
+    ports:
+      - target: 22
+        published: 2222
+        protocol: tcp
+        mode: host
+    deploy:
+      replicas: 1
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.http.routers.hivemind-git.rule=Host(`git.kisult.com`)
+        - traefik.http.routers.hivemind-git.entrypoints=websecure
+        - traefik.http.routers.hivemind-git.tls=true
+        - traefik.http.routers.hivemind-git.tls.certresolver=letsencrypt
+        - traefik.http.services.hivemind-git.loadbalancer.server.port=3000
+
+volumes:
+  forgejo-data:
+
+networks:
+  traefik-public:
+    external: true
