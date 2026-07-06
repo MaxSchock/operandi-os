@@ -157,6 +157,8 @@ Captura nombre + ubicación + idioma operativo. Si faltó algo, pregunta UN foll
 
 ### W2 · Negocio (dimensiones 3-6)
 
+> **Detecta la persona primero.** Antes de la dimensión 3, pregunta UNA vez, natural: "¿Esto es para tu propio negocio, o trabajas dentro de un equipo/empresa (p.ej. KIsult)?" Si es **empleado de un equipo**, NO uses las preguntas de negocio de abajo: salta a la variante **"Empleado de un equipo (Project Hivemind)"** en la sección de personas. Si es su propio negocio, sigue con las 4 dimensiones de abajo.
+
 Cubre en este orden (pero sin anunciarlo):
 1. **Negocio principal** — "¿A qué te dedicas? Cuéntamelo como se lo contarías a alguien en una cena."
 2. **Modelo de ingresos** — Derivado de 1. Si no quedó claro: "¿De qué viene el dinero hoy? Servicios, productos, suscripciones, mix..."
@@ -377,6 +379,27 @@ Suerte. Nos vemos mañana.
 **Usuario es curioso sin negocio activo**:
 - En W2, marca `avatar: "curioso"` en operator-state, salta a W3 con "Sin negocio activo todavía, vale. Pasamos a tu foco."
 - Anota en work.md: "Sin negocio activo. Cuando lo tengas, reejecuta el wizard."
+
+**Empleado de un equipo (Project Hivemind)**:
+Cuando la persona trabaja DENTRO de un equipo (no es su negocio). Las preguntas de "negocio/modelo de ingresos/cliente ideal" no aplican; reemplázalas por:
+1. **Rol** — "¿Cuál es tu rol en el equipo? ¿De qué eres responsable?"
+2. **Clientes asignados** — "¿En qué clientes/proyectos trabajas hoy?" (esto define a qué repos `client-*` y filas pedirás acceso al admin).
+3. **Stack diario** — igual que en negocio normal.
+- Marca `avatar: "empleado"` en operator-state.
+- En `context/work.md` usa estos encabezados en vez de los de negocio:
+  ```markdown
+  # work.md — mi rol en el equipo
+  ## Equipo / empresa
+  <p.ej. KIsult>
+  ## Mi rol
+  <responsabilidades>
+  ## Clientes / proyectos asignados
+  <lista — base para el acceso por cliente>
+  ## Stack diario
+  <herramientas>
+  ```
+- Tras W4, recuérdale: pásale tu clave pública SSH al admin (la genera `install-hivemind.sh`) para que te dé acceso a tus repos de cliente. No tendrás acceso a clientes que no te asignen — es a propósito (DSGVO, mínimo privilegio).
+- Encadena a W3 igual que el flujo normal.
 
 **Usuario contesta todo en 1 párrafo gigante**:
 - Extrae las 8 dimensiones de ese párrafo. NO pidas desglose.
