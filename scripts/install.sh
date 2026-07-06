@@ -745,6 +745,25 @@ main() {
     phase_sinapsis_engine
     setup_os_layer
 
+    # Project Hivemind: renderiza .mcp.json portable y (en modo team) la capa
+    # de equipo. Activación: marker persistente ~/.claude/.hivemind-enabled
+    # (lo crea la primera respuesta afirmativa; --resume lo respeta). No-fatal.
+    if [ -f "$REPO_ROOT/scripts/install-hivemind.sh" ]; then
+        HIVEMIND_MARKER="$HOME/.claude/.hivemind-enabled"
+        if [ "${HIVEMIND_ENABLE:-0}" != "1" ] && [ ! -f "$HIVEMIND_MARKER" ] && [ -t 0 ]; then
+            printf "Gehörst du zum KIsult-Team? / ¿Equipo KIsult? Hivemind aktivieren [j/s/N] "
+            read -r _hive_ans
+            case "$_hive_ans" in
+                [jJsSyY]*) mkdir -p "$HOME/.claude"; touch "$HIVEMIND_MARKER" ;;
+            esac
+        fi
+        if [ -f "$HIVEMIND_MARKER" ]; then
+            HIVEMIND_ENABLE=1 bash "$REPO_ROOT/scripts/install-hivemind.sh" || warn "install-hivemind.sh terminó con avisos (no bloqueante)"
+        else
+            bash "$REPO_ROOT/scripts/install-hivemind.sh" || warn "install-hivemind.sh terminó con avisos (no bloqueante)"
+        fi
+    fi
+
     # Migración automática para usuarios v0.5.x con instalación previa
     migrate_v05_existing
 
