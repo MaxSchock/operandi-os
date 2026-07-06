@@ -4,6 +4,18 @@
 .env.*.local
 !.env.example
 
+# MCP config is rendered per-machine by the installer from .mcp.json.template
+# (resolves absolute paths to the local $HOME/$REPO_ROOT). Keep the template tracked.
+.mcp.json
+!.mcp.json.template
+
+# Runtime marker dropped by scripts/skill-change-detector.sh
+.claude/.skills-dirty
+.claude/hivemind-outbox/
+
+# One-off lead pull outputs — contain prospect PII, never commit
+scripts/zayd_leads.json
+
 # OS
 .DS_Store
 Thumbs.db
