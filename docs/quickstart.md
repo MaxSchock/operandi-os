@@ -52,7 +52,7 @@ Antes de cerrar:
 ```
 
 Claude:
-- Genera daily summary en `synapsis/daily-summaries/<TODAY>.md`
+- Genera daily summary en `~/.claude/skills/_daily-summaries/<TODAY>.md`
 - Updates skills registry si añadiste alguna
 - Propone git commit (acepta o rechaza)
 - Te dice qué empezar mañana al volver

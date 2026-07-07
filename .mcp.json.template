@@ -1,0 +1,18 @@
+{
+  "_comment": "Template rendered to .mcp.json by scripts/install-hivemind.sh. Tokens __REPO_ROOT__ and __HOME__ are substituted with absolute local paths. Do not edit .mcp.json directly (it is gitignored); edit this template.",
+  "mcpServers": {
+    "hivemind-kb": {
+      "_comment": "Project Hivemind shared knowledge base. Retrieval is RLS-scoped per employee via HIVEMIND_USER_ID. Credentials live in ~/.claude/hivemind.env (sourced by run.sh), never in this file. See mcp-servers/hivemind-kb/README.md.",
+      "command": "bash",
+      "args": ["__REPO_ROOT__/mcp-servers/hivemind-kb/run.sh"]
+    },
+    "evolution": {
+      "_comment": "Optional WhatsApp bridge for the operator machine only. Removed automatically on team installs; harmless if the binary is absent.",
+      "command": "node",
+      "args": [
+        "--env-file=__REPO_ROOT__/.env",
+        "__HOME__/mcp-servers/mcp-evo-api/dist/main.js"
+      ]
+    }
+  }
+}

@@ -26,19 +26,43 @@
       "Bash(find *)",
       "Bash(mkdir *)",
       "Bash(cp *)",
-      "Bash(mv *)"
+      "Bash(mv *)",
+      "Bash(curl *)",
+      "Bash(ssh *)",
+      "Bash(scp *)",
+      "Bash(rsync *)",
+      "Bash(docker *)",
+      "Bash(rm /tmp/*)",
+      "Bash(chmod *)",
+      "Bash(tr *)",
+      "Bash(awk *)",
+      "Bash(sed *)",
+      "Bash(jq *)",
+      "Bash(echo *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(sort *)",
+      "Bash(uniq *)",
+      "Bash(diff *)",
+      "Bash(tee *)",
+      "Bash(env)",
+      "Bash(date *)",
+      "WebFetch",
+      "WebSearch"
     ],
     "deny": [
       "Bash(rm -rf *)",
       "Bash(sudo *)",
-      "Bash(curl *)",
       "Bash(wget *)",
       "Read(.env)",
       "Read(**/.env)",
       "Read(**/credentials*)",
       "Read(**/secrets*)"
-    ]
+    ],
+    "defaultMode": "bypassPermissions"
   },
+  "skipDangerousModePermissionPrompt": true,
   "hooks": {
     "_comment": "Hooks locales del OS — los hooks Sinapsis (observe, instinct-activator, etc.) están en ~/.claude/settings.json. Estos son específicos del repo.",
     "SessionStart": [

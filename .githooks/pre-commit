@@ -1,0 +1,61 @@
+#!/bin/bash
+# Project Hivemind pre-commit gate. Activated via:  git config core.hooksPath .githooks
+# (install-hivemind.sh does this automatically on team installs.)
+# Blocks commits that would leak Tier 3 data (credentials / secrets / personal context).
+# Fail-closed. Emergency override (use only when you are certain): HIVEMIND_ALLOW_COMMIT=1 git commit ...
+# Known limits (accepted): `git commit --no-verify` skips any local hook; this is
+# a safety net against accidents, not a defense against a deliberate insider.
+#
+# It checks two things on STAGED content:
+#   1) Sensitive PATHS (filenames that must never be committed).
+#   2) Secret PATTERNS inside the staged diff (keys, tokens, private keys).
+
+set -u
+
+if [ "${HIVEMIND_ALLOW_COMMIT:-0}" = "1" ]; then
+    echo "[pre-commit] OVERRIDE active (HIVEMIND_ALLOW_COMMIT=1) — skipping gate." >&2
+    exit 0
+fi
+
+fail=0
+# ACMR: renames included, so `git mv secret.env foo.txt` is still scanned.
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+
+# ---- 1. Forbidden paths ---------------------------------------------------
+# Real .env files (but allow .env.example / .mcp.json.template), private keys,
+# credential/secret files, and personal operator context.
+forbidden_path_re='(^|/)\.env($|\.)|(^|/)\.env\.|\.pem$|\.key$|(^|/)id_(rsa|ed25519)$|(^|/)credentials|(^|/)secrets|clients\.private\.md|(^|/)context/(me|work|team|user|current-priorities|goals|soul)\.md$'
+
+while IFS= read -r f; do
+    [ -z "$f" ] && continue
+    case "$f" in
+        .env.example|*/.env.example|*.env.example.tmpl|*.mcp.json.template) continue ;;
+    esac
+    if printf '%s' "$f" | grep -qiE "$forbidden_path_re"; then
+        echo "[pre-commit] BLOCKED path (Tier 3 / personal): $f" >&2
+        fail=1
+    fi
+done <<< "$staged"
+
+# ---- 2. Secret patterns in staged content ---------------------------------
+secret_re='sk-ant-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|gho_[A-Za-z0-9]{30,}|AIza[A-Za-z0-9_-]{30,}|xox[bpars]-[A-Za-z0-9-]{20,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|(api[_-]?key|token|secret|password|passphrase)["'"'"' ]*[:=]["'"'"' ]*[A-Za-z0-9_/+=.-]{16,}'
+
+while IFS= read -r f; do
+    [ -z "$f" ] && continue
+    # Scan the INDEX (staged content), not the worktree: a file staged and then
+    # deleted from disk still gets scanned.
+    if git show ":$f" 2>/dev/null | grep -aiEq "$secret_re"; then
+        echo "[pre-commit] BLOCKED secret-like content in: $f" >&2
+        fail=1
+    fi
+done <<< "$staged"
+
+if [ "$fail" -ne 0 ]; then
+    echo "" >&2
+    echo "[pre-commit] Commit rejected. Remove the secret/sensitive data, or unstage the file:" >&2
+    echo "             git restore --staged <file>" >&2
+    echo "             (genuine false positive? HIVEMIND_ALLOW_COMMIT=1 git commit ... — use sparingly)" >&2
+    exit 1
+fi
+
+exit 0

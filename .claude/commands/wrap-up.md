@@ -12,7 +12,7 @@ Invoca la skill `meta-wrap-up` que vive en `.claude/skills/_meta/meta-wrap-up/SK
 2. Sincroniza `synapsis/skills-catalog.json` si hubo cambios en `.claude/skills/`
 3. Actualiza el skills registry de `CLAUDE.md`
 4. Append a `context/learnings.md` si hubo aprendizajes
-5. Genera/actualiza `synapsis/daily-summaries/<TODAY>.md`
+5. Genera/actualiza `~/.claude/skills/_daily-summaries/<TODAY>.md`
 6. Detecta proyectos a archivar (status: done > 7 días)
 7. Propone Git commit (espera aprobación)
 8. Sugiere `/eod` Sinapsis si es final del día

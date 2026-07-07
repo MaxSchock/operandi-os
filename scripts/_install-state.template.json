@@ -64,6 +64,21 @@
       "required": false,
       "deferrable": true,
       "owner": "meta-deep-dive"
+    },
+    "hivemind-setup": {
+      "status": "pending",
+      "required": false,
+      "deferrable": true,
+      "comment": "Project Hivemind team layer (KIsult). Set required=true for team members once Forgejo + pgvector are live. Stays optional/deferrable for solo installs so it never hard-blocks a session before the shared infra exists.",
+      "validatedAt": null,
+      "checks": {
+        "ssh_key_present": false,
+        "forgejo_reachable": false,
+        "repos_cloned": false,
+        "summary_hook_registered": false,
+        "mcp_registered": false
+      },
+      "owner": "install-hivemind.sh"
     }
   },
   "pausedBy": null,

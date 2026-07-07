@@ -98,10 +98,11 @@ Para CADA uno de los 4 archivos críticos:
 
 ### Paso 5 · Verificación skills curadas
 
-Lista skills mínimas (v0.6 Capa 1):
+Lista skills core (v0.6 Capa 1) = 27 (23 del manifiesto original + 4 importadas de upstream Anthropic: skill-creator, mcp-builder, canvas-design, content-engine). NO incluye `_meta/_optional/cognito` (opcional). En disco hay 28 `SKILL.md` (27 core + cognito).
 
 ```
 .claude/skills/_meta/meta-skill-creator/SKILL.md
+.claude/skills/_meta/skill-creator/SKILL.md
 .claude/skills/_meta/meta-onboarding-wizard/SKILL.md
 .claude/skills/_meta/meta-deep-dive/SKILL.md
 .claude/skills/_meta/meta-start-here/SKILL.md
@@ -117,13 +118,16 @@ Lista skills mínimas (v0.6 Capa 1):
 .claude/skills/marketing/marketing-copywriting/SKILL.md
 .claude/skills/marketing/marketing-content-repurposing/SKILL.md
 .claude/skills/marketing/marketing-email-sequence/SKILL.md
+.claude/skills/marketing/content-engine/SKILL.md
 .claude/skills/automation/automation-n8n-to-claude/SKILL.md
 .claude/skills/automation/automation-n8n-builder/SKILL.md
+.claude/skills/automation/mcp-builder/SKILL.md
 .claude/skills/strategy/strategy-web-research/SKILL.md
 .claude/skills/tools/tool-firecrawl-scraper/SKILL.md
 .claude/skills/tools/tool-humanizer/SKILL.md
 .claude/skills/tools/tool-output-verifier/SKILL.md
 .claude/skills/visualization/tool-visual-explainer/SKILL.md
+.claude/skills/visualization/canvas-design/SKILL.md
 ```
 
 Por cada faltante: 🟡 con sugerencia "ejecuta `bash scripts/update.sh` para sincronizar".
@@ -194,7 +198,7 @@ State machine: <X>/5 required phases done · <currentPhase>
 🟢 goals.md (180 chars)
 
 ### Skills curadas
-🟢 23/23 skills core presentes
+🟢 27/27 skills core presentes
 
 ### Settings
 🟢 Repo settings.json válido

@@ -202,6 +202,12 @@ cd tu-proyecto && codegraph init -i # indexa ese proyecto
 **Config**: `@modelcontextprotocol/server-filesystem` con paths whitelisted.
 **⚠️**: riesgo de seguridad. Whitelist específica obligatoria.
 
+### obsidian · NO se instala
+
+**Por qué no**: el segundo cerebro Obsidian montado 2026-06-03 sigue el **patrón Karpathy** (wiki vivo, no RAG). Claude Code accede al vault `~/iamasters-os/_wiki/` directamente vía filesystem (`Read`, `Edit`, `Write`), no via MCP. El tutorial iAmasters lo descarta literal: "No hay plugin ni API. Claude Code abre la misma carpeta y edita los .md directamente."
+
+Si en uso real demuestra limitación (búsquedas semánticas que vector search resolvería mejor que grep, navegación graph-aware), evaluar `dbmcco/obsidian-mcp` o `StevenStavrakis/obsidian-mcp`. Por ahora, fuera del scope.
+
 ---
 
 ## ⚠️ MCPs que evitar (en producción)
