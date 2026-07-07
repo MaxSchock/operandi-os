@@ -31,9 +31,15 @@ desktop.ini
 # Claude Code locales
 .claude/settings.local.json
 .claude/.local/
+.claude/.skills-pending.json
+# CodeGraph index local (si se usa el add-on)
+.codegraph/
 
 # Operator data — privado por usuario, no se commitea
 context/daily-memory/
+context/.memory-index/
+# corpus.yaml lleva rutas personales del operador; el genérico es corpus.example.yaml
+scripts/memory-index/corpus.yaml
 context/user.md
 context/me.md
 context/work.md
@@ -43,6 +49,7 @@ context/goals.md
 context/decisions-log.md
 context/learnings.md
 context/soul.md
+context/working-memory.md
 brand-context/voice/voice-profile.md
 brand-context/voice/samples.md
 brand-context/voice/vocabulary.md

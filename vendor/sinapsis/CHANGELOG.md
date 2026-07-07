@@ -1,5 +1,48 @@
 # Changelog
 
+## v4.6.1 (2026-06-02)
+
+### Fixed
+
+- **Registry filename collision with skill-router / external launchers** (`_session-learner.sh`, `_eod-gather.sh`, `_generate-dashboard.py`, commands, installers): Sinapsis used `~/.claude/skills/_projects.json` as its canonical project registry, but that filename is also used by the bundled `skill-router` skill (and other launchers) with a different schema. On a machine where a launcher owns `_projects.json`, the session-learner upsert (added in v4.3.3) would append Sinapsis hash-entries into the launcher's registry on every Stop event, mixing two schemas in one file. Sinapsis now owns a dedicated `~/.claude/skills/_sinapsis-projects.json`; `_projects.json` is left entirely to skill-router. The learner re-populates the new registry automatically on Stop events (no migration needed), and `_eod-gather.sh` reads it with the legacy `homunculus/projects.json` fallback unchanged.
+- Template `core/_projects.json` renamed to `core/_sinapsis-projects.json`; the installers seed/chmod/preserve the new name and no longer create or touch `_projects.json`.
+
+### Tests
+
+- New `tests/test-registry-isolation.sh`: asserts the learner and gather target `_sinapsis-projects.json` and that no `core/` file references the launcher's `_projects.json`. `tests/test-install-upgrade.sh` and `tests/test-eod-gather.sh` updated to the new filename.
+
+---
+
+## v4.6.0 (2026-06-01)
+
+### Changed — Opus 4.8 alignment
+
+- **Caps re-tuned for Claude Opus 4.8** (`_instinct-activator.sh`, `_session-learner.sh`): `MAX_INSTINCTS_INJECTED` 6 → 8, `TOKEN_BUDGET` 4000 → 6000, learner observation window 5000 → 8000 lines. Opus 4.8 keeps long context on-task with fewer compactions and better compaction recovery, so a richer per-turn instinct injection and a longer cross-session window for the learner carry no quality regression. The 1M context window is unchanged from Opus 4.7.
+- **Prompt-cache fit improved, no code change.** Opus 4.8 lowers the minimum cacheable prompt to 1,024 tokens and adds mid-conversation `role: "system"` messages — the exact shape of Sinapsis's per-turn `systemMessage` injection — so the byte-stable instinct block introduced in v4.5 caches more readily (~90% read discount once warm).
+- **Hot path remains model-free.** The activator and learner are still pure bash/node. Opus 4.8's `effort` parameter defaults to `high` in Claude Code; Sinapsis needs no change because it never calls the model directly.
+- **RFC `docs/rfc-v5-adaptive-thinking.md` retargeted to `claude-opus-4-8`**: the opt-in `/analyze-session` SDK path now uses adaptive thinking with the `effort` parameter (`budget_tokens` is rejected on Opus 4.7+). Multi-agent blueprint Architect tier moved Opus 4.7 → 4.8.
+
+### Tests
+
+- New `tests/test-v46-opus48.sh`: asserts the re-tuned caps (`TOKEN_BUDGET` >= 6000, `MAX_INSTINCTS_INJECTED` = 8, learner window >= 8000) and that no stale `claude-opus-4-7` model ID remains in `docs/` or `core/`.
+- Existing suites re-run clean, including `test-v45-opus47` (cap assertions use `>=`, so they still pass).
+
+---
+
+## v4.5.1 (2026-06-01)
+
+### Fixed
+
+- **`/eod` reported 0 projects for non-git folders** (`core/_eod-gather.sh`): `observe_v3.py` writes observations for a non-git `cwd` to the root `homunculus/observations.jsonl` with `project_id: "global"` (the `project_name` is still correct), but the gather only walked `homunculus/projects/<hash>/` and never read the root file. The writer and reader disagreed on where non-git projects live, so a full day of activity in any non-git folder surfaced as **0** in `/eod`. The gather now also reads the root file, grouping its observations by `project_name`. Reported by @NestorPVsf.
+- **Cross-OS gather robustness** (`core/_eod-gather.sh`): for users syncing `observations.jsonl` between macOS and Windows (e.g. via Nextcloud), the file mixes `C:\…` and `/Users/…` paths. Node's `path.basename` is platform-specific (the POSIX build ignores `\`), so "files touched" came out mangled on the foreign OS, and the gather could try to `git` against the other machine's path. Added a `baseName()` that splits on both `/` and `\`; roots that don't exist on the current machine are skipped before any `git` call; `HOME || USERPROFILE` is resolved; and projects are merged by `project_name` so the same project from two machines collapses into one entry. Reported by @NestorPVsf.
+
+### Tests
+
+- New suite `tests/test-eod-gather.sh` — 8 hermetic tests (via `SINAPSIS_HOMUNCULUS` / `SINAPSIS_SKILLS` overrides) covering root-file detection, name grouping, cross-OS basename, subdir+root merge, today-only filtering, empty-dir graceful exit, the canonical `_projects.json` loader, and output shape.
+- Existing suites re-run clean: `test-security` 11/11, `test-gstack-separation` 18/18.
+
+---
+
 ## v4.5.0 (2026-04-21)
 
 ### Added — Opus 4.7 integration

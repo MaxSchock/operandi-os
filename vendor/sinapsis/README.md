@@ -1,9 +1,9 @@
-# Sinapsis v4.5.0
+# Sinapsis v4.6.1
 
-[![Version](https://img.shields.io/badge/version-4.5.0-blue.svg)](https://github.com/Luispitik/sinapsis)
+[![Version](https://img.shields.io/badge/version-4.6.1-blue.svg)](https://github.com/Luispitik/sinapsis)
 [![Tests](https://img.shields.io/badge/tests-112%20passing-green.svg)](tests/)
 [![CI](https://github.com/Luispitik/sinapsis/actions/workflows/tests.yml/badge.svg)](https://github.com/Luispitik/sinapsis/actions)
-[![License](https://img.shields.io/badge/license-Source%20Available-orange.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ### The skill system for Claude Code that learns and adapts to you.
 
@@ -27,6 +27,16 @@ Every time you start a new session, Claude starts from zero. Your preferences, y
 Think of it as going from a dumb terminal to an assistant that actually knows you.
 
 ---
+
+## What's New in v4.6.0 — Opus 4.8
+
+> Same deterministic core, tuned for 4.8's longer attention span.
+
+- **Aligned to Claude Opus 4.8.** The cache-stable instinct ordering from v4.5 pays off harder here: Opus 4.8 lowers the minimum cacheable prompt to **1,024 tokens** and accepts **mid-conversation `system` messages** — exactly the shape of Sinapsis's per-turn `systemMessage` injection — so the byte-stable instinct block caches more readily (~90 % read discount once warm).
+- **Caps re-tuned for 4.8's long-context handling**: `MAX_INSTINCTS_INJECTED` 6 → 8, `TOKEN_BUDGET` 4000 → 6000, learner observation window 5000 → 8000 lines. 4.8 holds longer context with fewer compactions, so a richer per-turn injection and a longer cross-session window carry no quality regression.
+- **Hot path stays model-free.** The activator and learner remain pure bash/node; Opus 4.8's `effort` parameter (default `high` in Claude Code) needs no Sinapsis change because Sinapsis never calls the model itself.
+- **RFC retargeted** ([`docs/rfc-v5-adaptive-thinking.md`](docs/rfc-v5-adaptive-thinking.md)): the opt-in `/analyze-session` SDK path now uses `claude-opus-4-8` with adaptive thinking + `effort`.
+- **New guard tests** (`tests/test-v46-opus48.sh`): assert the re-tuned caps and that no stale `claude-opus-4-7` reference lingers in docs or core.
 
 ## What's New in v4.5.0 — Opus 4.7 Integration
 
@@ -374,7 +384,7 @@ Use `/eod --quick` for a fast auto-generated summary, or `/eod --yesterday` to r
     _session-learner.sh        <-- Stop hook: writes context + detects patterns
     _dream.sh                  <-- Dream cycle: 5-module index hygiene
     _operator-state.json       <-- Your identity + decisions (cross-project)
-    _projects.json             <-- Project registry
+    _sinapsis-projects.json             <-- Project registry
   commands/                    <-- Slash commands (/evolve, /dream, etc.)
   homunculus/
     projects/{hash}/
@@ -424,13 +434,7 @@ Visit **[salgadoia.com](https://salgadoia.com)** for mentoring, courses, and con
 
 ## License
 
-Sinapsis is **source-available** under a custom license:
-
-- **Free** for personal and internal business use
-- **Free** to study, modify, and learn from
-- **Commercial exploitation** exclusively reserved to Luis Salgado / SalgadoIA
-
-See [LICENSE](LICENSE) for full terms.
+Sinapsis is released under the **MIT License** — free for personal, commercial, and any other use, including modification, distribution, and sale. The only condition is that the copyright notice in [LICENSE](LICENSE) is preserved.
 
 ---
 

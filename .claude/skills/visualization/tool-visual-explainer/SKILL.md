@@ -1,6 +1,6 @@
 ---
 name: tool-visual-explainer
-description: Genera páginas HTML autocontenidas y bonitas que explican visualmente sistemas, código, planes, datos o análisis. Úsalo cuando necesites compartir un output complejo (diagrama, comparativa, recap de proyecto, plan review, tabla larga) o cuando otra skill (welcome-quick-win, six-hats, marketing-positioning) cierre con material que el usuario querrá compartir por WhatsApp/Skool/email. Output: HTML5 sin dependencias externas, móvil-first, paleta sobria con acento naranja iAmasters.
+description: Genera páginas HTML autocontenidas y bonitas que explican visualmente sistemas, código, planes, datos o análisis. Úsalo cuando necesites compartir un output complejo (diagrama, comparativa, recap de proyecto, plan review, tabla larga) o cuando otra skill (welcome-quick-win, seis-sombreros, marketing-positioning) cierre con material que el usuario querrá compartir por WhatsApp/Skool/email. Output: HTML5 sin dependencias externas, móvil-first, paleta sobria con acento naranja iAmasters.
 ---
 
 # tool-visual-explainer
@@ -221,7 +221,7 @@ Si el usuario reporta que el HTML quedó mal (colores, layout, elementos rotos),
 
 ## Skills que llama
 
-Ninguna directamente. Esta skill es **invocada por** otras (`welcome-quick-win`, `six-hats`, `marketing-positioning`, `marketing-content-repurposing`, etc.) cuando esas necesitan un output compartible.
+Ninguna directamente. Esta skill es **invocada por** otras (`welcome-quick-win`, `seis-sombreros`, `marketing-positioning`, `marketing-content-repurposing`, etc.) cuando esas necesitan un output compartible.
 
 ## Edge cases
 

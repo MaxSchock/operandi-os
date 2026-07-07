@@ -39,12 +39,13 @@ const indexFile = process.argv[2];
 const proposalsFile = process.argv[3];
 const logFile = process.argv[4];
 
-// Read last 5000 lines of observations (v4.5: was 1000; Opus 4.7 1M context absorbs the
-// extra payload without pressure and lets cross-session detectors see a longer window).
+// Read last 8000 lines of observations (v4.5: 1000 → 5000; v4.6: 5000 → 8000). The 1M
+// context in Opus 4.7+ absorbs the payload, and the stronger long-context handling in 4.8
+// keeps the cross-session detectors (repetitions, agent patterns) reliable over the window.
 let lines;
 try {
   const content = fs.readFileSync(obsFile, "utf8").trim().split("\n");
-  lines = content.slice(-5000).map(l => { try { return JSON.parse(l); } catch(e) { return null; } }).filter(Boolean);
+  lines = content.slice(-8000).map(l => { try { return JSON.parse(l); } catch(e) { return null; } }).filter(Boolean);
 } catch(e) { process.exit(0); }
 
 if (lines.length < 3) process.exit(0);
@@ -149,12 +150,12 @@ try {
   // context.md write failure is non-critical
 }
 
-// ── JOB 1.5: Upsert canonical project registry _projects.json ──
-// FIX: prior to this, _projects.json was never populated by any hook even though
+// ── JOB 1.5: Upsert canonical project registry _sinapsis-projects.json ──
+// FIX: prior to this, _sinapsis-projects.json was never populated by any hook even though
 // /projects, /eod, /instinct-status, /evolve, /backup all read from it.
 // We upsert here on every Stop event — atomic write + advisory lock, idempotent.
 try {
-  const registryPath = process.env.HOME + "/.claude/skills/_projects.json";
+  const registryPath = process.env.HOME + "/.claude/skills/_sinapsis-projects.json";
   const lockPath = registryPath + ".lock";
   const now = new Date().toISOString();
 
@@ -185,7 +186,7 @@ try {
   if (lockFd === null) {
     // Could not acquire lock — skip this upsert. Next Stop will retry.
     if (process.env.SINAPSIS_DEBUG === "1") {
-      process.stderr.write("[session-learner] _projects.json: lock contention, skipping upsert\n");
+      process.stderr.write("[session-learner] _sinapsis-projects.json: lock contention, skipping upsert\n");
     }
   } else {
     try {
@@ -222,7 +223,7 @@ try {
 } catch(e) {
   // Registry upsert failure is non-critical (logged for debugging)
   if (process.env.SINAPSIS_DEBUG === "1") {
-    process.stderr.write("[session-learner] _projects.json upsert failed: " + e.message + "\n");
+    process.stderr.write("[session-learner] _sinapsis-projects.json upsert failed: " + e.message + "\n");
   }
 }
 

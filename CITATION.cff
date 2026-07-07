@@ -9,6 +9,12 @@ authors:
     email: "aaparicio@iamastersacademy.com"
     website: "https://angelaparicio.com"
     alias: "angelapaia"
+contributors:
+  - family-names: Montero
+    given-names: Fernando
+    affiliation: "Fersora Solutions SL"
+    alias: "fermonterom"
+    role: "Concepto original fs-scaffold (Cafe Camaleonico 18-may-2026), base de la skill vendored arnes integrada en v0.8.0"
 identifiers: []
 repository-code: "https://github.com/iamasters-academy/iamasters-os"
 url: "https://github.com/iamasters-academy/iamasters-os"
@@ -30,8 +36,8 @@ keywords:
   - iamasters-academy
 license: MIT
 license-url: "https://github.com/iamasters-academy/iamasters-os/blob/main/LICENSE"
-version: "0.5.1"
-date-released: "2026-05-13"
+version: "0.8.2"
+date-released: "2026-06-03"
 preferred-citation:
   type: software
   authors:
@@ -51,3 +57,12 @@ references:
         given-names: Luis
     repository-code: "https://github.com/Luispitik/sinapsis"
     notes: "Vendored as engine in vendor/sinapsis/"
+  - type: software
+    title: "arnes"
+    authors:
+      - family-names: Aparicio
+        given-names: Angel
+    repository-code: "https://github.com/iamasters-academy/arnes"
+    version: "0.2.4"
+    license: MIT
+    notes: "Vendored as opt-in skill in vendor/arnes/ since v0.8.0. Adapts the fs-scaffold concept by Fernando Montero (Cafe Camaleonico, 18-may-2026)."

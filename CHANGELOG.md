@@ -8,10 +8,145 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-### Próximas versiones (en backlog)
-- v0.7.0: skills nativas en español (meeting-notes, proposal-writer, youtube-transcript, linkedin-posts) reescritas con voice profile del operador
-- v0.8.0: dashboard del OS (pendiente decidir si se integra con dashboard Sinapsis)
-- v1.0.0: release pública estable + vídeos Loom integrados + landing en iamastersacademy.com/os
+### En curso — Memory Upgrade (Store / Inject / Recall · benchmark vs Agentic OS Phase 2)
+- **v0.8.3 · P2 captura de contenido** (opcional) — resumen legible por sesión que engorda el corpus. Bajo valor incremental: ya hay daily summaries indexados; pendiente de decidir si aporta.
+- **v0.9.0 · P4 Team OS** — memoria/permisos compartidos para equipo. Módulo AVANZADO opcional (no core), decisión de negocio pendiente.
+
+### Backlog
+- skills nativas en español adicionales (proposal-writer, youtube-transcript, linkedin-posts) con voice profile del operador
+- dashboard del OS (pendiente decidir si se integra con dashboard Sinapsis)
+- v1.0.0: release pública estable + vídeos Loom + landing en iamastersacademy.com/os
+
+---
+
+## v0.8.2 — Memory Upgrade · P1: recall local (SQLite + FTS5) + CodeGraph en el catálogo (2026-06-03)
+
+> **Por qué esta release**: el recall se construyó **LOCAL-FIRST** (SQLite + FTS5, cero servicios externos) en vez de Supabase/pgvector. Motivo: este repo lo instala **gente no técnica** de la comunidad — la sencillez de instalación manda sobre la potencia máxima. Búsqueda por keyword español para todos; semántica (embeddings) **opt-in** para quien ya tenga histórico que lo justifique. Patrón inspirado en CodeGraph (índice local en un `.db`, instalable de un comando).
+
+### Added
+- **Recall de memoria local** (`scripts/memory-index/`): índice SQLite + FTS5 sobre el corpus markdown del operador. `ingest.py` (chunking por encabezados, scrub de secretos, incremental por SHA1, ranking BM25), `schema.sql` (FTS5 external-content + triggers de sync), `corpus.yaml`. Capa semántica **opt-in** en `semantic.py` (`sqlite-vec` + `multilingual-e5-small`) tras `--semantic`. 100% local, sin API keys, sin connection strings.
+- **Skill `/recuerda`** (`_meta/recuerda`) — recall con Tier 0 (contexto cargado) → FTS5; responde **con fuente citada** o **"no lo tengo registrado"** sin inventar (coherente con la regla no-inventar-datos).
+- **CodeGraph** documentado en `docs/mcps-curated.md` como MCP **add-on opcional** (grafo de código local, 100% local, MIT) para usuarios que programan. Validado en un repo real antes de recomendarlo.
+- **Auto-sync** vía hook SessionStart: refresca el índice (ingest incremental, best-effort, no bloqueante) al abrir el repo, sin cron del sistema. Además, `/recuerda` re-indexa en cada consulta.
+
+### Changed
+- `CLAUDE.md` registry: +`recuerda` en `_meta`, +`/recuerda` en slash commands, conteo a 26 skills core.
+
+### Review del maintainer (Opus)
+- Eliminado un atajo de query **hardcodeado** con términos de iAmasters (`cpl→leadgen/ret/...`) que Codex había metido: rompía la promesa de repo genérico (misma clase de fuga limpiada en v0.7.1). Ahora `FTS_EXPANSIONS` está vacío y es configurable por el operador.
+- `--smoke-query` renombrado a `--query` (con alias) para uso de producción.
+
+### Validado (end-to-end, local)
+- Ingest: **108 archivos → 789 chunks en 0,15 s**, SQLite local 1,5 MB.
+- Validado con 3 preguntas de control sobre decisiones pasadas: devuelven la fuente correcta en top-5. Una pregunta sobre un dato que no existe en el corpus no produce falsos positivos (responde "no lo tengo registrado").
+
+---
+
+## v0.8.1 — Memory Upgrade · Fase A: working memory + memo manual (2026-06-02)
+
+> **Por qué esta release**: benchmark del OS contra Agentic OS (Scrapes) Phase 2, que organiza la memoria en tres ejes — Store / Inject / Recall. El análisis confirmó que iAmasters OS ya gana en Store e Inject (captura turno a turno vía Sinapsis + instincts con confidence decay) y tiene un motor de aprendizaje que ellos no tienen, pero que el **recall semántico** es el hueco real. Esta Fase A cierra primero la pieza más barata y de mayor uso diario: una memoria de trabajo curada que se inyecta al inicio y se mantiene en el cierre, más un memo manual en lenguaje natural.
+
+### Added
+
+- **`context/working-memory.md`** — scratchpad de trabajo curado con tres secciones (Hilos activos / Notas de entorno / Decisiones pendientes), tope ~2.500 caracteres y máx. 5 ítems por sección. Es la memoria "de trabajo" del OS: lo que el agente tiene presente sin buscar nada. Privado (gitignored); se bootstrappea en `meta-start-here` si no existe.
+- **Memo manual** — comportamiento documentado en `CLAUDE.md`: cuando el operador dice "recuerda esto" / "apunta que" / "nota que" / "para la próxima", el agente escribe el ítem en la sección correcta del working-memory con dedup y respeto del tope.
+
+### Changed
+
+- **`meta-start-here`** (Paso 2) — ahora carga `context/working-memory.md` lo primero como foto del estado actual (y lo crea si falta).
+- **`meta-wrap-up`** (nuevo Paso 5.5) — mantiene el working-memory al cierre: quita hilos cerrados, mueve decisiones tomadas a `decisions-log.md`, respeta el tope.
+- **`CLAUDE.md`** — `working-memory.md` añadido a la carga obligatoria de inicio, a la lista de paths de `context/` y a la capa Agent Context; nueva nota de memo manual.
+- **`context/README.md`** — documentado `working-memory.md`.
+- **`.gitignore`** — `context/working-memory.md` marcado como dato privado del operador.
+
+### Meta
+
+- Análisis comparativo completo iAmasters OS vs Agentic OS (Store/Inject/Recall, orquestación, multi-cliente, Team OS, UI) — 2026-06-02. Conclusión rectora: no copiar su Command Centre ni sus skill systems de contenido (ya cubiertos por skills propias); sí cerrar el recall semántico y evaluar Team OS dado el equipo creciente.
+
+---
+
+## v0.8.0 — Skill opt-in `arnes` (2026-05-20)
+
+> **Por qué esta release**: incorporar al catálogo una skill nativa creada en la comunidad de IA Masters Academy para arrancar proyectos software. Sigue el modelo de "sistema vivo" del OS: una skill validada en producción (139/139 tests, 5/5 sub-agentes Haiku en paralelo en E2E, 3 rondas de review con Fernando Montero) que ahora cualquier miembro puede activar con un comando. Se integra como **opt-in** (no se instala por defecto) siguiendo el mismo patrón que `cognito`: vendoreada intacta en `vendor/arnes/` y activable con `/install-skill arnes`.
+
+### Added — skill nueva (opt-in)
+
+- **`_meta/_optional/arnes`** (nueva, opt-in) — skill para vibe-coders no técnicos que ayuda a arrancar proyectos software por niveles: **Express** (5 min, web simple sin login), **Estándar** (20-30 min, app con login y datos), **PRO** (1-2 h, software profesional con SDD+TDD completo y revisión adversarial). Más dos modos para proyectos existentes: **Adoptar** (mete armazón sin tocar el código del usuario) y **Mantener** (actualiza armazón cuando la skill evoluciona). Pregunta SIEMPRE qué nivel quieres antes de avanzar — nunca decide por el usuario. Mantenida en repo separado [`iamasters-academy/arnes`](https://github.com/iamasters-academy/arnes) (público, MIT).
+
+- **`vendor/arnes/`** — copia intacta del repo arnes v0.2.4 (incluye SKILL.md, README, CHANGELOG, CITATION, LICENSE MIT, CODEOWNERS, docs/, modos/, plantillas/, scripts/, tutorial/, estado/). 452K.
+
+### Concepto original y créditos
+
+`arnes` adapta el concepto **fs-scaffold** de **Fernando Montero** (Fersora Solutions SL), presentado en el Café Camaleónico del 18 de mayo de 2026 en la comunidad iAmasters Academy. La adaptación para vibe-coders no técnicos mantiene el rigor donde importa (Modo PRO) pero ofrece niveles más ligeros (Express, Estándar) para el 80% de casos donde no hace falta tanto ceremonial.
+
+Fernando aparece como contributor en `CITATION.cff` por la integración de arnes en este OS, y arnes se referencia explícitamente como software vendored.
+
+### Changed
+
+- **`README.md`** — badge versión actualizado a v0.8.0. Nueva entrada `arnes` en sección "Skills incluidas → `_meta/_optional/`". Entrada en Roadmap. Entrada en Créditos con atribución a Fernando.
+- **`CLAUDE.md`** — Skills registry actualizado a v0.8.0. Sección `_meta/_optional/ (2)`, fila nueva para arnes. Mención de `vendor/arnes/` en la sección "Vendored".
+- **`CITATION.cff`** — bump versión `0.7.1` → `0.8.0`. Fernando Montero añadido como `contributors`. arnes añadida en `references` como software vendored.
+- **`scripts/_install-state.template.json`** — version bump `0.7.1` → `0.8.0`.
+
+### Cómo activar
+
+Desde Claude Code en este repo:
+
+```
+/install-skill arnes
+```
+
+Reinicia Claude Code tras la activación. Triggea con frases como «crea una app», «monta una landing», «nuevo proyecto».
+
+### No breaking changes
+
+Ninguna skill existente, configuración o flujo se modifica. La instalación de iAmasters OS sigue exactamente igual: arnes solo aparece si el usuario decide activarla explícitamente. `scripts/install.sh` no la copia automáticamente (mismo criterio que con cognito desde v0.4.3).
+
+---
+
+## v0.7.1 — Patch · multi-cliente cleanup + drift fixes (2026-05-20)
+
+> **Por qué este patch**: tras ejecutar un test controlado de instalación con `$HOME` aislado (simulando un usuario nuevo), aparecieron 3 bugs que no se vieron en review: las `references/` de `tool-zoom-summary` se copiaron sin limpiar y conservaban nombres de reuniones específicas + marca personal del maintainer; el template del state machine no se bumpeó con la release; y el `CLAUDE.md` mantenía un conteo viejo de skills. Los 3 son menores en código pero rompen la promesa de "multi-cliente" del OS, así que se corrigen como patch independiente.
+
+### Fixed
+
+- **`tools/tool-zoom-summary/references/color_schemes.md`** reescrito como catálogo neutro de 4 esquemas (`Warm Professional`, `Business Clean`, `Techy Modern`, `AI Future`). Eliminados los nombres de reuniones específicas del autor. El mapping topic→esquema ahora se documenta en `brand-context/meeting-types.md` del operador.
+- **`tools/tool-zoom-summary/references/html_template_guide.md`** — footer del template ya no hardcodea marca ni URL del autor. Las variables `{{BRAND_NAME}}`, `{{BRAND_WEBSITE}}` y `{{TIMEZONE}}` se resuelven desde `brand-context/identity.md`. Ejemplo del parser de chat usa nombre genérico.
+- **`scripts/_install-state.template.json`** — campo `version` bumpeado de `"0.6.0"` a `"0.7.1"`. Antes, el state machine generado por `install.sh` reportaba la versión equivocada, rompiendo la trazabilidad de qué versión del OS había instalado el usuario.
+- **`CLAUDE.md`** — sección "Capa OS" decía "23 skills core" cuando el registry abajo decía 25. Corregido a 25.
+
+### Test coverage
+
+Patch validado con re-ejecución del test controlado (`$HOME` aislado, clone fresco desde GitHub, `bash scripts/install.sh`, auditoría estructural de las 25 skills, validación del install gate, smoke test de las 3 skills nuevas). Confirmado: 0 referencias residuales al stack/marca del autor en las skills genéricas, state machine reporta v0.7.1, conteo coherente en toda la documentación.
+
+---
+
+## v0.7.0 — Skills nativas: `seis-sombreros`, `metodo-ias`, `tool-zoom-summary` (2026-05-20)
+
+> **Por qué esta release**: cerrar la promesa de v0.7 sobre skills nativas en español con tres incorporaciones de alto valor para el ICP del OS. Dos son contribuciones originales del maintainer (método I.A.S. y reescritura rigurosa de seis-sombreros con sistema anti-ancla), una traslada al OS una herramienta de uso semanal probado (resumen de reuniones Zoom). Todas pasan por adaptación multi-cliente: sin paths personales, sin referencias a stacks específicos del autor, sin glosarios privados.
+
+### Added — skills nuevas
+
+- **`_meta/seis-sombreros`** (nueva, reemplaza a `six-hats`) — implementación operativa de los 6 sombreros de De Bono con dos capas: (1) Fase 0 anti-ancla obligatoria con 4 movimientos (reformulación pura, asunción fundacional, steel-man del opuesto, pre-mortem rápido), y (2) sombreros con aislamiento estricto. Incluye 7 variantes de orden según tipo de problema (`references/variants.md`), catálogo de 10 marcos divergentes para el sombrero verde (`references/divergence-frameworks.md`), checklist anti-entrega y matriz de decisión operacionalizable en la síntesis. Mantiene integraciones con `tool-visual-explainer`, `decisions-log` y `projects/seis-sombreros/`.
+
+- **`strategy/metodo-ias`** (nueva) — método I.A.S. (Intención · Acción · Síntesis) para operar con IA agéntica sin AI brain fry. Dos modos: diario (planificación previa con checklist verde/rojo y decisiones congeladas) y semanal (recap macro con inventario, Pareto 80/20, boundary erosion, recalibración de techo y delegables). Incluye protocolos completos en `protocolos/` y stubs de comandos `/ias-start` y `/ias-recap`. Salidas en `projects/metodo-ias/diarios/` y `projects/metodo-ias/semanales/`.
+
+- **`tools/tool-zoom-summary`** (nueva) — genera un HTML interactivo premium a partir de una reunión de Zoom. Pipeline en 7 fases: FETCH (lista de grabaciones) → DETECT (mapping configurable de tipos de reunión vía `brand-context/meeting-types.md`) → DOWNLOAD (transcripción VTT + chat) → ANALYZE (parse + topic analysis + mini-resumen + resources) → GLOSSARY PASS (corrección de errores STT con glosario del operador en `brand-context/glossary.json`) → GENERATE (HTML con timestamps clickables) → SAVE + entregables de texto (títulos, descripción larga, mini-resumen para comunidad).
+
+### Changed — archivado controlado
+
+- **`_meta/six-hats/`** movida a `_meta/_archived/six-hats-2026-05-20/`. No se borra — se conserva como referencia histórica de la v0.4.3. El reemplazo (`seis-sombreros`) cubre el mismo caso de uso con mucho más rigor (anti-ancla, variantes, marcos divergentes, matriz de decisión).
+
+### Changed — registry y atribución
+
+- **README.md** actualizado: badge a v0.7.0, árbol de skills con tres entradas nuevas marcadas con 🆕 y nota de versión.
+- **CLAUDE.md** del repo: tabla de skills registry actualizada con `seis-sombreros` reemplazando `six-hats`, `metodo-ias` en `strategy/`, y `tool-zoom-summary` en `tools/`. Conteo actualizado a 25 skills core.
+- **CITATION.cff** bumpeada a 0.7.0 (2026-05-20).
+
+### Notas operativas
+
+- Las tres skills nuevas se diseñaron para multi-cliente desde el principio: paths configurables, sin asunciones sobre el stack del operador, sin referencias a marcas o cuentas privadas.
+- `seis-sombreros` cambia el nombre canónico al español (coherente con el ICP hispanohablante del OS). Si una skill o agente externo invocaba `six-hats`, debe actualizarse a `seis-sombreros`.
 
 ---
 

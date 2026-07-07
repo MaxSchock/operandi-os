@@ -46,7 +46,9 @@ Parallel systems (not part of the confidence pipeline):
 | Session Learner | `_session-learner.sh` | 329 | Stop | Sync | 15s |
 | PreCompact Guard | `_precompact-guard.sh` | 30 | PreCompact | Sync (fire-and-forget) | 10s |
 
-**v4.5 additions:** PreCompact hook flushes the learner before context compaction so long sessions do not lose fresh observations. Instinct injection is now byte-stable across calls (id-alphabetical tiebreaker) to unlock prompt-cache hits on Opus 4.7's cached system block. Caps raised: `TOKEN_BUDGET` 1500→4000, top-N instincts 3→6, observation window 1000→5000 lines.
+**v4.5 additions:** PreCompact hook flushes the learner before context compaction so long sessions do not lose fresh observations. Instinct injection is now byte-stable across calls (id-alphabetical tiebreaker) to unlock prompt-cache hits on Opus 4.7+'s cached system block. Caps raised: `TOKEN_BUDGET` 1500→4000, top-N instincts 3→6, observation window 1000→5000 lines.
+
+**v4.6 additions (Opus 4.8):** caps re-tuned for 4.8's stronger long-context handling — `TOKEN_BUDGET` 4000→6000, top-N instincts 6→8, observation window 5000→8000 lines. 4.8's 1,024-token cache minimum and mid-conversation `system` messages make the byte-stable instinct injection cache more readily. The hot path stays model-free.
 
 ---
 
@@ -118,7 +120,7 @@ Parallel systems (not part of the confidence pipeline):
 ### _eod-gather.sh — Multi-Project EOD (161 lines)
 - Scans ALL `homunculus/projects/` for today's observations
 - Extracts tools used, files touched, error count per project
-- Cross-references `_projects.json` for names/roots
+- Cross-references `_sinapsis-projects.json` for names/roots
 - Runs git log/status/branch per project root
 
 ---
@@ -274,7 +276,7 @@ Deterministic regex rules — not probabilistic. Always fire when trigger matche
 │   ├── _dream.sh                     # Dream cycle (manual/scheduled)
 │   ├── _eod-gather.sh                # EOD helper
 │   ├── _operator-state.json          # Identity + decisions (cross-project)
-│   ├── _projects.json                # Project registry
+│   ├── _sinapsis-projects.json                # Project registry
 │   ├── _catalog.json                 # Skill registry with token estimates
 │   ├── _instinct.log                 # Activation audit trail
 │   ├── _passive.log                  # Passive rule audit trail

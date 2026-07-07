@@ -108,7 +108,7 @@ Lista skills core (v0.6 Capa 1) = 27 (23 del manifiesto original + 4 importadas 
 .claude/skills/_meta/meta-start-here/SKILL.md
 .claude/skills/_meta/meta-wrap-up/SKILL.md
 .claude/skills/_meta/welcome-quick-win/SKILL.md
-.claude/skills/_meta/six-hats/SKILL.md
+.claude/skills/_meta/seis-sombreros/SKILL.md
 .claude/skills/_meta/decisions-log/SKILL.md
 .claude/skills/_meta/health-check/SKILL.md
 .claude/skills/_meta/find-skills/SKILL.md

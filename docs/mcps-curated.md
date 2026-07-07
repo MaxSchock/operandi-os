@@ -3,7 +3,7 @@
 > Lista validada de Model Context Protocol servers útiles para operadores IA.
 > Cada entrada incluye: para qué sirve, cuándo usarlo, instalación, riesgo de tokens, alternativas.
 >
-> Última revisión: 2026-05-07
+> Última revisión: 2026-06-03
 
 ## Cómo usar
 
@@ -142,6 +142,38 @@ FIRECRAWL_API_KEY=fc-xxxxx
 ---
 
 ## 🔧 Útiles para casos específicos
+
+### codegraph · Grafo de código local (ideal si programas)
+
+**Para qué**: da al agente un **grafo del código** de tu proyecto (símbolos, llamadas, imports) en una SQLite local. El agente responde "¿cómo funciona X?", "¿quién llama a Y?", "¿qué rompo si cambio Z?" sin grep ni lectura masiva → menos tokens y menos tool calls.
+
+**Cuándo activarlo**: si construyes apps o webs (Next.js, scripts…) y quieres que Claude navegue tu código de forma eficiente. Pensado para vibe-coders.
+
+**Riesgo de tokens**: bajo — de hecho los **reduce** (benchmarks del autor: ~16% más barato, ~58% menos tool calls).
+
+**Plan**: gratis, MIT, **100% local, sin API keys, sin servicios externos** (solo un `.db` SQLite).
+
+**Instalación** (un comando, self-contained, cross-OS):
+```bash
+npm i -g @colbymchenry/codegraph    # o: curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh
+codegraph install                   # auto-configura Claude Code / Cursor / Codex…
+cd tu-proyecto && codegraph init -i # indexa ese proyecto
+```
+
+**Config MCP manual** (alternativa, en `.mcp.json`):
+```json
+"codegraph": { "type": "stdio", "command": "codegraph", "args": ["serve", "--mcp"] }
+```
+
+**Variables**: ninguna.
+
+**✅ Validado** (2026-06-03, repo `recursos-platform`): instalación 4 s · indexado de 72 archivos en 281 ms · búsqueda + `callers` + `impact` precisos · SQLite local 1,2 MB.
+
+**⚠️ Notas**:
+- Es para **código** (TS/JS/Python/Go/Rust/Swift…), NO para memoria narrativa de negocio.
+- Auto-sync con file watcher (se mantiene fresco solo). El índice `.codegraph/` va **gitignored**.
+
+---
 
 ### linear · Gestión de proyectos
 

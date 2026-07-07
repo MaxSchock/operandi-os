@@ -27,7 +27,11 @@ Lee en orden:
 
 ### Paso 2 · Cargar continuidad
 
-Lee `~/.claude/skills/_daily-summaries/<TODAY>.md` o `<YESTERDAY>.md`:
+Lee `context/working-memory.md` (scratchpad de trabajo) **primero** — es tu foto del estado actual:
+- Si no existe → créalo con la cabecera de reglas y las 3 secciones vacías (Hilos activos / Notas de entorno / Decisiones pendientes). Es el bootstrap.
+- Si existe → úsalo como base del saludo: qué hilos están abiertos, qué decisiones esperan al operador.
+
+Lee `synapsis/daily-summaries/<TODAY>.md` o `<YESTERDAY>.md`:
 - Si hay → resumir el "For tomorrow" en una línea
 - Si no → primera sesión del día
 

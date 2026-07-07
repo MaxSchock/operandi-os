@@ -1,0 +1,31 @@
+# Corpus de memoria a indexar (PLANTILLA GENÉRICA).
+#
+# Copia este archivo a `corpus.yaml` y ajusta las rutas a tu setup.
+# `corpus.yaml` está gitignored (es tu config personal); este ejemplo sí se versiona.
+# Rutas relativas = desde esta carpeta (scripts/memory-index/). Soporta ~ y globs (*.md).
+
+sources:
+  # --- Fuentes del OS que toda instalación tiene ---
+  - source_type: working_memory
+    paths:
+      - ../../context/working-memory.md
+  - source_type: decisions_log
+    paths:
+      - ../../context/decisions-log.md
+  - source_type: learnings
+    paths:
+      - ../../context/learnings.md
+  - source_type: daily_memory
+    paths:
+      - ../../context/daily-memory/*.md
+  - source_type: brief
+    paths:
+      - ../../projects/briefs/*/brief.md
+
+  # --- Opcional: añade tus propias fuentes externas (descomenta y ajusta) ---
+  # - source_type: daily_summary
+  #   paths:
+  #     - ~/.claude/skills/_daily-summaries/*.md
+  # - source_type: notas
+  #   paths:
+  #     - ~/ruta/a/tus/notas/*.md

@@ -1,0 +1,6 @@
+pyyaml
+
+# Optional, only for `python ingest.py --semantic`.
+# Do not install for the default local-first FTS5 layer.
+# sqlite-vec
+# fastembed

@@ -29,7 +29,7 @@ forbidden_path_re='(^|/)\.env($|\.)|(^|/)\.env\.|\.pem$|\.key$|(^|/)id_(rsa|ed25
 while IFS= read -r f; do
     [ -z "$f" ] && continue
     case "$f" in
-        .env.example|*.mcp.json.template) continue ;;
+        .env.example|*/.env.example|*.env.example.tmpl|*.mcp.json.template) continue ;;
     esac
     if printf '%s' "$f" | grep -qiE "$forbidden_path_re"; then
         echo "[pre-commit] BLOCKED path (Tier 3 / personal): $f" >&2

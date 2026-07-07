@@ -57,7 +57,7 @@ Si durante la sesión:
 
 ### Paso 5 · Generar daily summary
 
-Crear/actualizar `~/.claude/skills/_daily-summaries/<TODAY>.md`:
+Crear/actualizar `synapsis/daily-summaries/<TODAY>.md`:
 
 ```markdown
 # EOD — YYYY-MM-DD
@@ -92,6 +92,14 @@ Crear/actualizar `~/.claude/skills/_daily-summaries/<TODAY>.md`:
 
 Si ya hay sessions previas hoy → append la sesión nueva, regenerar "For tomorrow" y "Quick resume" combinando.
 
+### Paso 5.5 · Mantener working-memory
+
+Revisa `context/working-memory.md` y déjalo limpio para mañana:
+- **Hilos cerrados hoy** → quítalos de "Hilos activos" (ya quedan registrados en el daily summary).
+- **Decisiones tomadas** → quítalas de "Decisiones pendientes" y, si son de fondo, regístralas en `context/decisions-log.md`.
+- **Tope ~2.500 car / máx. 5 ítems por sección**: si se excedió, consolida.
+- Deja solo lo VIGENTE: el scratchpad debe reflejar el estado real al arrancar mañana.
+
 ### Paso 6 · Detectar proyectos a archivar
 
 Si algún `projects/briefs/<X>/brief.md` tiene `status: done` y han pasado 7+ días:
@@ -120,7 +128,7 @@ NO ejecutar `/eod` automáticamente — es una invitación.
 
 ### Paso 9 · Despedida
 
-> "Sesión cerrada. Daily summary guardado en `~/.claude/skills/_daily-summaries/{{TODAY}}.md`.
+> "Sesión cerrada. Daily summary guardado en `synapsis/daily-summaries/{{TODAY}}.md`.
 > Mañana al abrir Claude Code aquí, te recordaré: '{{quick-resume}}'.
 >
 > {{si commit hecho}}: Commit {{hash}} creado.
@@ -130,7 +138,8 @@ NO ejecutar `/eod` automáticamente — es una invitación.
 
 ## Outputs
 
-- `~/.claude/skills/_daily-summaries/<TODAY>.md` — actualizado/creado
+- `synapsis/daily-summaries/<TODAY>.md` — actualizado/creado
+- `context/working-memory.md` — consolidado/podado (solo lo vigente)
 - `synapsis/skills-catalog.json` — sincronizado si hubo skill changes
 - `CLAUDE.md` — skills registry actualizado
 - `context/learnings.md` — append si aplica

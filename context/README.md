@@ -4,6 +4,7 @@ Capa dinámica que evoluciona con el uso del OS. Aquí vive todo lo que cambia c
 
 ## Archivos
 
+- `working-memory.md` — **scratchpad de trabajo** (hilos activos / notas de entorno / decisiones pendientes). Se inyecta al inicio de cada sesión (`meta-start-here`) y se mantiene en el cierre (`meta-wrap-up`). Tope ~2.500 caracteres. Es la memoria "de trabajo" del OS: lo que el agente tiene presente sin buscar nada. Privado (gitignored).
 - `soul.md` — personalidad del agente (cómo responde, boundaries). Estática, la editas tú.
 - `user.md` — perfil del operador en el repo (preferencias, stack del día a día). Se rellena en onboarding y va creciendo.
 - `learnings.md` — feedback consolidado por skill, en formato humano-legible.

@@ -260,7 +260,7 @@ Si el operador menciona en el deep-dive un problema concreto, sugiere skill al c
 
 - Confusión con ICP → `marketing-icp`
 - Falta de claridad en voice profile → `marketing-brand-voice`
-- Decisión pendiente compleja → `six-hats`
+- Decisión pendiente compleja → `seis-sombreros`
 - Cuello de botella operacional → `marketing-content-repurposing` o automation skills
 
 NO ejecutes las skills automáticamente. Solo sugiere al final.

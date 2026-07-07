@@ -17,6 +17,16 @@ set +e  # Nunca queremos que un hook roto bloquee la sesión
 
 STATE_FILE="$HOME/.claude/skills/_install-state.json"
 
+# Windows / Git Bash (MSYS): $STATE_FILE es /c/Users/... y node lo interpreta
+# como C:\c\Users\... (inexistente) al interpolarlo dentro del string del heredoc.
+# cygpath -m lo traduce a C:/Users/... (mixed), que node sí entiende.
+# Sin esto, el hook caía al catch en CADA sesión con un falso "state corrupted".
+if [[ -n "$MSYSTEM" ]] && command -v cygpath >/dev/null 2>&1; then
+    WIN_STATE_FILE="$(cygpath -m "$STATE_FILE")"
+else
+    WIN_STATE_FILE="$STATE_FILE"
+fi
+
 # Si no tenemos node, no podemos parsear el state. Salimos silencioso.
 # (Si node no está, Sinapsis tampoco funciona, así que el OS está roto de todos modos.)
 if ! command -v node >/dev/null 2>&1; then
@@ -39,7 +49,7 @@ fi
 node <<NODE_EOF
 try {
   const fs = require('fs');
-  const s = JSON.parse(fs.readFileSync('$STATE_FILE', 'utf8'));
+  const s = JSON.parse(fs.readFileSync('$WIN_STATE_FILE', 'utf8'));
 
   const phases = s.phases || {};
   const required = Object.entries(phases).filter(([k, v]) => v.required === true);

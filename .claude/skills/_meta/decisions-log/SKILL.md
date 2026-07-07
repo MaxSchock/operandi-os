@@ -1,6 +1,6 @@
 ---
 name: decisions-log
-description: Mantiene un diario append-only de decisiones importantes del operador, con formato fijo (fecha · decisión · razonamiento · contexto). Úsalo cuando el usuario tome una decisión estratégica que querrá recordar más adelante, o cuando otra skill (six-hats, marketing-positioning, pricing-strategy) cierre con una conclusión decidida. El log vive en `context/decisions-log.md` y Claude lo lee al arrancar cada sesión para no contradecirse con decisiones anteriores.
+description: Mantiene un diario append-only de decisiones importantes del operador, con formato fijo (fecha · decisión · razonamiento · contexto). Úsalo cuando el usuario tome una decisión estratégica que querrá recordar más adelante, o cuando otra skill (seis-sombreros, marketing-positioning, pricing-strategy) cierre con una conclusión decidida. El log vive en `context/decisions-log.md` y Claude lo lee al arrancar cada sesión para no contradecirse con decisiones anteriores.
 ---
 
 # decisions-log
@@ -10,7 +10,7 @@ description: Mantiene un diario append-only de decisiones importantes del operad
 ## Cuándo se invoca
 
 - Usuario dice: "registra esta decisión", "quiero recordar esto", "anota que hemos decidido X"
-- Otra skill cierra con una decisión clara y propone grabarla (six-hats, pricing-strategy, marketing-positioning, etc.)
+- Otra skill cierra con una decisión clara y propone grabarla (seis-sombreros, pricing-strategy, marketing-positioning, etc.)
 - Cierre de sesión (`/wrap-up`) detecta una decisión tomada que no se ha registrado y propone grabarla
 - Usuario pregunta: "¿qué decidimos sobre Y?" → la skill busca en el log
 
@@ -122,7 +122,7 @@ Recordatorios del decisions-log:
 
 ## Skills que llama
 
-Ninguna directamente. Esta skill es invocada **por** otras (six-hats, pricing-strategy, marketing-positioning, etc.) cuando esas cierran con decisión.
+Ninguna directamente. Esta skill es invocada **por** otras (seis-sombreros, pricing-strategy, marketing-positioning, etc.) cuando esas cierran con decisión.
 
 ## Edge cases
 

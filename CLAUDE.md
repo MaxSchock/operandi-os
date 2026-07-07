@@ -1,7 +1,7 @@
 # iAmasters OS — CLAUDE.md (project root)
 
 > Sistema operativo agéntico para operadores de IA.
-> Sinapsis v4.1 (engine activo en `~/.claude/`, datos reales) + capa OS (brand context, agent context, skills curadas, multi-cliente). El repo trae vendored Sinapsis v4.5.0 en `vendor/sinapsis/` para un futuro upgrade, pero NO está en uso.
+> Sinapsis v4.6.1 (engine) + capa OS (brand context, agent context, skills curadas, multi-cliente).
 
 ---
 
@@ -47,12 +47,12 @@ Antes de responder al primer mensaje del usuario en este repo, **debes** comprob
 - **Skills del OS**: `.claude/skills/`
 - **Commands del OS**: `.claude/commands/`
 - **Brand context**: `brand-context/` (voice, positioning, ICP, assets)
-- **Agent context sectorizado**: `context/` (me.md, work.md, team.md, current-priorities.md, goals.md, decisions-log.md, learnings.md, soul.md)
-- **Proyectos**: `projects/` (`projects/briefs/<nombre>/`, `projects/welcome/`, `projects/six-hats/`, `projects/visual/`)
+- **Agent context sectorizado**: `context/` (working-memory.md, me.md, work.md, team.md, current-priorities.md, goals.md, decisions-log.md, learnings.md, soul.md)
+- **Proyectos**: `projects/` (`projects/briefs/<nombre>/`, `projects/welcome/`, `projects/seis-sombreros/`, `projects/metodo-ias/`, `projects/visual/`)
 - **Clientes**: `clients/<nombre>/` (con `clients/_templates/` para nuevos)
 - **Docs operativos**: `docs/`
 - **Scripts del installer**: `scripts/install.sh`, `scripts/_install-gate.sh`, `scripts/_install-state.template.json`
-- **Vendored**: `vendor/sinapsis/` (engine), `vendor/cognito/` (Sistema Operativo de Pensamiento de Luis Pitik)
+- **Vendored**: `vendor/sinapsis/` (engine), `vendor/cognito/` (Sistema Operativo de Pensamiento de Luis Pitik), `vendor/arnes/` (skill opt-in para arrancar proyectos software, concepto fs-scaffold de Fernando Montero)
 
 ### Paths Sinapsis (engine global del operador)
 - **Skills root global**: `~/.claude/skills/` (Sinapsis instalado por install.sh)
@@ -68,10 +68,11 @@ Antes de responder al primer mensaje del usuario en este repo, **debes** comprob
 Una vez confirmado que la instalación está completa, antes de responder al primer mensaje del usuario:
 
 1. Lee `~/.claude/skills/_operator-state.json` (Sinapsis: perfil del operador, decisiones, lecciones).
-2. Lee los 5 archivos sectorizados de `context/` si existen: `me.md`, `work.md`, `team.md`, `current-priorities.md`, `goals.md`.
-3. Lee `context/decisions-log.md` (últimas 5 entradas) para mantener coherencia.
-4. Lee cualquier plan activo en `.claude/plans/` si la carpeta existe (planes en progreso de sesiones anteriores).
-5. Lee `~/.claude/skills/_daily-summaries/<TODAY>.md` o `<YESTERDAY>.md` (continuidad diaria).
+2. Lee `context/working-memory.md` — **scratchpad de trabajo** (hilos activos / notas de entorno / decisiones pendientes). Es lo primero que te pone al día sobre el estado actual, sin buscar nada.
+3. Lee los 5 archivos sectorizados de `context/` si existen: `me.md`, `work.md`, `team.md`, `current-priorities.md`, `goals.md`.
+4. Lee `context/decisions-log.md` (últimas 5 entradas) para mantener coherencia.
+5. Lee cualquier plan activo en `.claude/plans/` si la carpeta existe (planes en progreso de sesiones anteriores).
+6. Lee `synapsis/daily-summaries/<TODAY>.md` o `<YESTERDAY>.md` (continuidad diaria).
 
 ### Session continuity (operativa diaria)
 
@@ -84,8 +85,6 @@ Cuando todo está configurado y la instalación está completa:
 ---
 
 ## Sobre el sistema
-
-> **Estado del setup (2026-06-13).** Consolidación WSL-first: `~/.claude/CLAUDE.md`, `clients.private.md` y las credenciales n8n son archivos reales en WSL (symlinks inversos en `/mnt/c`). n8n se opera vía REST API, sin n8n-mcp (ver `docs/tech-stack-decision.md` para cuándo n8n y cuándo no). La memoria (Sinapsis + `memory/`) se respalda con historial en el repo privado `MaxSchock/sinapsis-state` (snapshot en el hook Stop) + rsync al VPS como secundario.
 
 ### Sinapsis (engine de memoria)
 Sinapsis es el sistema que hace que Claude Code aprenda de ti. Vive instalado en `~/.claude/` (no en este repo). El repo lo trae vendored en `vendor/sinapsis/` para instalación.
@@ -109,11 +108,14 @@ Lo que aporta este repo encima de Sinapsis:
 - Positioning, ICP, brand assets
 
 **Agent Context (`context/`)** — dinámica:
+- `working-memory.md` — **scratchpad de trabajo** (hilos activos / notas de entorno / decisiones pendientes). Se inyecta al inicio y se mantiene al cierre. Tope ~2.500 car.
 - `soul.md` — personalidad del agente (cómo respondes)
 - `me.md`, `work.md`, `team.md`, `current-priorities.md`, `goals.md`
 - `learnings.md`, `decisions-log.md`
 
-**Skills curadas (`.claude/skills/`)**: 28 SKILL.md en disco (ver registry abajo).
+**Memoria de trabajo (memo manual)**: cuando el operador diga *"recuerda esto"*, *"apunta que"*, *"nota que"* o *"para la próxima"*, escribe el ítem en la sección que corresponda de `context/working-memory.md` (Hilos activos / Notas de entorno / Decisiones pendientes), con dedup y respetando el tope. Visible de inmediato en esta sesión; en sesiones futuras se carga al inicio.
+
+**Skills curadas (`.claude/skills/`)** — 25 skills core (ver registry abajo).
 
 **Niveles de proyecto**:
 1. **Single task** — pregunta directa. Output a `projects/<skill-name>/<fecha>-<titulo>/`.
@@ -126,33 +128,34 @@ Lo que aporta este repo encima de Sinapsis:
 
 ---
 
-## Skills registry (v0.6.0)
+## Skills registry (v0.8.2)
 
-Capa 1 = 28 `SKILL.md` en disco: 23 del manifiesto core original (lo que valida `/doctor` como "23/23 core") + 4 importadas de upstream Anthropic (skill-creator, mcp-builder, canvas-design, content-engine) + 1 opcional (cognito). La carpeta `operations/` es un placeholder vacío (solo `.gitkeep`), sin skills.
+Capa 1 = 26 skills core + 2 opcionales (cognito, arnes).
 
 ### `_meta/` — sistema (11)
 
 | Skill | Descripción corta |
 |---|---|
 | `meta-skill-creator` | Crea skills nuevas |
-| `skill-creator` | Crea/modifica/evalúa skills, optimiza descriptions para activación (Anthropic upstream) |
 | `meta-onboarding-wizard` | Entrevista express por **4 sub-fases con commits incrementales** (v0.6) |
 | `meta-deep-dive` | Entrevista profunda (22-25 dimensiones) — opcional |
 | `meta-start-here` | Ritual diario de inicio |
 | `meta-wrap-up` | Ritual diario de cierre |
 | `welcome-quick-win` | Primer entregable en 5 min |
-| `six-hats` | Método 6 sombreros |
+| `seis-sombreros` | Seis sombreros de De Bono con **anti-ancla, 7 variantes, marcos divergentes y matriz de decisión** (v0.7) |
 | `decisions-log` | Diario append-only de decisiones |
 | `health-check` | Diagnóstico del OS con **validación profunda y detección de drift** (v0.6) |
 | `find-skills` | Descoverabilidad por intent |
+| `recuerda` | **Recall de memoria local** (SQLite+FTS5) con fuente citada — base para todos, semántico opt-in (v0.8.2) |
 
-### `_meta/_optional/` (1)
+### `_meta/_optional/` (2)
 
 | Skill | Cómo activar |
 |---|---|
 | `cognito` | `/install-skill cognito` |
+| `arnes` | `/install-skill arnes` (🆕 v0.8.0) — arrancar proyectos software por niveles. Concepto fs-scaffold de Fernando Montero. Vendoreada en `vendor/arnes/` |
 
-### `marketing/` (7)
+### `marketing/` (6)
 
 | Skill | Descripción |
 |---|---|
@@ -162,36 +165,35 @@ Capa 1 = 28 `SKILL.md` en disco: 23 del manifiesto core original (lo que valida 
 | `marketing-copywriting` | Copy con humanizer gate |
 | `marketing-content-repurposing` | Distribución multiplataforma |
 | `marketing-email-sequence` | Secuencias de email |
-| `content-engine` | Idea → 5 piezas + imagen + publica (Fal/OpenAI + Upload-Post). Multi-brief por cliente. Upstream IA Masters Academy. |
 
-### `automation/` (3)
+### `automation/` (2)
 
 | Skill | Descripción |
 |---|---|
 | `automation-n8n-to-claude` | Migra workflows n8n al ecosistema Claude |
 | `automation-n8n-builder` | Crea workflows n8n vía MCP `n8n-mcp` |
-| `mcp-builder` | Construye servidores MCP en Python (FastMCP) o Node/TS (MCP SDK) — Anthropic upstream |
 
-### `strategy/` (1)
+### `strategy/` (2)
 
 | Skill | Descripción |
 |---|---|
+| `metodo-ias` | Método I.A.S. (Intención · Acción · Síntesis) anti-AI-brain-fry — diario + semanal (v0.7) |
 | `strategy-web-research` | Research con subagentes |
 
-### `tools/` (3)
+### `tools/` (4)
 
 | Skill | Descripción |
 |---|---|
 | `tool-firecrawl-scraper` | Wrapper Firecrawl |
 | `tool-humanizer` | Quita patrones AI-tell |
 | `tool-output-verifier` | Gate de calidad |
+| `tool-zoom-summary` | Resumen HTML interactivo de reuniones Zoom (transcripción + chat + topics + recursos) (v0.7) |
 
-### `visualization/` (2)
+### `visualization/` (1)
 
 | Skill | Descripción |
 |---|---|
 | `tool-visual-explainer` | HTML autocontenido compartible |
-| `canvas-design` | Posters / arte estático en .png / .pdf con design philosophy (Anthropic upstream) |
 
 ### Plugins Anthropic (instalación vía marketplace)
 
@@ -201,7 +203,7 @@ Capa 1 = 28 `SKILL.md` en disco: 23 del manifiesto core original (lo que valida 
 
 ### Slash commands
 
-`/install` · `/install-status` · `/start-here` · `/wrap-up` · `/doctor` · `/add-client` · `/install-skill` · `/install-mcp` · `/aprende` · `/deep-dive`
+`/install` · `/install-status` · `/start-here` · `/wrap-up` · `/doctor` · `/add-client` · `/install-skill` · `/install-mcp` · `/aprende` · `/deep-dive` · `/recuerda`
 
 Los dos primeros (`/install`, `/install-status`) son nuevos en v0.6 y son la **única vía oficial** para gestionar la instalación desde dentro de Claude Code.
 
