@@ -28,7 +28,14 @@ for name in tracked:
     if name == ".env.example":
         continue
     # The scanner itself and the CI workflow list the patterns literally.
-    if name in ("scripts/ci/check-secrets.sh", ".github/workflows/validate.yml"):
+    # Same for the operator's own scrubbers/hooks and docs with token-format examples.
+    if name in (
+        "scripts/ci/check-secrets.sh",
+        ".github/workflows/validate.yml",
+        ".githooks/pre-commit",
+        "scripts/chat-to-md.py",
+        ".claude/skills/automation/mcp-builder/reference/evaluation.md",
+    ):
         continue
     if "vendor" in path.parts:
         continue

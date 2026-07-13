@@ -229,6 +229,17 @@ Viven en `skills-library/` (cero coste de contexto hasta instalarlas). Instalar:
 |---|---|
 | `tool-visual-explainer` | HTML autocontenido compartible |
 
+### Skills propias del operador (4)
+
+No vienen del upstream; sobreviven a `/actualiza` y no se desinstalan con `/skills remove`.
+
+| Skill | Descripción |
+|---|---|
+| `content-engine` | Motor de contenido LinkedIn multi-cliente (Operandi) — opera junto al daemon del VPS |
+| `mcp-builder` | Guía para crear servidores MCP de calidad |
+| `canvas-design` | Diseño visual en canvas (posters, arte generativo) |
+| `skill-creator` | Crear, mejorar y medir skills (upstream Anthropic) |
+
 ### Plugins Anthropic (instalación vía marketplace)
 
 | Skill | Cómo activar |
