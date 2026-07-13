@@ -24,6 +24,19 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 BACKUP_DIR="$REPO_ROOT/.backup/$(date +%Y%m%d_%H%M%S)"
 
+# Modo no-interactivo: lo activa --non-interactive/-y o la ausencia de TTY
+# (p. ej. cuando lo ejecuta Claude vía /actualiza). En este modo NUNCA se
+# pregunta: ante cualquier duda se mantiene la versión local y se reporta.
+NON_INTERACTIVE=false
+[ ! -t 0 ] && NON_INTERACTIVE=true
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --non-interactive|-y) NON_INTERACTIVE=true ;;
+        *) echo "Argumento desconocido: $1" >&2; exit 1 ;;
+    esac
+    shift
+done
+
 echo ""
 echo -e "${PURPLE}${BOLD}============================================================${NC}"
 echo -e "${PURPLE}${BOLD}  iAmasters OS — Update${NC}"
@@ -41,16 +54,28 @@ if [ ! -d ".git" ]; then
 fi
 
 # Detect uncommitted changes
-if ! git diff-index --quiet HEAD -- 2>/dev/null; then
+LOCALLY_MODIFIED=$(git diff --name-only HEAD -- 2>/dev/null || true)
+if [ -n "$LOCALLY_MODIFIED" ]; then
     echo -e "${YELLOW}  ! Tienes cambios sin commitear${NC}"
-    echo -e "${YELLOW}    Recomendación: commitea o stash antes de update${NC}"
-    read -p "  ¿Continuar de todas formas? (y/N) " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "Update cancelado."
-        exit 0
+    if $NON_INTERACTIVE; then
+        # No bloqueamos: los archivos modificados quedan protegidos más abajo
+        # (se mantienen en local y se reportan como pendientes)
+        echo -e "${YELLOW}    Modo no-interactivo: continúo SIN tocar tus archivos modificados${NC}"
+    else
+        echo -e "${YELLOW}    Recomendación: commitea o stash antes de update${NC}"
+        read -p "  ¿Continuar de todas formas? (y/N) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "Update cancelado."
+            exit 0
+        fi
     fi
 fi
+
+is_locally_modified() {
+    # $1 = ruta relativa; 0 si el archivo tiene cambios locales sin commitear
+    [ -n "$LOCALLY_MODIFIED" ] && echo "$LOCALLY_MODIFIED" | grep -qxF "$1"
+}
 
 CURRENT_BRANCH=$(git branch --show-current)
 echo -e "${GREEN}  OK${NC} Branch actual: $CURRENT_BRANCH"
@@ -68,6 +93,13 @@ for d in ".claude/skills" "brand-context" "context" "projects" "clients" ".env" 
         cp -R "$REPO_ROOT/$d" "$BACKUP_DIR/$d" 2>/dev/null || true
     fi
 done
+
+# META.txt permite a rollback.sh saber a qué commit volver
+{
+    echo "PRE_UPDATE_COMMIT=$(git rev-parse HEAD)"
+    echo "PRE_UPDATE_BRANCH=$(git branch --show-current)"
+    echo "CREATED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+} > "$BACKUP_DIR/META.txt"
 
 echo -e "${GREEN}  OK${NC} Backup en: ${BACKUP_DIR/$REPO_ROOT/.}/"
 
@@ -89,14 +121,24 @@ echo -e "${GREEN}  OK${NC} Remote: $REMOTE_URL"
 # ── Step 4: Fetch upstream changes ──
 echo -e "${BLUE}[4/6]${NC} Fetching upstream..."
 
-git fetch origin "$CURRENT_BRANCH" 2>&1 | tail -3 || {
+# Nota: sin pipe a tail — el pipe se tragaba el exit code del fetch y el
+# script seguía como si hubiera cambios upstream cuando la rama ni existía
+if ! FETCH_OUT=$(git fetch origin "$CURRENT_BRANCH" 2>&1); then
+    if echo "$FETCH_OUT" | grep -qi "couldn't find remote ref"; then
+        echo -e "${YELLOW}  ! Branch '$CURRENT_BRANCH' no existe en origin${NC}"
+        echo "Update local-only completado."
+        exit 0
+    fi
     echo -e "${RED}  ERROR${NC} Fetch falló. Comprueba conexión y permisos."
+    echo "$FETCH_OUT" | tail -3
     exit 1
-}
+fi
 
 # Check if already up-to-date
 LOCAL=$(git rev-parse HEAD)
-REMOTE=$(git rev-parse "origin/$CURRENT_BRANCH" 2>/dev/null || echo "")
+# --verify --quiet: si el ref no existe devuelve vacío (rev-parse a secas
+# imprime el nombre del ref aunque no exista, dando un falso "hay cambios")
+REMOTE=$(git rev-parse --verify --quiet "origin/$CURRENT_BRANCH^{commit}" 2>/dev/null || echo "")
 
 if [ -z "$REMOTE" ]; then
     echo -e "${YELLOW}  ! Branch '$CURRENT_BRANCH' no existe en origin${NC}"
@@ -166,18 +208,30 @@ echo -e "${BLUE}[6/6]${NC} Aplicando updates..."
 # - SKILLS_MODIFIED: preguntar al operador caso por caso
 # - USER_DATA_CONFLICT: skip (mantener local)
 
-# Apply safe updates
+# Apply safe updates (sin pisar archivos con cambios locales sin commitear)
+PENDING_CONFLICTS=()
+UPDATED=0
 for file in "${SAFE_TO_UPDATE[@]}" "${SKILLS_NEW[@]}"; do
+    [ -z "$file" ] && continue
+    if is_locally_modified "$file"; then
+        PENDING_CONFLICTS+=("$file")
+        continue
+    fi
     git checkout "origin/$CURRENT_BRANCH" -- "$file" 2>/dev/null || true
+    UPDATED=$((UPDATED+1))
 done
 
-if [ ${#SAFE_TO_UPDATE[@]} -gt 0 ] || [ ${#SKILLS_NEW[@]} -gt 0 ]; then
-    UPDATED=$((${#SAFE_TO_UPDATE[@]} + ${#SKILLS_NEW[@]}))
+if [ "$UPDATED" -gt 0 ]; then
     echo -e "${GREEN}  OK${NC} $UPDATED archivos actualizados (safe + new skills)"
 fi
 
-# Handle skill conflicts case-by-case
-if [ ${#SKILLS_MODIFIED[@]} -gt 0 ]; then
+# Handle skill conflicts
+if [ ${#SKILLS_MODIFIED[@]} -gt 0 ] && $NON_INTERACTIVE; then
+    # Sin terminal no se pregunta: keep local SIEMPRE y se reporta al final
+    for file in "${SKILLS_MODIFIED[@]}"; do
+        [ -n "$file" ] && PENDING_CONFLICTS+=("$file")
+    done
+elif [ ${#SKILLS_MODIFIED[@]} -gt 0 ]; then
     echo
     echo -e "${YELLOW}Conflictos en skills modificadas localmente:${NC}"
     echo
@@ -216,6 +270,26 @@ fi
 # Skip user data (always keep local — that's the contract)
 if [ ${#USER_DATA_CONFLICT[@]} -gt 0 ]; then
     echo -e "${CYAN}  ->${NC} ${#USER_DATA_CONFLICT[@]} archivos de user data ignorados (siempre keep local)"
+fi
+
+# Report pending conflicts (modo no-interactivo: nada se pisó, todo se lista)
+if [ ${#PENDING_CONFLICTS[@]} -gt 0 ]; then
+    echo
+    echo -e "${YELLOW}${BOLD}Pendientes de decisión (se mantuvo TU versión local):${NC}"
+    for file in "${PENDING_CONFLICTS[@]}"; do
+        echo -e "  ${YELLOW}·${NC} $file"
+    done
+    echo
+    echo -e "  Para aceptar la versión nueva de un archivo concreto:"
+    echo -e "    ${CYAN}git checkout origin/$CURRENT_BRANCH -- <archivo>${NC}"
+    echo -e "  O dile a Claude: ${CYAN}\"aplica la versión nueva de <archivo>\"${NC}"
+fi
+
+# ── Sync skills instaladas desde la biblioteca ──
+# Si el update trajo versiones nuevas de skills que el operador tiene
+# instaladas, refrescarlas (SKILL.local.md se preserva siempre)
+if [ -f "$REPO_ROOT/scripts/skills.sh" ]; then
+    bash "$REPO_ROOT/scripts/skills.sh" sync || true
 fi
 
 # ── Done ──

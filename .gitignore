@@ -50,6 +50,7 @@ context/decisions-log.md
 context/learnings.md
 context/soul.md
 context/working-memory.md
+context/loops-config.md
 brand-context/voice/voice-profile.md
 brand-context/voice/samples.md
 brand-context/voice/vocabulary.md
@@ -75,6 +76,11 @@ projects/*/
 # Excepción: el showcase sí forma parte del repo (material de referencia)
 !projects/_showcase/
 !projects/_showcase/**
+
+# Loops del operador (privados)
+loops/*
+!loops/README.md
+!loops/_templates/
 
 # Client data — sensible
 clients/*
@@ -118,3 +124,6 @@ yarn.lock
 # Vault Obsidian — sub-repo independiente con su propio .git
 # Auto-commit + auto-push a github.com/MaxSchock/iamasters-vault (privado)
 _wiki/
+
+# Personalizaciones del operador sobre skills curadas — sobreviven updates
+**/SKILL.local.md

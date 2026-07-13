@@ -1,133 +1,136 @@
 ---
 name: find-skills
-description: Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.
+description: Ayuda a descubrir e instalar skills de agente cuando el usuario pregunta "cómo hago X", "busca una skill para X", "hay alguna skill que pueda...", o quiere ampliar capacidades. Usar cuando el usuario busca una funcionalidad que quizá exista como skill instalable. English triggers: find a skill, is there a skill, install skill.
 ---
 
-# Find Skills
+# Buscar skills
 
-This skill helps you discover and install skills from the open agent skills ecosystem.
+Esta skill ayuda a descubrir e instalar skills del ecosistema abierto de agentes.
 
-## When to Use This Skill
+## Cuándo usar esta skill
 
-Use this skill when the user:
+Úsala cuando el usuario:
 
-- Asks "how do I do X" where X might be a common task with an existing skill
-- Says "find a skill for X" or "is there a skill for X"
-- Asks "can you do X" where X is a specialized capability
-- Expresses interest in extending agent capabilities
-- Wants to search for tools, templates, or workflows
-- Mentions they wish they had help with a specific domain (design, testing, deployment, etc.)
+- Pregunta "cómo hago X" y X parece una tarea común que podría tener skill.
+- Dice "busca una skill para X" o "hay alguna skill para X".
+- Pregunta "puedes hacer X" y X requiere una capacidad especializada.
+- Quiere ampliar capacidades del agente.
+- Quiere buscar herramientas, plantillas o workflows.
+- Menciona que le gustaría tener ayuda en un dominio concreto: diseño, testing, deployment, documentación, etc.
 
-## What is the Skills CLI?
+## Qué es Skills CLI
 
-The Skills CLI (`npx skills`) is the package manager for the open agent skills ecosystem. Skills are modular packages that extend agent capabilities with specialized knowledge, workflows, and tools.
+Skills CLI (`npx skills`) es el gestor de paquetes del ecosistema abierto de agent skills. Las skills son paquetes modulares que amplían capacidades del agente con conocimiento, procesos y herramientas especializadas.
 
-**Key commands:**
+Comandos clave:
 
-- `npx skills find [query]` - Search for skills interactively or by keyword
-- `npx skills add <package>` - Install a skill from GitHub or other sources
-- `npx skills check` - Check for skill updates
-- `npx skills update` - Update all installed skills
+- `npx skills find [query]` - Buscar skills de forma interactiva o por palabra clave.
+- `npx skills add <package>` - Instalar una skill desde GitHub u otras fuentes.
+- `npx skills check` - Comprobar actualizaciones de skills.
+- `npx skills update` - Actualizar todas las skills instaladas.
 
-**Browse skills at:** https://skills.sh/
+Catálogo público:
 
-## How to Help Users Find Skills
+```text
+https://skills.sh/
+```
 
-### Step 1: Understand What They Need
+## Cómo ayudar al usuario a encontrar skills
 
-When a user asks for help with something, identify:
+### Paso 1: entender qué necesita
 
-1. The domain (e.g., React, testing, design, deployment)
-2. The specific task (e.g., writing tests, creating animations, reviewing PRs)
-3. Whether this is a common enough task that a skill likely exists
+Cuando el usuario pida ayuda con algo, identifica:
 
-### Step 2: Search for Skills
+1. Dominio: React, testing, diseño, deployment, documentación, etc.
+2. Tarea concreta: escribir tests, crear animaciones, revisar PRs, preparar changelog.
+3. Si es una tarea suficientemente común como para que exista una skill.
 
-Run the find command with a relevant query:
+### Paso 2: buscar skills
+
+Ejecuta el comando de búsqueda con una query relevante:
 
 ```bash
 npx skills find [query]
 ```
 
-For example:
+Ejemplos:
 
-- User asks "how do I make my React app faster?" → `npx skills find react performance`
-- User asks "can you help me with PR reviews?" → `npx skills find pr review`
-- User asks "I need to create a changelog" → `npx skills find changelog`
+- "¿Cómo hago mi app React más rápida?" -> `npx skills find react performance`
+- "¿Puedes ayudarme con reviews de PR?" -> `npx skills find pr review`
+- "Necesito crear un changelog" -> `npx skills find changelog`
 
-The command will return results like:
+El comando devolverá resultados parecidos a:
 
-```
+```text
 Install with npx skills add <owner/repo@skill>
 
 vercel-labs/agent-skills@vercel-react-best-practices
 └ https://skills.sh/vercel-labs/agent-skills/vercel-react-best-practices
 ```
 
-### Step 3: Present Options to the User
+### Paso 3: presentar opciones
 
-When you find relevant skills, present them to the user with:
+Cuando encuentres skills relevantes, muestra:
 
-1. The skill name and what it does
-2. The install command they can run
-3. A link to learn more at skills.sh
+1. Nombre de la skill y qué hace.
+2. Comando de instalación.
+3. Enlace para leer más en `skills.sh`.
 
-Example response:
+Ejemplo de respuesta:
 
-```
-I found a skill that might help! The "vercel-react-best-practices" skill provides
-React and Next.js performance optimization guidelines from Vercel Engineering.
+```text
+He encontrado una skill que encaja: "vercel-react-best-practices".
+Trae guías de optimización de React y Next.js basadas en patrones de Vercel Engineering.
 
-To install it:
+Para instalarla:
 npx skills add vercel-labs/agent-skills@vercel-react-best-practices
 
-Learn more: https://skills.sh/vercel-labs/agent-skills/vercel-react-best-practices
+Más información:
+https://skills.sh/vercel-labs/agent-skills/vercel-react-best-practices
 ```
 
-### Step 4: Offer to Install
+### Paso 4: ofrecer instalación
 
-If the user wants to proceed, you can install the skill for them:
+Si el usuario quiere seguir, puedes instalarla:
 
 ```bash
 npx skills add <owner/repo@skill> -g -y
 ```
 
-The `-g` flag installs globally (user-level) and `-y` skips confirmation prompts.
+La flag `-g` instala a nivel de usuario y `-y` omite prompts de confirmación.
 
-## Common Skill Categories
+## Categorías frecuentes
 
-When searching, consider these common categories:
+| Categoría | Queries de ejemplo |
+|---|---|
+| Desarrollo web | react, nextjs, typescript, css, tailwind |
+| Testing | testing, jest, playwright, e2e |
+| DevOps | deploy, docker, kubernetes, ci-cd |
+| Documentación | docs, readme, changelog, api-docs |
+| Calidad de código | review, lint, refactor, best-practices |
+| Diseño | ui, ux, design-system, accessibility |
+| Productividad | workflow, automation, git |
 
-| Category        | Example Queries                          |
-| --------------- | ---------------------------------------- |
-| Web Development | react, nextjs, typescript, css, tailwind |
-| Testing         | testing, jest, playwright, e2e           |
-| DevOps          | deploy, docker, kubernetes, ci-cd        |
-| Documentation   | docs, readme, changelog, api-docs        |
-| Code Quality    | review, lint, refactor, best-practices   |
-| Design          | ui, ux, design-system, accessibility     |
-| Productivity    | workflow, automation, git                |
+## Consejos para buscar bien
 
-## Tips for Effective Searches
+1. Usa palabras específicas: "react testing" mejor que "testing".
+2. Prueba términos alternativos: si "deploy" no funciona, usa "deployment" o "ci-cd".
+3. Revisa fuentes populares como `vercel-labs/agent-skills` o `ComposioHQ/awesome-claude-skills`.
 
-1. **Use specific keywords**: "react testing" is better than just "testing"
-2. **Try alternative terms**: If "deploy" doesn't work, try "deployment" or "ci-cd"
-3. **Check popular sources**: Many skills come from `vercel-labs/agent-skills` or `ComposioHQ/awesome-claude-skills`
+## Si no encuentras skills
 
-## When No Skills Are Found
+Si no aparece nada relevante:
 
-If no relevant skills exist:
+1. Di claramente que no has encontrado una skill existente.
+2. Ofrece resolver la tarea directamente con capacidades generales.
+3. Sugiere crear una skill propia si es una tarea recurrente.
 
-1. Acknowledge that no existing skill was found
-2. Offer to help with the task directly using your general capabilities
-3. Suggest the user could create their own skill with `npx skills init`
+Ejemplo:
 
-Example:
+```text
+He buscado skills relacionadas con "xyz" y no he encontrado una opción clara.
+Puedo ayudarte igualmente con la tarea directamente.
 
-```
-I searched for skills related to "xyz" but didn't find any matches.
-I can still help you with this task directly! Would you like me to proceed?
-
-If this is something you do often, you could create your own skill:
+Si esto es algo que haces a menudo, también podemos convertirlo en una skill propia con:
 npx skills init my-xyz-skill
 ```

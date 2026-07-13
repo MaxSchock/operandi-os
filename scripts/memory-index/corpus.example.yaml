@@ -21,6 +21,10 @@ sources:
   - source_type: brief
     paths:
       - ../../projects/briefs/*/brief.md
+  - source_type: loops
+    paths:
+      - ../../loops/*/loop-spec.md
+      - ../../loops/*/REGLAS.md
 
   # --- Opcional: añade tus propias fuentes externas (descomenta y ajusta) ---
   # - source_type: daily_summary

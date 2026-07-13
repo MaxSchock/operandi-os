@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Claim",
+  "type": "object",
+  "required": ["claim_id", "claim"],
+  "properties": {
+    "claim_id": {"type": "string"},
+    "claim": {
+      "type": "string",
+      "description": "Afirmación atómica (no compuesta). Ejemplo: 'El mercado X creció 23% en 2024' es atómico; 'X creció y Y se contrajo' NO lo es."
+    },
+    "supporting_evidence_ids": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "support_status": {
+      "type": "string",
+      "enum": ["unverified", "single_source", "triangulated", "contested", "refuted"]
+    },
+    "section": {
+      "type": "string",
+      "description": "Sección del informe donde aparece la afirmación."
+    },
+    "added_at": {"type": "string", "format": "date-time"}
+  }
+}

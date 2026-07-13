@@ -18,18 +18,20 @@ Ejemplos:
 - `/install-skill https://github.com/anthropics/skills/copywriting`
 - `/install-skill cognito` (atajo a skill local en `_optional/`)
 
-## Modo "atajo opcional" (sin URL)
+## Modo "atajo biblioteca" (sin URL)
 
-Si el argumento NO es URL sino un nombre simple (ej. `cognito`):
+Si el argumento NO es URL sino un nombre simple (ej. `cognito`, `seis-sombreros`):
 
-1. Buscar la skill en `.claude/skills/_meta/_optional/<nombre>/`.
-2. Si existe:
-   - Mover a `.claude/skills/_meta/<nombre>/`
-   - Update CLAUDE.md skills registry (sección `_meta/` +1, `_optional/` -1)
-   - Mensaje: *"Skill `<nombre>` activada. Reinicia Claude Code para que cargue."*
-3. Si NO existe → error: *"No hay skill opcional `<nombre>`. Skills disponibles en `_optional/`: <lista>."*
+→ Es una skill de la **biblioteca del OS** (`skills-library/`). Delega en `/skills`:
 
-Para desactivar una skill (moverla de vuelta a `_optional/`): editar manualmente o pedir al operador.
+```bash
+bash scripts/skills.sh add <nombre>
+```
+
+Mensaje: *"Skill `<nombre>` instalada. Reinicia Claude Code para que cargue."*
+Si no existe en la biblioteca, el script lo dice y sugiere `bash scripts/skills.sh list` — muestra ese catálogo al usuario.
+
+Para desinstalar: `bash scripts/skills.sh remove <nombre>` (ver `/skills`).
 
 ## Process
 

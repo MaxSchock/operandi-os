@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RunManifest",
+  "type": "object",
+  "required": ["query", "mode", "created_at"],
+  "properties": {
+    "query": {"type": "string"},
+    "mode": {
+      "type": "string",
+      "enum": ["quick", "standard", "deep", "ultradeep"]
+    },
+    "created_at": {"type": "string", "format": "date-time"},
+    "language": {"type": "string", "default": "es"},
+    "assumptions": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "phase_log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "phase": {"type": "string"},
+          "started_at": {"type": "string", "format": "date-time"},
+          "completed_at": {"type": "string", "format": "date-time"},
+          "notes": {"type": "string"}
+        }
+      }
+    }
+  }
+}

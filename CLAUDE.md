@@ -84,6 +84,23 @@ Cuando todo está configurado y la instalación está completa:
 
 ---
 
+## Actualizar el OS
+
+Cuando el usuario diga **"actualízate"**, **"actualiza el OS"**, **"actualízate a la última versión"**, **"tráete los cambios nuevos"**, **"ponme la última versión de iAmasters OS"** o **"update"** → ejecuta el comando `/actualiza`:
+
+```bash
+git pull --ff-only
+bash scripts/update.sh
+```
+
+`update.sh` preserva SIEMPRE lo del operador (skills propias, `brand-context/`, `context/`, `projects/`, `clients/`, `loops/`); solo actualiza el código del OS, las skills curadas y Sinapsis vendored. Si `git pull` falla por cambios locales, NO fuerces: explica qué tiene modificado y pregunta. Al terminar, resume lo nuevo desde el `CHANGELOG.md`.
+
+Cuando lo lanzas tú (sin terminal del usuario), `update.sh` detecta que no hay TTY y entra en modo no-interactivo: nunca pregunta, mantiene la versión local ante cualquier conflicto y lista al final los "Pendientes de decisión". Resuélvelos conversacionalmente con el usuario (enséñale qué cambia cada archivo y aplica lo que decida con `git checkout origin/<branch> -- <archivo>`).
+
+**Si tras actualizar algo se rompe** → `/restaura` (rollback completo al estado anterior: código + datos). Cada update deja backup automático en `.backup/`.
+
+---
+
 ## Sobre el sistema
 
 ### Sinapsis (engine de memoria)
@@ -115,7 +132,7 @@ Lo que aporta este repo encima de Sinapsis:
 
 **Memoria de trabajo (memo manual)**: cuando el operador diga *"recuerda esto"*, *"apunta que"*, *"nota que"* o *"para la próxima"*, escribe el ítem en la sección que corresponda de `context/working-memory.md` (Hilos activos / Notas de entorno / Decisiones pendientes), con dedup y respetando el tope. Visible de inmediato en esta sesión; en sesiones futuras se carga al inicio.
 
-**Skills curadas (`.claude/skills/`)** — 25 skills core (ver registry abajo).
+**Skills curadas** — modelo Core + Biblioteca: 17 core en `.claude/skills/` (siempre cargadas) + 20 en `skills-library/` instalables con `/skills` (ver registry abajo).
 
 **Niveles de proyecto**:
 1. **Single task** — pregunta directa. Output a `projects/<skill-name>/<fecha>-<titulo>/`.
@@ -128,11 +145,15 @@ Lo que aporta este repo encima de Sinapsis:
 
 ---
 
-## Skills registry (v0.8.2)
+## Skills registry (v0.10.0)
 
-Capa 1 = 26 skills core + 2 opcionales (cognito, arnes).
+Modelo **Core + Biblioteca**: 17 skills core siempre instaladas (el OS las necesita) + 20 en `skills-library/` que el operador instala a demanda con `/skills`. Cada skill instalada consume contexto en cada sesion (recomendacion Anthropic: <50 cargadas) — instala solo lo que uses.
 
-### `_meta/` — sistema (11)
+**Routing por intencion (IMPORTANTE)**: si el usuario pide algo que resuelve una skill de la BIBLIOTECA que no tiene instalada, NO digas que no puedes — ofrece instalarla: "Eso lo hace la skill `<nombre>`. ¿La instalo?" → `bash scripts/skills.sh add <nombre>`. Catalogo en vivo: `bash scripts/skills.sh list`.
+
+### Core — siempre instaladas (17)
+
+#### `_meta/` — sistema (10)
 
 | Skill | Descripción corta |
 |---|---|
@@ -142,54 +163,67 @@ Capa 1 = 26 skills core + 2 opcionales (cognito, arnes).
 | `meta-start-here` | Ritual diario de inicio |
 | `meta-wrap-up` | Ritual diario de cierre |
 | `welcome-quick-win` | Primer entregable en 5 min |
-| `seis-sombreros` | Seis sombreros de De Bono con **anti-ancla, 7 variantes, marcos divergentes y matriz de decisión** (v0.7) |
 | `decisions-log` | Diario append-only de decisiones |
 | `health-check` | Diagnóstico del OS con **validación profunda y detección de drift** (v0.6) |
-| `find-skills` | Descoverabilidad por intent |
+| `find-skills` | Descubre e instala skills por intención del usuario |
 | `recuerda` | **Recall de memoria local** (SQLite+FTS5) con fuente citada — base para todos, semántico opt-in (v0.8.2) |
 
-### `_meta/_optional/` (2)
-
-| Skill | Cómo activar |
-|---|---|
-| `cognito` | `/install-skill cognito` |
-| `arnes` | `/install-skill arnes` (🆕 v0.8.0) — arrancar proyectos software por niveles. Concepto fs-scaffold de Fernando Montero. Vendoreada en `vendor/arnes/` |
-
-### `marketing/` (6)
+#### Fundación de marca + motor (7)
 
 | Skill | Descripción |
 |---|---|
 | `marketing-brand-voice` | Voice profile + 3 registros |
 | `marketing-positioning` | Posicionamiento competitivo |
 | `marketing-icp` | Cliente ideal |
+| `automation-loop-engine` | Loop Engineering: convierte trabajo repetitivo en sistemas con verificación, compuertas humanas y aprendizaje |
+| `tool-firecrawl-scraper` | Wrapper Firecrawl |
+| `tool-humanizer` | Quita patrones AI-tell |
+| `tool-output-verifier` | Gate de calidad |
+
+### Biblioteca — instalables con `/skills` (20)
+
+Viven en `skills-library/` (cero coste de contexto hasta instalarlas). Instalar: `bash scripts/skills.sh add <nombre>` · Quitar: `remove` · Catálogo: `list`.
+
+#### `marketing/` (4)
+
+| Skill | Descripción |
+|---|---|
 | `marketing-copywriting` | Copy con humanizer gate |
 | `marketing-content-repurposing` | Distribución multiplataforma |
-| `marketing-email-sequence` | Secuencias de email |
+| `marketing-email-sequence` | Secuencias de email con brand voice y gate obligatorio |
+| `marketing-meta-ads-analyzer` | Diagnóstico experto de campañas Meta Ads con Breakdown Effect |
 
-### `automation/` (2)
+#### `strategy/` (6)
+
+| Skill | Descripción |
+|---|---|
+| `metodo-ias` | Método I.A.S. (Intención · Acción · Síntesis) anti-AI-brain-fry — diario + semanal (v0.7) |
+| `seis-sombreros` | Seis sombreros de De Bono con **anti-ancla, 7 variantes, marcos divergentes y matriz de decisión** (v0.7) |
+| `cognito` | Sistema Operativo de Pensamiento de Luis Pitik |
+| `strategy-web-research` | Búsqueda ligera citada con 3-5 fuentes |
+| `strategy-investigacion-profunda` | Informes completos con triangulación, scoring y verificación |
+| `strategy-stack-recommender` | Recomendación de stack tecnológico antes de construir |
+
+#### `tools/` (7)
+
+| Skill | Descripción |
+|---|---|
+| `arnes` | Arrancar proyectos software por niveles (Express/Estándar/PRO). Concepto fs-scaffold de Fernando Montero. Vendoreada en `vendor/arnes/` |
+| `tool-zoom-summary` | Resumen HTML interactivo de reuniones Zoom (transcripción + chat + topics + recursos) (v0.7) |
+| `tool-seguridad-ia` | Prompts preventivos y checklist de seguridad para desarrollo con IA |
+| `tool-quality-gate` | Validación pre-deploy con score 0-100 |
+| `tool-transcribe-social` | Transcripción de vídeos sociales con Groq Whisper |
+| `tool-web-legal-audit` | Auditoría RGPD/LSSI/cookies/accesibilidad para webs |
+| `tool-web-security-audit` | Auditoría defensiva de seguridad web autorizada |
+
+#### `automation/` (2)
 
 | Skill | Descripción |
 |---|---|
 | `automation-n8n-to-claude` | Migra workflows n8n al ecosistema Claude |
 | `automation-n8n-builder` | Crea workflows n8n vía MCP `n8n-mcp` |
 
-### `strategy/` (2)
-
-| Skill | Descripción |
-|---|---|
-| `metodo-ias` | Método I.A.S. (Intención · Acción · Síntesis) anti-AI-brain-fry — diario + semanal (v0.7) |
-| `strategy-web-research` | Research con subagentes |
-
-### `tools/` (4)
-
-| Skill | Descripción |
-|---|---|
-| `tool-firecrawl-scraper` | Wrapper Firecrawl |
-| `tool-humanizer` | Quita patrones AI-tell |
-| `tool-output-verifier` | Gate de calidad |
-| `tool-zoom-summary` | Resumen HTML interactivo de reuniones Zoom (transcripción + chat + topics + recursos) (v0.7) |
-
-### `visualization/` (1)
+#### `visualization/` (1)
 
 | Skill | Descripción |
 |---|---|
@@ -203,13 +237,13 @@ Capa 1 = 26 skills core + 2 opcionales (cognito, arnes).
 
 ### Slash commands
 
-`/install` · `/install-status` · `/start-here` · `/wrap-up` · `/doctor` · `/add-client` · `/install-skill` · `/install-mcp` · `/aprende` · `/deep-dive` · `/recuerda`
+`/install` · `/install-status` · `/start-here` · `/wrap-up` · `/doctor` · `/actualiza` · `/restaura` · `/backup` · `/skills` · `/add-client` · `/install-skill` · `/install-mcp` · `/aprende` · `/deep-dive` · `/recuerda` · `/loops` · `/evalua-loop`
 
 Los dos primeros (`/install`, `/install-status`) son nuevos en v0.6 y son la **única vía oficial** para gestionar la instalación desde dentro de Claude Code.
 
-### Capa 2 — on-demand library
+### Capa 2 — skills externas
 
-Ver [`docs/skills-recommended.md`](docs/skills-recommended.md) para skills opcionales instalables vía `/install-skill <github-url>`.
+Ver [`docs/skills-recommended.md`](docs/skills-recommended.md) para skills de terceros instalables vía `/install-skill <github-url>` (con validación previa). Las skills curadas del OS viven en la biblioteca (`/skills`), no aquí.
 
 ---
 
@@ -219,6 +253,22 @@ Al iniciar cada sesión (post-gate), comprueba `projects/briefs/*/brief.md`:
 - Si hay `status: active`, recuérdale qué dejó abierto.
 - Si hay un `.planning/` en raíz o cliente, indica que hay un GSD en marcha.
 - Si terminó algo (`status: done`), pregunta si archivamos.
+
+---
+
+## Personalizar skills sin perder updates — SKILL.local.md
+
+Si el operador quiere cambiar el comportamiento de una skill curada ("a partir de ahora esta skill siempre X"), NO edites su `SKILL.md` (un update lo pisaría o generaría conflicto). En su lugar:
+
+1. Crea/edita `SKILL.local.md` junto al `SKILL.md` de esa skill.
+2. Formato: lista de reglas fechadas, append-only:
+   ```markdown
+   ## Reglas del operador
+   - 2026-06-12: siempre incluir CTA al final de los emails
+   ```
+3. **Al invocar cualquier skill**: si existe `SKILL.local.md` en su carpeta, léelo DESPUÉS del `SKILL.md`. Sus reglas mandan sobre lo que diga la skill base.
+
+`SKILL.local.md` está gitignored: sobrevive a `/actualiza` sin conflictos y nunca se sube al repo.
 
 ---
 

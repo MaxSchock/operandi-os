@@ -344,14 +344,19 @@ phase_prereqs() {
 
     # Python 3 (optional but recommended) — detección multi-plataforma
     local python_cmd=""
-    for candidate in python3 "py -3" python python3.11 python3.12 python3.10; do
-        if command -v $(echo "$candidate" | awk '{print $1}') >/dev/null 2>&1; then
-            if $candidate --version 2>&1 | grep -qE "Python 3\.(9|10|11|12|13)"; then
+    for candidate in python3 python python3.12 python3.11 python3.10; do
+        if command -v "$candidate" >/dev/null 2>&1; then
+            if "$candidate" --version 2>&1 | grep -qE "Python 3\.(9|[1-9][0-9])"; then
                 python_cmd="$candidate"
                 break
             fi
         fi
     done
+    if [ -z "$python_cmd" ] && [ "$os_type" = "windows-bash" ] && command -v py >/dev/null 2>&1; then
+        if py -3 --version 2>&1 | grep -qE "Python 3\.(9|[1-9][0-9])"; then
+            python_cmd="py -3"
+        fi
+    fi
     # Casos especiales Windows (rutas absolutas comunes)
     if [ -z "$python_cmd" ] && [ "$os_type" = "windows-bash" ]; then
         for win_path in "/c/Python311/python.exe" "/c/Python312/python.exe" "/c/Python310/python.exe"; do
@@ -451,12 +456,34 @@ validate_sinapsis_deep() {
     return $issues
 }
 
+record_sinapsis_validation() {
+    # Escribe los resultados REALES de cada check en el state, para que
+    # /install-status y el gate muestren la verdad (no los defaults del
+    # template, que son false y confunden al usuario).
+    local op_valid=false cat_valid=false hooks_ok=true
+    if [ -f "$SKILLS_DIR/_operator-state.json" ] && json_validate "$SKILLS_DIR/_operator-state.json"; then
+        op_valid=true
+    fi
+    if [ -f "$SKILLS_DIR/_catalog.json" ] && json_validate "$SKILLS_DIR/_catalog.json"; then
+        cat_valid=true
+    fi
+    local hook
+    for hook in _passive-activator.sh _instinct-activator.sh _session-learner.sh; do
+        [ -x "$SKILLS_DIR/$hook" ] || hooks_ok=false
+    done
+    local skill_count
+    skill_count=$(find "$SKILLS_DIR" -maxdepth 3 -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
+    json_set_phase "sinapsis-engine" "validation" \
+        "{\"operator_state_json_valid\": $op_valid, \"catalog_json_valid\": $cat_valid, \"hooks_executable\": $hooks_ok, \"skills_count\": ${skill_count:-0}}"
+}
+
 phase_sinapsis_engine() {
     local current_status
     current_status=$(json_get_phase_status "sinapsis-engine")
     if [ "$current_status" = "done" ] && ! $FORCE_REINSTALL; then
         # Aún así re-validamos para detectar drift (alguien borró archivos manualmente)
         if validate_sinapsis_deep >/dev/null 2>&1; then
+            record_sinapsis_validation
             skip "sinapsis-engine · ya instalado y validado (status=done)"
             return 0
         else
@@ -484,6 +511,7 @@ phase_sinapsis_engine() {
     info "Comprobando si Sinapsis ya está operativo..."
     if validate_sinapsis_deep >/dev/null 2>&1; then
         ok "Sinapsis ya está operativo (validación profunda pasa)"
+        record_sinapsis_validation
         compute_and_store_checksum
         mark_phase_done "sinapsis-engine"
         return 0
@@ -502,9 +530,11 @@ phase_sinapsis_engine() {
     # Validación POST-instalación (esto es lo que evita "instalaciones fantasma")
     info "Validando instalación de Sinapsis (validación profunda)..."
     if ! validate_sinapsis_deep; then
+        record_sinapsis_validation
         mark_phase_failed "sinapsis-engine" "Sinapsis se ejecutó pero la validación profunda falla · ver warnings arriba"
     fi
 
+    record_sinapsis_validation
     compute_and_store_checksum
     mark_phase_done "sinapsis-engine"
     ok "Sinapsis instalado y validado"

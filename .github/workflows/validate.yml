@@ -1,0 +1,29 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Skills bien formadas
+        run: bash scripts/ci/check-skills-frontmatter.sh
+
+      - name: Registry sin fantasmas
+        run: bash scripts/ci/check-skills-registry.sh
+
+      - name: Links internos vivos
+        run: bash scripts/ci/check-internal-links.sh
+
+      - name: Sintaxis
+        run: bash scripts/ci/check-syntax.sh
+
+      - name: Sin secretos
+        run: bash scripts/ci/check-secrets.sh

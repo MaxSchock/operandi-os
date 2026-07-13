@@ -96,6 +96,31 @@ Para CADA uno de los 4 archivos críticos:
 - Si `state.phases.context-files.status == "done"` PERO alguno de los 4 archivos críticos no existe o tiene <100 chars → reporta 🔴 **STATE DRIFT** + propone fix:
   > "El state dice que `context-files` está done pero `<archivo>` está vacío/inexistente. Esto indica una marca falsa. Voy a revertir el state a `in-progress` y reactivar el wizard. ¿Continúo?"
 
+### Paso 4.5 · Verificación Loop Engine
+
+Skip silencioso si no existe `loops/` o no hay carpetas de loop en `loops/<nombre>/` (excluye `_templates/`).
+
+Si hay ≥1 loop creado:
+
+| Check | Validación | Severidad |
+|---|---|---|
+| `context/loops-config.md` | Existe | 🟡 |
+| `loops/_index.md` | Existe | 🟡 |
+| Cada loop tiene `loop-spec.md` | Existe | 🔴 |
+| Cada loop tiene `REGLAS.md` | Existe | 🔴 |
+| `loops/_index.md` lista todos los loops | Cada carpeta `loops/<nombre>/` aparece en el índice | 🟡 |
+| Reglas por estación | Si una estación tiene >12 reglas en un `REGLAS.md` → ⚠️ "esa estación necesita rediseño" | 🟡 |
+
+Reporte sugerido:
+
+```
+### Loop Engine
+🟢 3 loops detectados
+🟢 propuestas: loop-spec.md + REGLAS.md
+🟡 onboarding-clientes no aparece en loops/_index.md
+🟡 propuestas · estación redacción tiene 14 reglas → esa estación necesita rediseño
+```
+
 ### Paso 5 · Verificación skills curadas
 
 Lista skills core (v0.6 Capa 1) = 27 (23 del manifiesto original + 4 importadas de upstream Anthropic: skill-creator, mcp-builder, canvas-design, content-engine). NO incluye `_meta/_optional/cognito` (opcional). En disco hay 28 `SKILL.md` (27 core + cognito).
@@ -119,6 +144,7 @@ Lista skills core (v0.6 Capa 1) = 27 (23 del manifiesto original + 4 importadas 
 .claude/skills/marketing/marketing-content-repurposing/SKILL.md
 .claude/skills/marketing/marketing-email-sequence/SKILL.md
 .claude/skills/marketing/content-engine/SKILL.md
+.claude/skills/automation/automation-loop-engine/SKILL.md
 .claude/skills/automation/automation-n8n-to-claude/SKILL.md
 .claude/skills/automation/automation-n8n-builder/SKILL.md
 .claude/skills/automation/mcp-builder/SKILL.md
@@ -182,7 +208,7 @@ State machine: <X>/5 required phases done · <currentPhase>
 🟢 _operator-state.json parseable + campos mínimos
 🟢 _catalog.json parseable
 🟢 5/5 hooks ejecutables
-🟢 23 SKILL.md instaladas
+🟢 27 SKILL.md instaladas
 🟢 Hooks Sinapsis registrados en settings.json
 🟢 Install-gate registrado en settings.json
 🟢 No hay drift

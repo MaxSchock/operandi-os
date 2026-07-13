@@ -8,14 +8,100 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-### En curso — Memory Upgrade (Store / Inject / Recall · benchmark vs Agentic OS Phase 2)
-- **v0.8.3 · P2 captura de contenido** (opcional) — resumen legible por sesión que engorda el corpus. Bajo valor incremental: ya hay daily summaries indexados; pendiente de decidir si aporta.
-- **v0.9.0 · P4 Team OS** — memoria/permisos compartidos para equipo. Módulo AVANZADO opcional (no core), decisión de negocio pendiente.
+### Roadmap
+- **P2 captura de contenido** (opcional) — resumen legible por sesión que engorda el corpus. Bajo valor incremental: ya hay daily summaries indexados; pendiente de decidir si aporta.
+- **Team OS** — memoria/permisos compartidos para equipo. Módulo AVANZADO opcional (no core), decisión de negocio pendiente. (Antes etiquetado como v0.9.0; re-planificado al dedicar la v0.9.0 a Loop Engineering.)
+- Skills nativas en español adicionales (proposal-writer, youtube-transcript, linkedin-posts) con voice profile del operador.
+- Dashboard del OS (pendiente decidir si se integra con dashboard Sinapsis).
+- Onboarding con extracción desde URL (web/LinkedIn del operador → brand-context automático vía Firecrawl).
+- GitHub privado como destino adicional de `/backup` (versionado completo). Requiere `gh` autenticado y excluir `.env` del push — evaluar si la fricción compensa para miembros no técnicos.
+- Loops desatendidos (ejecución programada sin sesión abierta) — decisión pendiente para v1.0.
+- Test end-to-end de instalación en máquina limpia antes de v1.0.
+- v1.0.0: release pública estable + vídeos Loom + landing en iamastersacademy.com/os.
 
-### Backlog
-- skills nativas en español adicionales (proposal-writer, youtube-transcript, linkedin-posts) con voice profile del operador
-- dashboard del OS (pendiente decidir si se integra con dashboard Sinapsis)
-- v1.0.0: release pública estable + vídeos Loom + landing en iamastersacademy.com/os
+---
+
+## [0.10.1] — 2026-06-12
+
+### Changed
+- `/backup` ahora detecta también **Google Drive** y **OneDrive** (además de iCloud y Dropbox), incluyendo las rutas `CloudStorage` modernas de macOS y "Mi unidad" en español. La primera vez, el OS pregunta al operador en qué nube quiere sus copias y guarda la elección en `.env` (`IAMASTERS_BACKUP_DIR`); nunca vuelve a preguntar. Nuevos flags: `--where` (nubes detectadas) y `--dest <ruta>`.
+
+---
+
+## [0.10.0] — 2026-06-12
+
+**Skills a la carta.** Se acabó instalar las 35 skills a todo el mundo: ahora el OS trae 17 core (las que el sistema necesita) y las otras 20 viven en la biblioteca, visibles pero sin gastar contexto hasta que el operador las instala. Anthropic recomienda no pasar de ~50 skills cargadas; con este modelo el catálogo puede crecer sin límite.
+
+### Added
+- **Modelo Core + Biblioteca**: 17 skills core en `.claude/skills/` + 20 instalables en `skills-library/` (incluye absorber el antiguo `_meta/_optional/`: cognito y arnes pasan a la biblioteca).
+- **`/skills`** (`scripts/skills.sh`) — catálogo y gestión: `list` (instaladas vs disponibles con descripción), `add <nombre>` (con resolución automática de dependencias), `remove <nombre>` (las core no se pueden quitar), `sync` (refresca instaladas tras `/actualiza`). `SKILL.local.md` se preserva en todo el ciclo: instalar, quitar, reinstalar y sincronizar.
+- **Routing por intención**: si el usuario pide algo que resuelve una skill de biblioteca no instalada, el agente ofrece instalarla en vez de decir que no puede.
+
+### Changed
+- `/install-skill <nombre>` (modo atajo) ahora instala desde la biblioteca vía `scripts/skills.sh`; el modo URL de GitHub sigue igual con validación previa.
+- `scripts/update.sh` ejecuta `skills.sh sync` al final: las skills de biblioteca instaladas se refrescan solas con cada actualización.
+- CI `check-skills-registry.sh` valida el registry contra ambas raíces (`.claude/skills/` + `skills-library/`).
+
+---
+
+## [0.9.2] — 2026-06-12
+
+**Resilience pack.** El OS se respalda, se actualiza y se recupera solo: `/backup` a iCloud/Dropbox, `/restaura` como botón de deshacer de `/actualiza`, updates no-interactivos que nunca pisan lo del operador, y state de instalación que siempre dice la verdad.
+
+### Added
+- **`/backup`** (`scripts/backup.sh`) — copia de seguridad de todo lo irreemplazable del operador (context, brand-context, projects, clients, loops, .env, skills propias + memoria Sinapsis global: operator-state, instincts, daily summaries). Destino automático: iCloud → Dropbox → `~/iAmasters-Backup/` (override con `IAMASTERS_BACKUP_DIR` en `.env`). Rotación: últimos 7. `/wrap-up` lo sugiere si el último backup tiene >7 días.
+- **`/restaura`** (`scripts/rollback.sh`) — botón de deshacer de `/actualiza`: devuelve código Y datos al estado previo a la última actualización. Antes de restaurar guarda snapshot del estado actual (`.backup/pre-rollback-*`), así el rollback también es reversible. `update.sh` ahora escribe `META.txt` (commit pre-update) en cada backup.
+- **Convención `SKILL.local.md`** — personalizaciones del operador sobre skills curadas en archivo aparte (gitignored): sobreviven a `/actualiza` sin conflictos. El agente lo lee tras el `SKILL.md` y sus reglas mandan. (Patrón inspirado en agentic-os de Simon C.)
+
+### Fixed
+- `scripts/update.sh` — un fetch fallido quedaba enmascarado por el pipe a `tail` y `git rev-parse` sin `--verify` devolvía el nombre del ref inexistente: el script creía que había cambios upstream y abortaba a mitad con un error críptico. Ahora distingue "rama no está en origin" (update local-only, exit limpio) de "sin conexión/permisos" (error claro).
+
+### Changed
+- `scripts/update.sh` — modo no-interactivo automático cuando no hay TTY (p. ej. lanzado por Claude vía `/actualiza`): nunca pregunta, mantiene la versión local ante cualquier conflicto y lista "Pendientes de decisión" al final para resolverlos conversacionalmente. Antes, los prompts interactivos colgaban el flujo "sin terminal". Además ya no pisa archivos con cambios locales sin commitear.
+- `scripts/install.sh` — la validación profunda de `sinapsis-engine` ahora escribe los resultados reales de cada check en `_install-state.json` (antes quedaban los `false` del template aunque todo pasara, confundiendo a `/install-status` y al gate).
+
+---
+
+## [0.9.1] — 2026-06-11
+
+### Added
+- Comando `/actualiza` y disparadores en lenguaje natural ("actualízate a la última versión", "update"...) → corre `git pull` + `bash scripts/update.sh` preservando el contenido del operador. Pensado para miembros no técnicos: actualizan sin tocar la terminal.
+- Sección "Actualizar el OS" en `CLAUDE.md` y rama en `docs/quickstart.md`.
+
+---
+
+## [0.9.0] — 2026-06-11
+
+**Loop Engineering release.** El OS aprende a convertir trabajo repetitivo en sistemas: `automation-loop-engine` como skill core, 5 plantillas de loops listas para usar, 8 skills nuevas portadas del arsenal de Angel, catálogo 100% en español y CI anti-drift.
+
+### Fixed
+- Sincronizadas las menciones de Sinapsis vendored a v4.6.1 en README y CITATION.
+- Unificado el conteo documental a 35 skills core + 2 opcionales (cognito, arnes).
+- Añadido H1 descriptivo al comando `.claude/commands/doctor.md`.
+- Ajustada la detección de Python en `scripts/install.sh` para separar candidatos POSIX de `py -3` en Windows/Git Bash.
+
+### Added
+- `docs/automatizaciones.md` — guía de loops programados y rutinas para hacer que el OS trabaje solo.
+- CI de validación anti-drift en `.github/workflows/validate.yml` con checks locales reutilizables.
+- Nueva guía `docs/skill-creation-guide.md` con patrón real de skills, frontmatter, validación y ejemplo mínimo.
+- Nueva plantilla `brand-context/glossary-template.json` para correcciones STT de `tool-zoom-summary`.
+- `automation-loop-engine` (Loop Engineering) como skill core + carpeta `loops/` + comandos `/loops` y `/evalua-loop` + integración con `health-check`, `/recuerda` y `working-memory`.
+- 5 plantillas de loops (`contenido-semanal`, `propuestas`, `triaje-leads`, `informe-cliente`, `revision-semanal`) + `docs/loop-engineering.md`.
+- `tool-seguridad-ia` — prompts preventivos y checklist pre-deploy de seguridad para desarrollo con IA.
+- `tool-quality-gate` — validación pre-deploy con setup de tests y score 0-100.
+- `marketing-meta-ads-analyzer` — diagnóstico experto de campañas Meta Ads con Breakdown Effect.
+- `tool-transcribe-social` — transcripción de Reels/TikTok/Shorts con Groq Whisper y fallback claro.
+- `tool-web-legal-audit` — auditoría RGPD/LSSI/cookies/accesibilidad con evidencias y remediación.
+- `strategy-investigacion-profunda` — informes completos con triangulación, scoring y verificación de citas.
+- `tool-web-security-audit` — auditoría defensiva de seguridad web para objetivos autorizados.
+- `strategy-stack-recommender` — recomendación de stack tecnológico antes de construir.
+
+### Changed
+- `docs/quickstart.md` ampliado con árbol de decisión y plan de primera semana.
+- `docs/skills-recommended.md` reescrito como tabla accionable sin inventar URLs nuevas.
+- Traducidas al español las skills `find-skills`, `marketing-email-sequence` y `strategy-web-research`.
+- `marketing-email-sequence` ahora carga brand voice/contexto real del OS y pasa cada email por `tool-output-verifier`.
+- `tool-zoom-summary` menciona la plantilla de glosario cuando no existe `brand-context/glossary.json`.
 
 ---
 

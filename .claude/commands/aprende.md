@@ -137,7 +137,7 @@ Si no tiene clientes:
 
 ### Concepto
 
-iAmasters OS viene con **22 skills core** preinstaladas, pero el ecosistema Claude tiene cientos más. Hay tres formas de añadir cosas:
+iAmasters OS viene con **27 skills core** preinstaladas, pero el ecosistema Claude tiene cientos más. Hay tres formas de añadir cosas:
 
 1. **Plugins oficiales de Anthropic** (docx, xlsx, pdf, pptx, etc.) — se instalan vía marketplace, NO se copian al repo (su licencia es source-available).
 2. **Skills de terceros con MIT/Apache** — `/install-skill <github-url>` las vendorea aquí.

@@ -1,166 +1,87 @@
-# Skills recomendadas — Capa 2 (on-demand)
+# Skills recomendadas — Capa 2
 
-Las **18 skills core** que vienen preinstaladas con iAmasters OS están en el README. Este documento lista las **skills opcionales** que puedes añadir cuando las necesites con `/install-skill <github-url>`.
+Las skills core vienen preinstaladas en iAmasters OS. Esta lista recoge skills opcionales para instalar bajo demanda con:
 
-> **Filosofía**: max 30 skills, no 1000. Inflar el catálogo paraliza al miembro nuevo. Esta lista es **curada y opinada** — solo skills validadas en producción ≥2 semanas. No es exhaustiva ni inclusiva.
-
-> Última revisión: 2026-05-08 (v0.4.3)
-
----
-
-## Cómo instalar una skill de esta lista
-
-```
-# Dentro de Claude Code en tu repo iAmasters OS:
-/install-skill https://github.com/<owner>/<skill-repo>
+```bash
+/install-skill <url>
 ```
 
-El comando:
-1. Clona la skill a `.claude/skills/<categoria>/<nombre>/` localmente
-2. Valida estructura (SKILL.md presente, YAML frontmatter, descripción ≥50 chars)
-3. Te pregunta si quieres globalizarla a `~/.claude/skills/` (skill compartida entre repos)
+No instales skills porque sí. Añade una cuando resuelva una tarea recurrente y esté validada para tu caso.
 
----
+> Nota: este catálogo no inventa URLs. Usa la URL curada de la skill cuando esté documentada o aprobada en un issue/PR del repo.
 
-## Marketing — texto y campañas
+## Catálogo recomendado
 
-| Skill | Para qué | Dificultad |
-|---|---|:-:|
-| `copywriting` | Copy de landing pages y emails con humanizer gate y validación de no-fabricación | ⭐ Fácil |
-| `copy-editing` | Edita y mejora copy existente, proofreading, sweep de claridad | ⭐ Fácil |
-| `content-strategy` | Plan de contenido (qué escribir, frecuencia, distribución) | ⭐⭐ Media |
-| `email-sequence` | Drip campaigns, secuencias de bienvenida, lifecycle, abandoned cart | ⭐⭐ Media |
-| `email-marketing-bible` | Knowledge base de email marketing (908 fuentes, 4.798 insights) | ⭐ Fácil |
-| `social-content` | LinkedIn, X/Twitter, Instagram, TikTok, Facebook | ⭐ Fácil |
-| `ad-creative` | Variaciones de copy de ads (headlines, descriptions, primary text) | ⭐⭐ Media |
-| `launch-strategy` | Plan de lanzamiento de producto, feature, beta, ProductHunt | ⭐⭐⭐ Avanzada |
-| `paid-ads` | Google Ads, Meta, LinkedIn, X — campañas, ROAS, CPA | ⭐⭐⭐ Avanzada |
-| `cold-email` | B2B prospecting emails con follow-ups | ⭐⭐ Media |
+| Skill | Qué hace | Cuándo usarla | Cómo instalarla |
+|---|---|---|---|
+| `copywriting` | Escribe copy de landing pages y emails con validación de claridad. | Cuando necesitas una pieza persuasiva desde cero. | `/install-skill <url>` |
+| `copy-editing` | Revisa, corrige y mejora copy existente. | Cuando ya tienes texto y quieres pulirlo. | `/install-skill <url>` |
+| `content-strategy` | Planifica temas, frecuencia y distribución de contenido. | Cuando no sabes qué publicar o cómo ordenar el calendario editorial. | `/install-skill <url>` |
+| `email-sequence` | Diseña secuencias welcome, nurture, lifecycle y win-back. | Cuando necesitas varios emails conectados por objetivo y timing. | `/install-skill <url>` |
+| `email-marketing-bible` | Base de conocimiento amplia sobre email marketing. | Cuando quieres criterios, benchmarks o diagnóstico de email. | `/install-skill <url>` |
+| `social-content` | Crea contenido para LinkedIn, X, Instagram, TikTok o Facebook. | Cuando necesitas adaptar una idea a redes. | `/install-skill <url>` |
+| `ad-creative` | Genera variaciones de anuncios: titulares, descripciones y primary text. | Cuando preparas campañas pagadas. | `/install-skill <url>` |
+| `launch-strategy` | Planifica lanzamientos de producto, feature, beta o Product Hunt. | Cuando tienes fecha de lanzamiento y necesitas secuencia de acciones. | `/install-skill <url>` |
+| `paid-ads` | Ayuda con campañas en Google Ads, Meta, LinkedIn o X. | Cuando optimizas CPA, ROAS, segmentación o estructura de campañas. | `/install-skill <url>` |
+| `cold-email` | Crea emails outbound B2B y follow-ups. | Cuando haces prospección comercial en frío. | `/install-skill <url>` |
+| `page-cro` | Optimiza home, landing, pricing y páginas de producto. | Cuando quieres mejorar conversión de una página. | `/install-skill <url>` |
+| `form-cro` | Optimiza formularios de contacto, lead o demo. | Cuando pierdes usuarios en un formulario que no es signup. | `/install-skill <url>` |
+| `signup-flow-cro` | Mejora registro, alta de cuenta o activación de trial. | Cuando el cuello de botella está en el signup. | `/install-skill <url>` |
+| `popup-cro` | Diseña popups, modales, banners y exit intent. | Cuando quieres capturar leads sin dañar la experiencia. | `/install-skill <url>` |
+| `paywall-upgrade-cro` | Optimiza paywalls, upgrade screens y upsells. | Cuando necesitas convertir usuarios free o trial a pago. | `/install-skill <url>` |
+| `onboarding-cro` | Mejora activación y time-to-value post-signup. | Cuando los usuarios se registran pero no llegan al primer valor. | `/install-skill <url>` |
+| `ab-test-setup` | Diseña experimentos y variantes con hipótesis medibles. | Cuando quieres probar un cambio con criterio. | `/install-skill <url>` |
+| `seo-audit` | Audita problemas técnicos y on-page SEO. | Cuando una web no rankea o necesitas revisar fundamentos. | `/install-skill <url>` |
+| `ai-seo` | Optimiza para respuestas generadas por LLMs y citaciones. | Cuando quieres aparecer en AI search, AEO, GEO o LLMO. | `/install-skill <url>` |
+| `schema-markup` | Crea y corrige JSON-LD y structured data. | Cuando quieres rich snippets o datos estructurados limpios. | `/install-skill <url>` |
+| `programmatic-seo` | Diseña páginas SEO a escala con templates y datos. | Cuando tienes datasets, directorios o páginas por ciudad/categoría. | `/install-skill <url>` |
+| `pricing-strategy` | Ayuda con pricing, packaging, freemium y trials. | Cuando revisas monetización o subidas de precio. | `/install-skill <url>` |
+| `referral-program` | Diseña programas de referidos, afiliados o embajadores. | Cuando quieres crecimiento por recomendación. | `/install-skill <url>` |
+| `product-marketing-context` | Ordena positioning, ICP y contexto de producto. | Cuando falta una fuente de verdad de marketing. | `/install-skill <url>` |
+| `marketing-ideas` | Genera ideas prácticas de marketing y growth. | Cuando necesitas opciones rápidas para ejecutar. | `/install-skill <url>` |
+| `marketing-psychology` | Aplica sesgos, modelos mentales y persuasión. | Cuando quieres mejorar mensaje, oferta o fricción. | `/install-skill <url>` |
+| `churn-prevention` | Diseña cancel flows, save offers y recuperación de pagos. | Cuando tienes churn, bajas o pagos fallidos. | `/install-skill <url>` |
+| `revops` | Define lifecycle, lead scoring y handoff marketing-ventas. | Cuando marketing y ventas no están alineados. | `/install-skill <url>` |
+| `sales-enablement` | Crea sales decks, one-pagers, objeciones y demo scripts. | Cuando necesitas material para vender mejor. | `/install-skill <url>` |
+| `running-marketing-campaigns` | Planifica campañas digitales end-to-end. | Cuando necesitas coordinar contenido, email, social, SEO y tracking. | `/install-skill <url>` |
+| `analytics-tracking` | Configura GA4, eventos, conversiones y UTMs. | Cuando no confías en tus datos de conversión. | `/install-skill <url>` |
+| `saas-revenue-growth-metrics` | Calcula MRR, ARR, ARPU, churn, NRR y cohortes. | Cuando quieres entender salud de negocio SaaS. | `/install-skill <url>` |
+| `competitive-ads-extractor` | Analiza anuncios de competidores desde librerías públicas. | Cuando necesitas inspiración o benchmark de paid media. | `/install-skill <url>` |
+| `competitor-alternatives` | Crea páginas "alternativa a" y comparativas. | Cuando compites contra herramientas conocidas. | `/install-skill <url>` |
+| `free-tool-strategy` | Planifica free tools para SEO, leads o awareness. | Cuando quieres ingeniería como marketing. | `/install-skill <url>` |
 
-## CRO — conversión
+## Skills oficiales de archivos
 
-| Skill | Para qué | Dificultad |
-|---|---|:-:|
-| `page-cro` | Optimizar homepage, landing, pricing, feature pages | ⭐⭐ Media |
-| `form-cro` | Formularios contacto/lead/demo (NO signup) | ⭐⭐ Media |
-| `signup-flow-cro` | Optimización registration / signup / trial activation | ⭐⭐⭐ Avanzada |
-| `popup-cro` | Modales, exit-intent, banners, slide-ins | ⭐⭐ Media |
-| `paywall-upgrade-cro` | Paywalls, upgrade screens, upsells, feature gates | ⭐⭐⭐ Avanzada |
-| `onboarding-cro` | Activación post-signup, time-to-value | ⭐⭐⭐ Avanzada |
-| `ab-test-setup` | Diseñar e implementar A/B tests | ⭐⭐ Media |
+| Skill | Qué hace | Cuándo usarla | Cómo instalarla |
+|---|---|---|---|
+| `anthropic-skills:docx` | Crear, leer y editar documentos Word. | Cuando clientes envían `.docx`. | `/plugin install anthropic-skills` |
+| `anthropic-skills:xlsx` | Manipular hojas de cálculo. | Cuando trabajas con Excel, CSV o TSV. | `/plugin install anthropic-skills` |
+| `anthropic-skills:pptx` | Crear y editar presentaciones. | Cuando necesitas decks o PPTX. | `/plugin install anthropic-skills` |
+| `anthropic-skills:pdf` | Leer, dividir, combinar o marcar PDFs. | Cuando el input o entregable está en PDF. | `/plugin install anthropic-skills` |
 
-## SEO
+## Alternativa lean
 
-| Skill | Para qué | Dificultad |
-|---|---|:-:|
-| `seo-audit` | Audit técnico SEO completo | ⭐⭐ Media |
-| `ai-seo` | AEO/GEO/LLMO — optimizar para citaciones de LLMs | ⭐⭐ Media |
-| `schema-markup` | JSON-LD, structured data, rich snippets | ⭐⭐⭐ Avanzada |
-| `programmatic-seo` | Páginas SEO a escala con templates + datos | ⭐⭐⭐ Avanzada |
+Si prefieres empezar con memoria persistente mínima, revisa:
 
-## Estrategia y producto
+```text
+https://github.com/Luispitik/claude-code-second-brain
+```
 
-| Skill | Para qué | Dificultad |
-|---|---|:-:|
-| `pricing-strategy` | Decisiones de precio, packaging, freemium, free trial | ⭐⭐ Media |
-| `referral-program` | Programas de referidos, afiliados, viral loops | ⭐⭐ Media |
-| `product-marketing-context` | Document de positioning, ICP, foundational context | ⭐⭐ Media |
-| `marketing-ideas` | Generación de ideas de marketing y growth | ⭐ Fácil |
-| `marketing-psychology` | Aplicar principios psicológicos a marketing | ⭐⭐ Media |
-| `churn-prevention` | Cancellation flows, save offers, recovery | ⭐⭐⭐ Avanzada |
-| `revops` | Lead lifecycle, marketing-to-sales handoff, scoring | ⭐⭐⭐ Avanzada |
-| `sales-enablement` | Pitch decks, one-pagers, objection handling | ⭐⭐ Media |
-| `running-marketing-campaigns` | Plan completo end-to-end de campañas | ⭐⭐⭐ Avanzada |
+Es útil si no necesitas skills curadas, multi-cliente ni brand context. iAmasters OS adopta parte del patrón de contexto sectorizado con crédito explícito a Luis Pitik.
 
-## Analítica y crecimiento
+## Cómo proponer una skill
 
-| Skill | Para qué | Dificultad |
-|---|---|:-:|
-| `analytics-tracking` | GA4, conversion tracking, UTMs, event tracking | ⭐⭐ Media |
-| `saas-revenue-growth-metrics` | ARPU, MRR, ARR, churn, NRR, expansion, cohorts | ⭐⭐ Media |
-| `competitive-ads-extractor` | Extraer ads de competidores (Facebook/LinkedIn ad library) | ⭐⭐ Media |
-| `competitor-alternatives` | Páginas comparativa "X vs Y" para SEO + sales | ⭐⭐ Media |
-| `free-tool-strategy` | Free tools como growth driver | ⭐⭐⭐ Avanzada |
+Abre un issue o PR en:
 
-## Operaciones (de plugin externo `operations:*`)
+```text
+https://github.com/iamasters-academy/iamasters-os
+```
 
-Estas skills vienen del plugin `operations:*` de la suite de Cowork. Disponibles si tienes el plugin instalado:
+Incluye:
+- URL de la skill.
+- 1-2 ejemplos de uso real.
+- Categoría sugerida.
+- Por qué sirve a más de un avatar iAmasters.
+- Evidencia de uso en producción durante al menos 2 semanas.
 
-- `operations:process-optimization` — analizar y mejorar procesos
-- `operations:runbook` — crear runbooks operacionales
-- `operations:status-report` — reportes con KPIs, riesgos, action items
-- `operations:risk-assessment` — identificar y mitigar riesgos
-- `operations:capacity-plan` — planificación de capacidad
-- `operations:vendor-review` — evaluación de proveedores
-- `operations:change-request` — solicitudes de cambio con análisis impacto
-- `operations:compliance-tracking` — tracking compliance + audit prep
-- `operations:process-doc` — documentación de procesos (RACI, SOPs)
-
-## Tooling y archivos (oficiales Anthropic)
-
-| Skill | Para qué | Dificultad |
-|---|---|:-:|
-| `anthropic-skills:docx` | Crear, leer, editar Word docs | ⭐ Fácil |
-| `anthropic-skills:xlsx` | Manipular spreadsheets (xlsx, xlsm, csv, tsv) | ⭐ Fácil |
-| `anthropic-skills:pptx` | Crear y editar presentaciones | ⭐ Fácil |
-| `anthropic-skills:pdf` | Leer, combinar, dividir, marcar PDFs | ⭐ Fácil |
-
-> Las 4 skills de manejo de archivos office vienen oficialmente desde Anthropic. Recomendación: instalarlas SIEMPRE que el operador trabaje con clientes que mandan Excel/Word/PDF/PPT (mayoría).
-
-## Para sectores específicos
-
-Si la lista de skills no cubre tu vertical, mira si hay plantilla más específica:
-
-- **Médicos / Dental**: combinar `web-legal-audit` para RGPD + plantilla para clínicas
-- **Inmobiliarias**: combinar `programmatic-seo` + skills de local SEO
-- **B2B SaaS**: combinar `revops` + `saas-revenue-growth-metrics` + `pricing-strategy`
-- **E-commerce**: combinar `paywall-upgrade-cro` + `email-sequence` + `analytics-tracking`
-- **Educación / Formación online**: combinar `email-sequence` (cohortes) + `launch-strategy` (cada lanzamiento) + `churn-prevention` (retención)
-
----
-
-## Alternativa lean: claude-code-second-brain
-
-Si **prefieres empezar más minimal** (sin clonar todo iAmasters OS), existe una alternativa más liviana del mismo autor de Sinapsis:
-
-> 🧠 **[claude-code-second-brain](https://github.com/Luispitik/claude-code-second-brain)** por [Luis Pitik](https://github.com/Luispitik)
->
-> Pegas un prompt en Claude Code → te entrevista por secciones → genera un sistema de archivos persistente: CLAUDE.md master + `context/me.md, work.md, team.md, current-priorities.md, goals.md` + `decisions-log.md`. **Es la versión lean** de lo que hace iAmasters OS.
-
-### Cuándo elegir uno u otro
-
-| Caso | Mejor opción |
-|---|---|
-| Quieres empezar minimal, sin skills curadas | **second-brain** |
-| Quieres skills marketing/CRO/SEO ya instaladas | **iamasters-os** |
-| Trabajas con múltiples clientes con brand context distinta | **iamasters-os** (templates verticales) |
-| Solo necesitas memoria persistente | **second-brain** |
-| Quieres comunidad + actualizaciones curadas | **iamasters-os** |
-| Eres muy técnico y quieres rolar tu propio sistema | **second-brain** + tus skills propias |
-
-iAmasters OS adopta el patrón de "context sectorizado + decisions-log" de second-brain con crédito explícito. Son productos hermanos del mismo autor (Luis), no competencia.
-
----
-
-## Cómo proponer una skill nueva al catálogo
-
-Si has creado o encontrado una skill que crees que merece estar en este catálogo:
-
-1. Asegúrate de que cumple los criterios:
-   - Sirve a ≥3 avatares iAmasters
-   - Output útil sin contexto previo del operador
-   - No depende de integraciones privadas (Skool, Wixin, etc.)
-   - No depende de información confidencial
-   - Validada en producción ≥2 semanas
-
-2. Abre un issue o PR en [`iamasters-academy/iamasters-os`](https://github.com/iamasters-academy/iamasters-os) con:
-   - Link a la skill
-   - 1-2 ejemplos de uso real
-   - Categoría sugerida
-   - Por qué encaja en Capa 2
-
-3. El maintainer (Angel) la revisa. Las que pasan se añaden al catálogo en próxima release.
-
-## Cómo retirar una skill del catálogo
-
-Si una skill se vuelve obsoleta, deprecated, o el autor la abandona, abre un issue. Las skills en este catálogo se renuevan trimestralmente.
+El maintainer revisa y, si pasa, se añade al catálogo en una release futura.

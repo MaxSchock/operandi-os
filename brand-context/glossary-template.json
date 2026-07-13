@@ -1,0 +1,45 @@
+{
+  "replacements": [
+    {
+      "alias": "Cloud",
+      "canonical": "Claude",
+      "confidence": "high"
+    },
+    {
+      "alias": "Claud",
+      "canonical": "Claude",
+      "confidence": "high"
+    },
+    {
+      "alias": "rack",
+      "canonical": "RAG",
+      "confidence": "medium",
+      "caveat": "Aplicar solo en contexto de IA, retrieval o bases de conocimiento; no aplicar si se habla de servidores o hardware."
+    },
+    {
+      "alias": "super base",
+      "canonical": "Supabase",
+      "confidence": "high"
+    },
+    {
+      "alias": "supa base",
+      "canonical": "Supabase",
+      "confidence": "high"
+    },
+    {
+      "alias": "ene-ocho-ene",
+      "canonical": "n8n",
+      "confidence": "high"
+    },
+    {
+      "alias": "en ocho en",
+      "canonical": "n8n",
+      "confidence": "high"
+    },
+    {
+      "alias": "make punto com",
+      "canonical": "Make.com",
+      "confidence": "high"
+    }
+  ]
+}

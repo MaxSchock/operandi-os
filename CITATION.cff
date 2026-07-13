@@ -19,7 +19,7 @@ identifiers: []
 repository-code: "https://github.com/iamasters-academy/iamasters-os"
 url: "https://github.com/iamasters-academy/iamasters-os"
 abstract: >-
-  Sistema operativo agéntico para operadores de IA. Combina Sinapsis v4.5
+  Sistema operativo agéntico para operadores de IA. Combina Sinapsis v4.6.1
   (engine de memoria persistente) con una capa OS que añade brand context,
   agent context, skills curadas y multi-cliente. Construido en castellano
   como repositorio neutro y reutilizable.
@@ -36,8 +36,8 @@ keywords:
   - iamasters-academy
 license: MIT
 license-url: "https://github.com/iamasters-academy/iamasters-os/blob/main/LICENSE"
-version: "0.8.2"
-date-released: "2026-06-03"
+version: "0.10.1"
+date-released: "2026-06-11"
 preferred-citation:
   type: software
   authors:

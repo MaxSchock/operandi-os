@@ -1,92 +1,123 @@
 # Quickstart — primeros 30 minutos con iAmasters OS
 
-> Para alguien que clonó el repo, ejecutó `bash scripts/install.sh`, y abrió Claude Code en el repo.
+> Para alguien que clonó el repo, ejecutó `bash scripts/install.sh` y abrió Claude Code dentro del repo.
 
-## Minuto 0-5 · Onboarding
+## Árbol de decisión
 
-Claude Code te lanza el wizard automáticamente. 7 preguntas:
+### ¿Es tu primera vez?
 
-1. Avatar (single business / freelance / agencia / formador)
-2. Nivel técnico (cero / intermedio / avanzado)
-3. Dominio principal (marketing / operations / strategy / dev / mixto)
-4. Stack actual (multi-select)
-5. Idioma de outputs cliente (si aplica)
-6. Firecrawl API key (opcional pero recomendado)
-7. Identidad básica (nombre, email, web/LinkedIn)
+Ejecuta `/install`.
 
-Output: `~/.claude/skills/_operator-state.json` y `context/user.md` rellenados.
+Activa el install gate, completa el onboarding wizard y genera tu primer entregable con `welcome-quick-win`.
 
-## Minuto 5-15 · Brand voice (opcional pero recomendado)
+Outputs esperados: `~/.claude/skills/_operator-state.json`, archivos de `context/` y primer HTML en `projects/welcome/`.
 
-Si dijiste sí al brand voice:
+### ¿Ya está instalado y empiezas el día?
 
-- Pega tus URLs públicas (web, LinkedIn, YouTube, blog)
-- Firecrawl scraping → extrae voice samples
-- Claude analiza patrones de tu voz
-- Genera `brand-context/voice/voice-profile.md` + 3 registros (A/B/C)
-- Genera `brand-context/positioning/positioning.md` y `brand-context/icp/icp.md`
+Ejecuta `/start-here`.
 
-Output: tu marca queda "instalada" en el OS. Cualquier skill marketing-* la usará automáticamente.
+Carga memoria, prioridades y tareas abiertas antes de pedir trabajo nuevo.
 
-## Minuto 15-25 · Primera tarea real
+### ¿Vienes de n8n o Make?
 
-Pide algo concreto. Ejemplos:
+Pide: `Usa automation-n8n-to-claude para migrar este workflow`.
 
+Pega el JSON/export o describe el escenario.
+
+### ¿Quieres crear contenido con tu voz?
+
+Primero: `Ejecuta marketing-brand-voice con mi web y LinkedIn`.
+
+Después: `Usa marketing-copywriting para escribir 3 posts de LinkedIn sobre <tema>`.
+
+### ¿Vas a lanzar una web?
+
+Antes de publicar: `Ejecuta tool-quality-gate y tool-seguridad-ia`.
+
+Para cumplimiento y riesgo legal: `Usa tool-web-legal-audit con esta URL`.
+
+Para seguridad defensiva autorizada: `Usa tool-web-security-audit con esta URL`. Confirma siempre que la web es tuya o tienes permiso explícito.
+
+### ¿Vas a arrancar un proyecto software?
+
+Primero: `Usa strategy-stack-recommender para recomendar stack`.
+
+Después, si vas a construir con arnes: `Arranca el proyecto con arnes en nivel Express, Estándar o PRO`.
+
+### ¿Necesitas investigar algo a fondo?
+
+Usa `strategy-web-research` para una búsqueda ligera con 3-5 fuentes.
+
+Usa `strategy-investigacion-profunda` para un informe completo con triangulación, scoring de fuentes y verificación de afirmaciones.
+
+### ¿Quieres analizar campañas o vídeos sociales?
+
+Para campañas: `Usa marketing-meta-ads-analyzer con este export de Meta Ads`.
+
+Para vídeos: `Usa tool-transcribe-social con esta URL`.
+
+### ¿Trabajas para varios clientes?
+
+Ejecuta `/add-client`.
+
+Luego lee `docs/multi-client-guide.md`.
+
+### ¿Quieres crear tu propia skill?
+
+Lee `docs/skill-creation-guide.md`.
+
+### ¿Quieres la última versión?
+
+Dile a tu OS: **"actualízate a la última versión"** (o `/actualiza`). Trae los cambios e instala sin tocar tus skills ni tu contexto.
+
+### ¿Algo va mal?
+
+Ejecuta `/doctor`. Fuera de Claude Code: `bash scripts/install.sh --resume`.
+
+## Primeros 30 minutos
+
+0-5: onboarding wizard.  
+5-15: `marketing-brand-voice` para voice profile, registros A/B/C, positioning e ICP.  
+15-25: primera tarea real.  
+25-30: `/wrap-up` para registrar entregables, decisiones y aprendizajes.
+
+Ejemplos:
+
+```text
+Escribe 3 versiones de post LinkedIn sobre <tema>.
+Repurposea esta clase para redes.
+Genera un HTML compartible explicando esta decisión.
 ```
-"Escribe 3 versiones de post LinkedIn sobre <tema>"
-→ Claude usa marketing-copywriting con tu voice profile
 
-"Repurposea esta clase del Café Camaleónico para redes"
-→ marketing-content-repurposing
+## Tu primera semana con el OS
 
-"Genera un HTML compartible explicando esta decisión"
-→ tool-visual-explainer
-```
-
-## Minuto 25-30 · Wrap-up
-
-Antes de cerrar:
-
-```
-/wrap-up
-```
-
-Claude:
-- Genera daily summary en `~/.claude/skills/_daily-summaries/<TODAY>.md`
-- Updates skills registry si añadiste alguna
-- Propone git commit (acepta o rechaza)
-- Te dice qué empezar mañana al volver
-
-## Próximos días
-
-Cuando vuelvas a abrir Claude Code en el repo:
-
-```
-/start-here
-```
-
-Te recapitulará lo de ayer + propondrá tarea del día. La memoria persiste — no más "explícame tu stack otra vez".
+| Día | Qué probar | Resultado esperado |
+|---|---|---|
+| 1 | `/install` + `welcome-quick-win` | Primer entregable compartible |
+| 2 | `marketing-brand-voice` | Voz, registros, positioning e ICP |
+| 3 | `marketing-copywriting` | 2-3 piezas listas para revisar |
+| 4 | `automation-n8n-to-claude` | Primer workflow traducido o documentado |
+| 5 | `/add-client` | Un cliente separado con contexto propio |
+| 6 | `tool-visual-explainer` | HTML autocontenido para explicar una idea |
+| 7 | `/start-here` + `/wrap-up` | Rituales diarios consolidados |
 
 ## Comandos básicos
 
-| Comando | Qué hace |
-|---|---|
-| `/start-here` | Ritual de inicio (resumen + propuesta) |
-| `/wrap-up` | Cierre de sesión + commit |
-| `/add-client` | Crear cliente nuevo (multi-cliente) |
-| `/system-status` | Dashboard Sinapsis (engine) |
-| `/evolve` | Promover instincts aprendidos a permanentes |
-| `/eod` | End of day multi-proyecto (Sinapsis) |
-| `/dashboard-sinapsis` | Visualización del aprendizaje del sistema |
+`/install` completa instalación y onboarding.  
+`/start-here` inicia el día con memoria y prioridades.  
+`/wrap-up` cierra sesión con decisiones y aprendizajes.  
+`/add-client` crea un cliente nuevo.  
+`/doctor` diagnostica el OS.  
+`/system-status` muestra el dashboard Sinapsis.
 
-## Cuándo NO usar el OS
+## Cuándo no usar el OS
 
-- Editar el código de tu app → abre Claude Code en la carpeta de la app, no en este repo
-- Sesión exploratoria que no quieres ensuciar memoria → modo vanilla en otra carpeta
-- Tarea ultracorta (<2 min) → más fricción que valor
+- Para editar el código de una app: abre Claude Code en la carpeta de esa app.
+- Para una prueba que no quieres guardar en memoria: usa otra carpeta.
+- Para una tarea de menos de 2 minutos: quizá hay más fricción que valor.
 
 ## Siguiente lectura
 
-- `docs/multi-client-guide.md` (en v0.3.0) — flujo completo de servir N clientes
-- `docs/skill-creation-guide.md` — crear tus propias skills siguiendo el patrón
-- `docs/synapsis-overview.md` — entender qué hace el engine de memoria
+`docs/multi-client-guide.md` para multi-cliente.  
+`docs/skill-creation-guide.md` para crear skills propias.  
+`docs/install-state-schema.md` para entender el install gate.

@@ -16,6 +16,7 @@ Invoca la skill `meta-wrap-up` que vive en `.claude/skills/_meta/meta-wrap-up/SK
 6. Detecta proyectos a archivar (status: done > 7 días)
 7. Propone Git commit (espera aprobación)
 8. Sugiere `/eod` Sinapsis si es final del día
+9. Si el último backup tiene >7 días o no existe ninguno (`bash scripts/backup.sh --list`), sugiere en una línea lanzar `/backup` (30 segundos). No insistir si dice que no.
 
 ## Comando
 

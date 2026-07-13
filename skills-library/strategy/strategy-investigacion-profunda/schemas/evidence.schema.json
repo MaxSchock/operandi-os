@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Evidence",
+  "type": "object",
+  "required": ["evidence_id", "source_id", "quote"],
+  "properties": {
+    "evidence_id": {"type": "string"},
+    "source_id": {"type": "string"},
+    "quote": {
+      "type": "string",
+      "description": "Cita literal de la fuente. NO paráfrasis."
+    },
+    "evidence_type": {
+      "type": "string",
+      "enum": ["direct_quote", "statistic", "data_point", "figure", "table_row", "definition"]
+    },
+    "locator": {
+      "type": "string",
+      "description": "Página, sección, timestamp, párrafo. Ayuda a auditar."
+    },
+    "added_at": {"type": "string", "format": "date-time"}
+  }
+}
