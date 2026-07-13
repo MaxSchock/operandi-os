@@ -26,4 +26,19 @@ python3 "$SCRIPT_DIR/chat-to-md.py" "$latest" "$VAULT_OUTPUT" >/dev/null 2>&1 ||
     exit 0
 }
 
+# Auto-commit + push del vault: el backup no depende de tener Obsidian abierto.
+# obsidian-git sigue activo para cuando la app corre; aquí cubrimos el resto.
+VAULT="$HOME/iamasters-os/_wiki"
+if [ -d "$VAULT/.git" ]; then
+    (
+        cd "$VAULT"
+        git add -A >/dev/null 2>&1
+        if ! git diff --cached --quiet; then
+            git commit -m "vault backup: session close $(date +%Y-%m-%d_%H%M)" >/dev/null 2>&1
+        fi
+        git push origin main >/dev/null 2>&1 \
+            || echo "[chat-hook-on-stop] Vault push failed (offline?); queda commiteado en local." >&2
+    )
+fi
+
 exit 0
