@@ -14,3 +14,4 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-07-16,kisult,-,infra-google,sesion,0.4,Scope tasks.readonly token kisult + Tasks API habilitada; veredicto: tareas Chat Spaces no visibles por API
 2026-07-16,kisult,hemmersbach,optionsvergleich,sesion,1.5,Optionsvergleich 3 vías post-feedback David: verificación 14 reenvíos Gmail + cruce ejecuciones n8n + doc alemán + PDF (Downloads + Drive)
 2026-07-16,kisult,hemmersbach,optionsvergleich,sesion,0.7,Rework Optionsvergleich tras feedback Max: nivel no técnico + rediseño (Montserrat cards schaubild) + redistribución
+2026-07-16,kisult,hemmersbach,optionsvergleich,sesion,0.8,Technik-Anhang para Sergio (respuesta a sus comentarios del grupo WhatsApp): arquitectura + contrato HTTP + was bleibt/fliegt/neu + PDF (Downloads + Drive)
