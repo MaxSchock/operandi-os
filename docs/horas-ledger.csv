@@ -18,3 +18,4 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-07-16,kisult,suritec,fred-chatbot,sesion,0.8,Research emails support@/info@ + draft bloqueos Übergabe a Jo con propuesta Kontaktbereich y 3 citas
 2026-07-16,kisult,hemmersbach,weg-b-build,sesion,0.6,Screenshot Jonas (oferta David: respuestas manuales como modelo) analizado + Antwort-Korpus integrado en Technik-Anhang (15-22h) + prompt plan-mode del build Weg B
 2026-07-16,kisult,hemmersbach,weg-b-build,sesion,0.4,Matiz buzones (kisult@ solo reenvíos; Gesendet de info@ requiere acceso nuevo): fix Technik-Anhang + prompt build (tests 14+119 con Testbericht PDF y backups explícitos) + draft a David
+2026-07-16,kisult,hemmersbach,weg-b-build,sesion,0.3,Universo de tests congelado: 186 emails inbox kisult (174 reenvíos = casos) en test-universe CSV + regla sin-sampling en prompt build
