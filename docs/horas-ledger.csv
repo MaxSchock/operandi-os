@@ -19,3 +19,4 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-07-16,kisult,hemmersbach,weg-b-build,sesion,0.6,Screenshot Jonas (oferta David: respuestas manuales como modelo) analizado + Antwort-Korpus integrado en Technik-Anhang (15-22h) + prompt plan-mode del build Weg B
 2026-07-16,kisult,hemmersbach,weg-b-build,sesion,0.4,Matiz buzones (kisult@ solo reenvíos; Gesendet de info@ requiere acceso nuevo): fix Technik-Anhang + prompt build (tests 14+119 con Testbericht PDF y backups explícitos) + draft a David
 2026-07-16,kisult,hemmersbach,weg-b-build,sesion,0.3,Universo de tests congelado: 186 emails inbox kisult (174 reenvíos = casos) en test-universe CSV + regla sin-sampling en prompt build
+2026-07-16,interno,-,iamasters-os,sesion,0.7,Evaluación repo claude-code-best-practice: regla workflow builds grandes (Spec Kit vs spec.md) en CLAUDE.md global + piloto 3 skills anidadas por cliente (kisult-weekly-deck / hemmersbach-n8n-ops / operandi-brand-voice)
