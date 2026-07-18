@@ -46,7 +46,7 @@ BODY_MADS = """Hi Mads,
 
 im Anhang der neue Einbau-Code für das FRED-Chatfenster auf suri-tec.de. Neu darin: das Kontaktfenster im Suritec-Design (öffnet sich beim Laden der Seite automatisch, einmal pro Besuch, X schließt), die Kanäle Chat und WhatsApp, und die größere Chat-Bubble (138 px, gleich groß wie eure Buttons links). Die inhaltlichen Verbesserungen sind serverseitig schon live; das Design hat Jo am 17.07. freigegeben.
 
-Einbau: im Anhang ist alles zwischen den Markierungen "SURITEC FRED WIDGET v4 — START" und "SURITEC FRED WIDGET v4 — ENDE" gekennzeichnet (Styles + HTML + Script). Diesen Block 1:1 statt des bisherigen Widget-Blocks einfügen; der Rest der Datei ist nur unsere Testseite drumherum.
+Einbau: im Anhang ist alles zwischen den Markierungen "SURITEC FRED WIDGET v4 START" und "SURITEC FRED WIDGET v4 ENDE" gekennzeichnet (Styles + HTML + Script). Diesen Block 1:1 statt des bisherigen Widget-Blocks einfügen; der Rest der Datei ist nur unsere Testseite drumherum.
 
 So sieht es aus: https://s3.kisult.com/suritec-fred-test/index.html
 
