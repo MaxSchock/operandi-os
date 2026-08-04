@@ -31,6 +31,19 @@ Lee `context/working-memory.md` (scratchpad de trabajo) **primero** — es tu fo
 - Si no existe → créalo con la cabecera de reglas y las 3 secciones vacías (Hilos activos / Notas de entorno / Decisiones pendientes). Es el bootstrap.
 - Si existe → úsalo como base del saludo: qué hilos están abiertos, qué decisiones esperan al operador.
 
+Consulta `public.n8n_errors_inbox` en Supabase (project `xepotlbqlwmriwievyvc`):
+
+```sql
+SELECT id, client, workflow_name, step_name, error_message, occurred_at
+FROM public.n8n_errors_inbox
+WHERE resolved_at IS NULL
+ORDER BY occurred_at DESC LIMIT 20;
+```
+
+Es el canal por el que los sistemas desatendidos llegan a un humano, y va **antes** del saludo: si algo lleva roto toda la noche, eso es la noticia del día, no lo que quedó pendiente ayer. Resumir agrupado por cliente/workflow.
+
+Presta atención especial a `step_name = 'unipile_route_gone'`: significa que Unipile ha retirado una ruta que usamos y que hay envíos cayéndose en silencio. No esperes un aviso del proveedor por email; el 2026-08-04 se comprobó que su newsletter del 27-07 no mencionaba ninguna de las cuatro rutas que había retirado tres días antes.
+
 Lee `synapsis/daily-summaries/<TODAY>.md` o `<YESTERDAY>.md`:
 - Si hay → resumir el "For tomorrow" en una línea
 - Si no → primera sesión del día
