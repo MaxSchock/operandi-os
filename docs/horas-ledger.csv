@@ -103,3 +103,4 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-07-30,kisult,suritec,weekly,reunion,1.0,"KIsult & Suritec Weekly 12:29 CEST (duracion est., el doc de Gemini no la recoge)"
 2026-08-03,kisult,-,jonas-diverses,reunion,1.0,"Max & Jonas Diverses 13:01 CEST (duracion est., el doc de Gemini no la recoge)"
 2026-08-03,kisult,suritec,talkpilot,reunion,1.0,"Suritec TalkPilot con Gregor 15:16 CEST: cambio de stack a Azure GPT-4.1 + DeepGram Flux + voz Katesia, Kugel Audio descartado (duracion est.)"
+2026-08-04,operandi,-,outreach-v2,sesion,0.8,"Auditoria y reparacion de rutas Unipile: 4 rutas de escritura retiradas, fix + canario real, guardia de rutas cada 6h en el monitor"
