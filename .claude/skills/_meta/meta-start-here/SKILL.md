@@ -42,7 +42,9 @@ ORDER BY occurred_at DESC LIMIT 20;
 
 Es el canal por el que los sistemas desatendidos llegan a un humano, y va **antes** del saludo: si algo lleva roto toda la noche, eso es la noticia del día, no lo que quedó pendiente ayer. Resumir agrupado por cliente/workflow.
 
-Presta atención especial a `step_name = 'unipile_route_gone'`: significa que Unipile ha retirado una ruta que usamos y que hay envíos cayéndose en silencio. No esperes un aviso del proveedor por email; el 2026-08-04 se comprobó que su newsletter del 27-07 no mencionaba ninguna de las cuatro rutas que había retirado tres días antes.
+Las alertas que dicen que un proveedor externo ha cambiado bajo nuestros pies (rutas retiradas, credenciales caducadas, respuestas con otra forma) van primero: son las que rompen sistemas enteros en silencio.
+
+Un proveedor no avisa de lo que rompe. Sus newsletters cuentan lo que añade, y una comprobación que dependa de leer sus correos da luz verde mientras la integración lleva días caída. La señal fiable es siempre lo que responde su API, sondeada por nosotros. Si un sistema depende de un tercero y no tiene una comprobación propia que lo vigile, ese es el hueco, y merece nombrarse en el saludo.
 
 Lee `synapsis/daily-summaries/<TODAY>.md` o `<YESTERDAY>.md`:
 - Si hay → resumir el "For tomorrow" en una línea
