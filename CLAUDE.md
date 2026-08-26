@@ -229,7 +229,7 @@ Viven en `skills-library/` (cero coste de contexto hasta instalarlas). Instalar:
 |---|---|
 | `tool-visual-explainer` | HTML autocontenido compartible |
 
-### Skills propias del operador (4)
+### Skills propias del operador (5)
 
 No vienen del upstream; sobreviven a `/actualiza` y no se desinstalan con `/skills remove`.
 
@@ -239,6 +239,7 @@ No vienen del upstream; sobreviven a `/actualiza` y no se desinstalan con `/skil
 | `mcp-builder` | Guía para crear servidores MCP de calidad |
 | `canvas-design` | Diseño visual en canvas (posters, arte generativo) |
 | `skill-creator` | Crear, mejorar y medir skills (upstream Anthropic) |
+| `frontend-design` | Diseño visual intencional de UI: dirección estética, tipografía, evitar look de plantilla (upstream Anthropic, instalada 2026-07-22) |
 
 ### Plugins Anthropic (instalación vía marketplace)
 

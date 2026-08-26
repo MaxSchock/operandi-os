@@ -60,6 +60,58 @@ Lee `synapsis/projects.json` (Sinapsis):
 Lee `projects/briefs/*/brief.md`:
 - Filtrar los que tengan YAML frontmatter `status: active` o `phase: in-progress`
 
+### Paso 2.4 · Repaso de canales (OBLIGATORIO, antes del saludo)
+
+El saludo no vale con working-memory + inbox n8n + daily summaries. Desde el último EOD se repasan
+TODOS los canales, en paralelo (4 subagentes) y sin atajos:
+
+1. **WhatsApp** (BD `evolution` en VpsFigura, tabla `Message`): todos los chats de trabajo, texto
+   completo, audios descargados y transcritos (Gemini en ki-prod-01; Whisper si Gemini falla).
+2. **Buzón + Drive KIsult** (OAuth `accounts/kisult.json`): recibidos, enviados, borradores, docs
+   "Notizen von Gemini" íntegros, calendario.
+3. **Buzón + Drive Operandi** (OAuth `token-operandi.json`): ídem.
+4. **Falkenlead** max@ y administracion@ por IMAP (`~/.config/falkenlead/`).
+5. **Personal** por Unipile desde el VPS (`GET /api/v1/emails?account_id=fEIV_1UOTu-REknkpb_ZVA`).
+
+Las reuniones de Max se detectan por sus transcripts, no porque él las mencione; cada una va al
+ledger (`docs/horas-ledger.csv`, tipo reunion). Salida: "espera respuesta de Max" por canal y
+señales de facturación al radar (paso 2.5). Origen: Max lo exigió el 17-08 y lo reclamó de nuevo el
+22-08 al darle un saludo sin repaso. Memoria: `feedback-arrancar-sesion-con-repaso-de-canales`.
+
+### Paso 2.5 · Radar de facturación (al repasar canales)
+
+El repaso de bandejas y WhatsApp es donde aparecen, sueltas y sin avisar, las cosas que luego
+hacen falta al facturar. Cuando se lea un canal (WhatsApp vía BD `evolution`, buzones KIsult /
+Operandi / Falkenlead / personal), se anota **en el momento** lo que sea señal de facturación,
+porque a fin de mes ya nadie se acuerda de en qué chat estaba.
+
+Qué cuenta como señal, con lo que hay que capturar de cada una:
+
+| Señal | Qué se apunta |
+|---|---|
+| Autorización a facturar ("puedes facturar", "Rechnung stellen", "mándame la factura") | quién, qué concepto, qué hito o porcentaje, fecha del mensaje |
+| Confirmación de pago ("haben überwiesen", "te lo transferí", "pagado") | quién, qué factura dice haber pagado, fecha. **Es un dicho, no un hecho**: se verifica contra el banco antes de dar nada por cobrado |
+| Datos fiscales del cliente (razón social, dirección, VAT/USt-IdNr, a quién se emite) | el dato exacto y quién lo dio. Un cambio aquí obliga a rehacer facturas ya emitidas |
+| Hitos y forma de pago (50/50, a fin de mes por horas, vencimientos) | el acuerdo literal y de qué proyecto |
+| Gasto nuevo mencionado (proveedor, suscripción, compra) | proveedor y periodo, para buscar luego la factura en los buzones |
+| Peticiones del asesor (Guille, `guillermo@articoasesores.es`) | qué pide y para qué trimestre |
+
+Se escriben en `clients/falkenlead/facturacion-radar.md` (append-only, una línea por señal, con
+fecha y fuente citada para poder volver al mensaje original). Max factura todo desde Falkenlead,
+también lo de Operandi y KIsult, por eso el radar es único y vive ahí.
+
+En el saludo: si hay entradas del radar sin resolver, **una línea** al final ("Pendiente de
+facturar: X de Jonas desde el 04-08"). No se convierte el saludo en un informe contable; el
+detalle está en el archivo.
+
+Reglas duras de este paso:
+- Nunca dar por cobrada una factura porque alguien lo diga en un chat. La fuente de verdad es el
+  extracto bancario (`clients/falkenlead/scripts/enablebanking.py tx`).
+- **A KIsult se factura por porcentaje del proyecto, nunca por horas.** Si un mensaje habla de
+  "Zeiten"/horas, la señal a anotar es el hito o el porcentaje, no un número de horas facturables.
+  Las horas del ledger son control interno (contrastar esfuerzo real contra lo presupuestado).
+- Nunca emitir ni enviar nada desde el ritual. El radar solo anota.
+
 ### Paso 3 · Sincronizar skills detectadas
 
 Comprueba si hay `.claude/.skills-pending.json` (creado por hook `skill-change-detector.sh`):
