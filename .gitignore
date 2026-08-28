@@ -76,6 +76,13 @@ projects/*/
 # Excepción: el showcase sí forma parte del repo (material de referencia)
 !projects/_showcase/
 !projects/_showcase/**
+# Excepción: skool-radar es código, no output (sus datos y sesión se ignoran en su propio .gitignore)
+!projects/skool-radar/
+!projects/skool-radar/**
+projects/skool-radar/state/
+projects/skool-radar/data/
+projects/skool-radar/out/
+projects/skool-radar/.venv/
 
 # Loops del operador (privados)
 loops/*

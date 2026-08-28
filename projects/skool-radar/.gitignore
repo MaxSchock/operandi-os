@@ -1,0 +1,9 @@
+state/
+data/*.db
+data/*.json
+out/
+__pycache__/
+*.mp4
+*.m4a
+c.json
+*.html
