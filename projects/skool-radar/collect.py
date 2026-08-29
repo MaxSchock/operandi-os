@@ -84,7 +84,10 @@ async def run(args):
                     continue
                 lessons, _ = await sk.course_tree(community, c["id"])
                 for les in lessons:
+                    res = les.pop("resources", [])
                     db.upsert_post(con, les)
+                    if res:
+                        db.save_resources(con, les["id"], res)
                     n += 1
                 print(f"    {c['title']}: {len(lessons)} lecciones")
             con.commit()

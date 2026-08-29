@@ -46,6 +46,17 @@ CREATE TABLE IF NOT EXISTS comments (
     upvotes    INTEGER,
     created_at TEXT
 );
+CREATE TABLE IF NOT EXISTS resources (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id     TEXT NOT NULL,
+    title       TEXT,
+    link        TEXT,               -- external URL, when the resource is a link
+    file_id     TEXT,               -- Skool asset id, when it is an attachment
+    file_name   TEXT,
+    file_type   TEXT,
+    local_path  TEXT,               -- filled once downloaded
+    UNIQUE(post_id, title, link, file_id)   -- empty strings, never NULL, so dedupe works
+);
 CREATE TABLE IF NOT EXISTS runs (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
     community  TEXT,
@@ -99,6 +110,14 @@ def save_comments(con, post_id, rows):
         rows,
     )
     con.execute("UPDATE posts SET comments_at = ? WHERE id = ?", (now(), post_id))
+
+
+def save_resources(con, post_id, items):
+    con.executemany(
+        "INSERT OR IGNORE INTO resources (post_id, title, link, file_id, file_name, file_type) "
+        "VALUES (?,?,?,?,?,?)",
+        [(post_id, r.get("title") or "", r.get("link") or "", r.get("file_id") or "",
+          r.get("file_name") or "", r.get("file_content_type") or "") for r in items])
 
 
 def start_run(con, community):

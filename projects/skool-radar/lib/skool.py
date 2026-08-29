@@ -104,6 +104,48 @@ class Skool:
         return out
 
     @staticmethod
+    def _rich_text(desc):
+        """Skool stores lesson bodies as ProseMirror JSON prefixed with [v2]."""
+        if not desc:
+            return ""
+        if isinstance(desc, str):
+            raw = desc[4:] if desc.startswith("[v2]") else desc
+            try:
+                desc = json.loads(raw)
+            except Exception:
+                return raw
+        out = []
+
+        def walk(n):
+            if isinstance(n, list):
+                for x in n:
+                    walk(x)
+                return
+            if not isinstance(n, dict):
+                return
+            if n.get("type") == "text":
+                out.append(n.get("text", ""))
+            elif n.get("type") in ("paragraph", "heading", "listItem", "bulletList"):
+                out.append("\n")
+            for x in (n.get("content") or []):
+                walk(x)
+
+        walk(desc)
+        return "\n".join(line.strip() for line in "".join(out).splitlines() if line.strip())
+
+    @staticmethod
+    def _resources(md):
+        """Attachments and links a lesson carries, as a list of dicts."""
+        raw = md.get("resources")
+        if not raw:
+            return []
+        try:
+            items = json.loads(raw) if isinstance(raw, str) else raw
+        except Exception:
+            return []
+        return [i for i in items if isinstance(i, dict)]
+
+    @staticmethod
     def _videos(md):
         """Videos of a post or a lesson.
 
@@ -248,25 +290,34 @@ class Skool:
         node = props.get("course") or {}
         root = node.get("course") or {}
         course_title = (root.get("metadata") or {}).get("title")
+        # Lesson URLs are built from the course's short `name`, not from any id:
+        # with the wrong anchor Skool silently ignores ?md= and serves the
+        # default lesson, which reads as "this lesson has no text".
+        course_slug = root.get("name") or course_id
         lessons = []
 
-        def visit(n, module_title, depth):
+        def visit(n, module_title, module_id, depth):
             inner = n.get("course") or n
             md = inner.get("metadata") or {}
             title = md.get("title")
             kids = n.get("children") or []
             if kids:
                 for k in kids:
-                    visit(k, title if depth == 0 else module_title, depth + 1)
+                    visit(k,
+                          title if depth == 0 else module_title,
+                          inner.get("id") if depth == 0 else module_id,
+                          depth + 1)
                 return
             lessons.append({
                 "id": inner.get("id"),
                 "community": community,
                 "slug": inner.get("name"),
-                "url": f"{BASE}/{community}/classroom/{course_id}?md={inner.get('id')}",
+                "url": (f"{BASE}/{community}/classroom/"
+                        f"{course_slug}?md={inner.get('id')}"),
                 "kind": "lesson",
                 "title": title,
-                "content": md.get("description") or md.get("content") or "",
+                "content": self._rich_text(md.get("desc")),
+                "resources": self._resources(md),
                 "author": None,
                 "labels": None,
                 "upvotes": 0,
@@ -279,5 +330,5 @@ class Skool:
             })
 
         for child in (node.get("children") or []):
-            visit(child, None, 0)
+            visit(child, None, None, 0)
         return lessons, props
