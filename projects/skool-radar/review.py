@@ -21,7 +21,7 @@ from lib import db  # noqa: E402
 OUT = os.path.join(HERE, "out")
 
 
-def fetch(con, community, days, include_reported):
+def fetch(con, community, days, include_reported, kind=None):
     sql = ("SELECT id, community, title, content, author, url, upvotes, n_comments, "
            "videos, transcript, created_at, kind, course, module FROM posts WHERE 1=1")
     p = []
@@ -30,9 +30,12 @@ def fetch(con, community, days, include_reported):
         p.append(community)
     if not include_reported:
         sql += " AND reported_at IS NULL"
+    if kind:
+        sql += " AND kind = ?"
+        p.append(kind)
     if days:
         since = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
-        sql += " AND (created_at >= ? OR kind = 'lesson')"
+        sql += " AND created_at >= ?"
         p.append(since)
     sql += " ORDER BY (upvotes + n_comments) DESC, created_at DESC"
     return con.execute(sql, p).fetchall()
@@ -49,18 +52,19 @@ def main():
     ap.add_argument("--community")
     ap.add_argument("--days", type=int, default=7)
     ap.add_argument("--all", action="store_true", help="incluye lo ya reportado")
+    ap.add_argument("--kind", choices=["post", "lesson"])
     ap.add_argument("--mark", action="store_true", help="marca lo exportado como reportado")
     args = ap.parse_args()
 
     con = db.connect()
-    rows = fetch(con, args.community, None if args.all else args.days, args.all)
+    rows = fetch(con, args.community, None if args.all else args.days, args.all, args.kind)
     if not rows:
         print("Nada nuevo que revisar.")
         return 0
 
     os.makedirs(OUT, exist_ok=True)
     stamp = datetime.now().strftime("%Y-%m-%d")
-    path = os.path.join(OUT, f"{stamp}-material.md")
+    path = os.path.join(OUT, f"{stamp}-{args.kind or 'todo'}-material.md")
     n_vid = 0
     with open(path, "w") as f:
         f.write(f"# Material de Skool sin revisar · {stamp}\n\n")

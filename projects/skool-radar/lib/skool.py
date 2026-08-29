@@ -59,44 +59,78 @@ class Skool:
             return None
         return json.loads(m.group(1)).get("props", {}).get("pageProps", {})
 
+    async def api(self, path):
+        """Call the internal API from inside the page, so the session travels along."""
+        url = path if path.startswith("http") else f"https://api2.skool.com{path}"
+        if "skool.com" not in (self.page.url or ""):
+            await self.page.goto(f"{BASE}/discover", wait_until="domcontentloaded", timeout=60000)
+        return await self.page.evaluate(
+            """async (u) => {
+                try {
+                    const r = await fetch(u, {credentials: 'include'});
+                    if (!r.ok) return {__error: r.status};
+                    return await r.json();
+                } catch (e) { return {__error: String(e)}; }
+            }""", url)
+
     async def whoami(self):
-        props = await self.page_props(f"{BASE}/discover")
-        me = (props or {}).get("self") or {}
-        meta = me.get("metadata") or {}
-        return {"logged_in": bool(me.get("id")), "name": me.get("name"),
-                "first": meta.get("firstName"), "id": me.get("id")}
+        """Logged-in identity, read from the session endpoint the app itself uses.
+
+        Authenticated pages are rendered client-side, so __NEXT_DATA__ comes back
+        nearly empty and cannot be used to tell a live session from an anonymous one.
+        """
+        data = await self.api("/self/groups?limit=1&prefs=false")
+        if not data or data.get("__error"):
+            return {"logged_in": False, "name": None, "error": (data or {}).get("__error")}
+        me = data.get("user") or data.get("self") or {}
+        md = me.get("metadata") or {}
+        return {"logged_in": True, "name": me.get("name") or md.get("firstName"),
+                "id": me.get("id")}
 
     async def my_communities(self):
-        """Communities the logged-in account belongs to."""
-        props = await self.page_props(f"{BASE}/discover") or {}
+        """Communities this account belongs to."""
+        data = await self.api("/self/groups?limit=50&prefs=false")
+        if not data or data.get("__error"):
+            return []
+        groups = data.get("groups") or data.get("items") or []
         out = []
-        for key in ("groupCards", "myGroups", "groups"):
-            for g in (props.get(key) or []):
-                grp = g.get("group", g)
-                md = grp.get("metadata") or {}
-                if grp.get("name"):
-                    out.append({"slug": grp["name"], "title": md.get("displayName") or grp.get("name"),
-                                "id": grp.get("id"), "members": md.get("totalMembers")})
-        seen, uniq = set(), []
-        for c in out:
-            if c["slug"] not in seen:
-                seen.add(c["slug"])
-                uniq.append(c)
-        return uniq
+        for g in groups:
+            grp = g.get("group", g)
+            md = grp.get("metadata") or {}
+            if grp.get("name"):
+                out.append({"slug": grp["name"], "title": md.get("displayName") or grp["name"],
+                            "id": grp.get("id"), "members": md.get("totalMembers"),
+                            "role": g.get("role") or grp.get("role")})
+        return out
 
     @staticmethod
     def _videos(md):
+        """Videos of a post or a lesson.
+
+        Posts carry videoLinksData (a JSON list). Classroom lessons carry a bare
+        videoLink plus videoLenMs, and in this community those are Loom URLs.
+        """
+        out = []
         raw = md.get("videoLinksData") or md.get("video_links_data")
-        if not raw:
-            return []
-        try:
-            data = json.loads(raw) if isinstance(raw, str) else raw
-        except Exception:
-            return []
-        prov = {1: "youtube", 2: "vimeo", 3: "loom", 4: "wistia"}
-        return [{"provider": prov.get(v.get("provider"), str(v.get("provider"))),
-                 "video_id": v.get("video_id"), "url": v.get("url"),
-                 "len_ms": v.get("len_ms"), "title": v.get("title")} for v in data]
+        if raw:
+            try:
+                data = json.loads(raw) if isinstance(raw, str) else raw
+            except Exception:
+                data = []
+            prov = {1: "youtube", 2: "vimeo", 3: "loom", 4: "wistia"}
+            out += [{"provider": prov.get(v.get("provider"), str(v.get("provider"))),
+                     "video_id": v.get("video_id"), "url": v.get("url"),
+                     "len_ms": v.get("len_ms"), "title": v.get("title")} for v in data]
+        link = md.get("videoLink")
+        if link and not any(v.get("url") == link for v in out):
+            host = link.split("/")[2].lower() if "//" in link else ""
+            provider = ("loom" if "loom.com" in host else
+                        "youtube" if "youtu" in host else
+                        "vimeo" if "vimeo" in host else
+                        "wistia" if "wistia" in host else host or "desconocido")
+            out.append({"provider": provider, "video_id": link.rstrip("/").split("/")[-1],
+                        "url": link, "len_ms": md.get("videoLenMs"), "title": md.get("title")})
+        return out
 
     def _post_row(self, community, node):
         p = node.get("post", node)
@@ -205,43 +239,45 @@ class Skool:
         return out
 
     async def course_tree(self, community, course_id):
-        """Modules and lessons of one course, with body text and video links."""
+        """Modules and lessons of one course, with their video links.
+
+        Shape: pageProps.course = {course: <root>, children: [modules]}, and every
+        node repeats that {course, children} nesting. Leaves are the lessons.
+        """
         props = await self.page_props(f"{BASE}/{community}/classroom/{course_id}") or {}
-        course = props.get("course") or {}
-        cmd = (course.get("metadata") or {}) if isinstance(course, dict) else {}
+        node = props.get("course") or {}
+        root = node.get("course") or {}
+        course_title = (root.get("metadata") or {}).get("title")
         lessons = []
 
-        def visit(node, module_title):
-            md = node.get("metadata") or {}
+        def visit(n, module_title, depth):
+            inner = n.get("course") or n
+            md = inner.get("metadata") or {}
             title = md.get("title")
-            kids = node.get("children") or []
+            kids = n.get("children") or []
             if kids:
                 for k in kids:
-                    visit(k, title or module_title)
+                    visit(k, title if depth == 0 else module_title, depth + 1)
                 return
             lessons.append({
-                "id": node.get("id"),
+                "id": inner.get("id"),
                 "community": community,
-                "slug": node.get("name"),
-                "url": f"{BASE}/{community}/classroom/{course_id}?md={node.get('id')}",
+                "slug": inner.get("name"),
+                "url": f"{BASE}/{community}/classroom/{course_id}?md={inner.get('id')}",
                 "kind": "lesson",
                 "title": title,
-                "content": md.get("description") or md.get("content"),
+                "content": md.get("description") or md.get("content") or "",
                 "author": None,
                 "labels": None,
                 "upvotes": 0,
                 "n_comments": 0,
                 "videos": json.dumps(self._videos(md), ensure_ascii=False),
-                "created_at": node.get("createdAt"),
-                "updated_at": node.get("updatedAt"),
-                "course": cmd.get("title"),
+                "created_at": inner.get("createdAt"),
+                "updated_at": inner.get("updatedAt"),
+                "course": course_title,
                 "module": module_title,
             })
 
-        root = course.get("tree") or course.get("children") or course
-        if isinstance(root, dict):
-            visit(root, None)
-        elif isinstance(root, list):
-            for n in root:
-                visit(n, None)
+        for child in (node.get("children") or []):
+            visit(child, None, 0)
         return lessons, props
