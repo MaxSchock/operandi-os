@@ -73,6 +73,28 @@ class Skool:
                 } catch (e) { return {__error: String(e)}; }
             }""", url)
 
+    async def download_url(self, file_id, expire=28800):
+        """Signed URL for an attachment.
+
+        The endpoint answers POST only (a GET returns 405), and replies with the
+        bare URL as text, not JSON.
+        """
+        url = f"https://api2.skool.com/files/{file_id}/download-url?expire={expire}"
+        # the call must originate from a skool.com page or the browser blocks it
+        if "skool.com" not in (self.page.url or ""):
+            await self.page.goto(f"{BASE}/discover", wait_until="domcontentloaded", timeout=60000)
+        out = await self.page.evaluate(
+            """async (u) => {
+                try {
+                    const r = await fetch(u, {method: 'POST', credentials: 'include'});
+                    if (!r.ok) return {__error: r.status};
+                    return {url: (await r.text()).trim()};
+                } catch (e) { return {__error: String(e)}; }
+            }""", url)
+        if not out or out.get("__error"):
+            return None, (out or {}).get("__error", "sin respuesta")
+        return out.get("url"), None
+
     async def whoami(self):
         """Logged-in identity, read from the session endpoint the app itself uses.
 
