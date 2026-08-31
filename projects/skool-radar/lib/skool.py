@@ -22,6 +22,11 @@ NEXT_DATA = re.compile(r'<script id="__NEXT_DATA__" type="application/json">(.*?
 BASE = "https://www.skool.com"
 
 
+class SkoolUnavailable(RuntimeError):
+    """Skool did not serve data. Never swallowed: a silent zero reads exactly
+    like a quiet week, and that is how a broken collector goes unnoticed."""
+
+
 class Skool:
     def __init__(self, storage_state=None, headless=True, slow_ms=0):
         self.storage_state = storage_state
@@ -29,28 +34,44 @@ class Skool:
         self.slow_ms = slow_ms
 
     async def __aenter__(self):
-        self._pw = await async_playwright().start()
-        self._browser = await self._pw.chromium.launch(
-            headless=self.headless,
-            executable_path=chromium_exe(),
-            args=["--no-sandbox", "--disable-dev-shm-usage"],
-            slow_mo=self.slow_ms,
-        )
-        self.ctx = await self._browser.new_context(
-            user_agent=UA,
-            viewport={"width": 1440, "height": 1000},
-            locale="en-US",
-            storage_state=self.storage_state,
-        )
-        self.page = await self.ctx.new_page()
+        self._pw = self._browser = None
+        try:
+            self._pw = await async_playwright().start()
+            self._browser = await self._pw.chromium.launch(
+                headless=self.headless,
+                executable_path=chromium_exe(),
+                args=["--no-sandbox", "--disable-dev-shm-usage"],
+                slow_mo=self.slow_ms,
+            )
+            self.ctx = await self._browser.new_context(
+                user_agent=UA,
+                viewport={"width": 1440, "height": 1000},
+                locale="en-US",
+                storage_state=self.storage_state,
+            )
+            self.page = await self.ctx.new_page()
+        except Exception:
+            # __aexit__ never runs if __aenter__ raises: close what did open,
+            # or a failed start leaves a Chromium behind on every retry
+            await self.__aexit__()
+            raise
         return self
 
     async def __aexit__(self, *exc):
-        await self._browser.close()
-        await self._pw.stop()
+        if self._browser:
+            await self._browser.close()
+        if self._pw:
+            await self._pw.stop()
 
     async def page_props(self, url, wait_ms=1200):
-        """Load a Skool URL and return its pageProps dict."""
+        """Load a Skool URL and return its pageProps dict.
+
+        Returns None only when the page carried no __NEXT_DATA__ at all, which
+        means something is wrong (a redirect to login, a block, a changed app)
+        and never that the page was legitimately empty. Callers must tell those
+        two apart: treating it as "nothing here" turns an outage into a silent
+        zero.
+        """
         await self.page.goto(url, wait_until="domcontentloaded", timeout=60000)
         await self.page.wait_for_timeout(wait_ms)
         html = await self.page.content()
@@ -106,14 +127,23 @@ class Skool:
             return {"logged_in": False, "name": None, "error": (data or {}).get("__error")}
         me = data.get("user") or data.get("self") or {}
         md = me.get("metadata") or {}
-        return {"logged_in": True, "name": me.get("name") or md.get("firstName"),
-                "id": me.get("id")}
+        groups = data.get("groups") or data.get("items") or []
+        return {"logged_in": True,
+                "name": me.get("name") or md.get("firstName"),
+                "id": me.get("id"),
+                "communities": len(groups)}
 
     async def my_communities(self):
-        """Communities this account belongs to."""
+        """Communities this account belongs to.
+
+        Raises instead of returning an empty list on failure: an expired session
+        and an account with no communities are not the same answer.
+        """
         data = await self.api("/self/groups?limit=50&prefs=false")
         if not data or data.get("__error"):
-            return []
+            raise SkoolUnavailable(
+                f"No pude listar las comunidades ({(data or {}).get('__error', 'sin respuesta')}). "
+                f"Lo mas probable: la sesion caduco, vuelve a pasar por login.py")
         groups = data.get("groups") or data.get("items") or []
         out = []
         for g in groups:
@@ -226,8 +256,10 @@ class Skool:
         for page_no in range(1, max_pages + 1):
             url = f"{BASE}/{community}?p={page_no}&sort={sort}"
             props = await self.page_props(url)
-            if not props:
-                return
+            if props is None:
+                raise SkoolUnavailable(
+                    f"{url} no devolvio datos de Skool (sesion caducada, bloqueo o "
+                    f"cambio en la web). Se para para no reportar cero como si fuese normal.")
             trees = props.get("postTrees") or []
             if not trees:
                 return
@@ -287,9 +319,18 @@ class Skool:
         return rows
 
     async def group_id(self, community):
-        props = await self.page_props(f"{BASE}/{community}") or {}
+        """Group id of a community. Raises rather than returning None: every
+        comment call needs it, and a None here would just move the failure
+        downstream into empty threads that look like posts without comments."""
+        props = await self.page_props(f"{BASE}/{community}")
+        if props is None:
+            raise SkoolUnavailable(f"No pude abrir la comunidad {community}")
         g = props.get("currentGroup") or {}
-        return (g.get("group") or g).get("id")
+        gid = (g.get("group") or g).get("id")
+        if not gid:
+            raise SkoolUnavailable(
+                f"La comunidad {community} no expuso su id: revisa el slug o la sesion")
+        return gid
 
     async def classroom(self, community):
         """All courses, modules and lessons the account can actually open."""

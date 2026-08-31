@@ -15,7 +15,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from lib import db  # noqa: E402
-from lib.skool import Skool  # noqa: E402
+from lib.skool import Skool, SkoolUnavailable  # noqa: E402
 
 STATE = os.path.join(HERE, "state", "skool-session.json")
 
@@ -34,7 +34,12 @@ async def run(args):
 
     async with Skool(storage_state=state) as sk:
         who = await sk.whoami()
-        print(f"sesion: {'activa como ' + str(who.get('name')) if who['logged_in'] else 'anonima'}")
+        if who["logged_in"]:
+            # the endpoint returns the groups, not the profile: report what it does say
+            quien = who.get("name") or f"{who.get('communities', 0)} comunidades"
+            print(f"sesion: activa ({quien})")
+        else:
+            print(f"sesion: anonima ({who.get('error')})")
 
         if args.whoami:
             print(json.dumps(who, ensure_ascii=False, indent=2))
@@ -61,6 +66,7 @@ async def run(args):
         con.commit()
         print(f"posts nuevos: {len(new_rows)}")
 
+        errores = 0
         if args.comments and new_rows:
             print("bajando hilos de comentarios...")
             for row in new_rows:
@@ -70,7 +76,12 @@ async def run(args):
                 if rows:
                     db.save_comments(con, row["id"], rows)
                     print(f"  {len(rows):>4} comentarios · {str(row['title'])[:60]}")
+                elif sk.last_error:
+                    errores += 1
+                    print(f"  fallo al bajar el hilo ({sk.last_error}) · {str(row['title'])[:50]}")
             con.commit()
+            if errores:
+                print(f"AVISO: {errores} hilos no se pudieron bajar; no estan en la base")
 
         if args.classroom:
             print("classroom:")
