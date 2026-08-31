@@ -12,6 +12,7 @@ The Gemini key never leaves ki-prod-01 and is never printed.
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -45,8 +46,18 @@ def gemini_file(local_path):
 
 
 def download(url, workdir):
-    """Grab a compact copy: 480p is plenty for reading slides and UI."""
+    """Grab a compact copy: 480p is plenty for reading slides and UI.
+
+    Instagram hands over a direct CDN file, so there is nothing to extract:
+    fetching it is enough, and yt-dlp would only add a failure mode.
+    """
     out = os.path.join(workdir, "v.mp4")
+    if re.search(r"\.(mp4|mov|m4v)(\?|$)", url):
+        r = subprocess.run(["curl", "-sL", "--max-time", "900", "-o", out, url],
+                           capture_output=True, text=True)
+        if os.path.exists(out) and os.path.getsize(out) > 10000:
+            return out, None
+        return None, f"descarga directa vacia ({r.stderr[-120:]})"
     cmd = [YTDLP, "-q", "--no-warnings", "-f",
            "bv*[height<=480]+ba/b[height<=480]/b", "--merge-output-format", "mp4",
            "-o", out, url]

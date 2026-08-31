@@ -17,7 +17,7 @@ KEY_PATH = "/root/secrets/gemini-api-key.txt"
 G = "https://generativelanguage.googleapis.com"
 MODEL = "gemini-2.5-pro"
 
-PROMPT = """Analiza este video de una comunidad de formación en IA/automatización.
+PROMPT = """Analiza este video (clase de una comunidad, reel o post de un creador).
 Cubre lo que se VE en pantalla, no solo lo que se dice: interfaces, herramientas
 concretas, pasos de configuración, código y diagramas.
 
@@ -29,6 +29,8 @@ Devuelve en español:
 5. APLICABILIDAD: para quien construye automatizaciones n8n, pipelines RAG,
    agentes de voz y outreach multilingüe para pymes, ¿qué de esto es aprovechable
    y qué es relleno? Sé duro: si el video no aporta nada nuevo, dilo.
+Si el video no trata de tecnología ni de negocio, responde solo con una línea
+diciendo de qué va y para. No rellenes las cinco secciones a la fuerza.
 Sin paja, sin introducciones, sin recordatorios."""
 
 
