@@ -70,9 +70,17 @@ def download(url, workdir):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=5)
+    ap.add_argument("--autorizado", action="store_true",
+                    help="obligatorio: analizar video con Gemini cuesta dinero y "
+                         "Max lo autoriza pieza a pieza, nunca por lote automatico")
     ap.add_argument("--community")
     ap.add_argument("--max-min", type=int, default=60, help="salta videos mas largos")
     args = ap.parse_args()
+    if not args.autorizado:
+        print("Este paso cuesta dinero (Gemini cobra el video entero, no solo el audio).")
+        print("Primero se filtra por el TEXTO; el video solo para lo que el texto no resuelve.")
+        print("Si Max lo ha autorizado para estas piezas concretas, repite con --autorizado.")
+        return 1
 
     con = db.connect()
     sql = ("SELECT id, community, title, url, videos FROM posts "
@@ -81,7 +89,7 @@ def main():
     if args.community:
         sql += " AND community = ?"
         params.append(args.community)
-    sql += " ORDER BY created_at DESC LIMIT ?"
+    sql += " ORDER BY upvotes DESC, created_at DESC LIMIT ?"
     params.append(args.limit)
     rows = con.execute(sql, params).fetchall()
     if not rows:

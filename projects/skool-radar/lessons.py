@@ -63,7 +63,16 @@ async def run(args):
             except Exception as e:
                 print(f"  [{i}/{len(rows)}] error de carga: {str(e)[:70]}")
                 continue
-            node = (props or {}).get("course") or {}
+            if props is None:
+                print(f"  [{i}/{len(rows)}] la pagina no devolvio datos · {str(r['title'])[:45]}")
+                continue
+            # Skool ignora un ?md= con ancla equivocada y sirve la leccion por defecto,
+            # sin error: sin esta comprobacion, "sin texto" tapa un fallo de URL
+            if props.get("selectedModule") not in (None, r["id"]):
+                print(f"  [{i}/{len(rows)}] AVISO: pedi {r['id'][:8]} y Skool sirvio "
+                      f"{str(props.get('selectedModule'))[:8]} · {str(r['title'])[:35]}")
+                continue
+            node = props.get("course") or {}
             hit = find_node(node, r["id"])
             md = (hit or {}).get("metadata") or {}
             text = sk._rich_text(md.get("desc"))

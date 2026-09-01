@@ -193,8 +193,9 @@ class Skool:
             return []
         try:
             items = json.loads(raw) if isinstance(raw, str) else raw
-        except Exception:
-            return []
+        except Exception as e:
+            # devolver [] diria "esta leccion no tiene adjuntos", que es distinto
+            raise SkoolUnavailable(f"resources ilegible ({e}): el formato cambio")
         return [i for i in items if isinstance(i, dict)]
 
     @staticmethod
@@ -260,9 +261,13 @@ class Skool:
                 raise SkoolUnavailable(
                     f"{url} no devolvio datos de Skool (sesion caducada, bloqueo o "
                     f"cambio en la web). Se para para no reportar cero como si fuese normal.")
-            trees = props.get("postTrees") or []
+            if "postTrees" not in props:
+                raise SkoolUnavailable(
+                    f"{url} no trae postTrees: la pagina cambio de forma o no es la que "
+                    f"esperabamos. Parar es mejor que reportar cero posts.")
+            trees = props["postTrees"] or []
             if not trees:
-                return
+                return   # lista vacia de verdad: fin del feed
             for node in trees:
                 row = self._post_row(community, node)
                 if not row["id"]:
@@ -289,6 +294,7 @@ class Skool:
                 f"?group-id={group_id}&limit={min(limit, 30)}")
         rows, seen = [], set()
         self.last_error = None
+        bloques_ok = 0
         for variant in ("&pinned=true", "&tail=true"):
             data = await self.page.evaluate(
                 """async (u) => {
@@ -316,6 +322,10 @@ class Skool:
                     walk(child, cid, depth + 1)
 
             walk(data.get("post_tree") or {}, None, 0)
+            bloques_ok += 1
+        # un bloque caido y otro bueno da un hilo incompleto que parece completo
+        if bloques_ok < 2:
+            self.last_error = self.last_error or "solo bajo un bloque de dos"
         return rows
 
     async def group_id(self, community):
@@ -334,7 +344,11 @@ class Skool:
 
     async def classroom(self, community):
         """All courses, modules and lessons the account can actually open."""
-        props = await self.page_props(f"{BASE}/{community}/classroom") or {}
+        props = await self.page_props(f"{BASE}/{community}/classroom")
+        if props is None:
+            raise SkoolUnavailable(
+                f"El classroom de {community} no devolvio datos. Cero cursos aqui seria "
+                f"mentira: lo mas probable es que la sesion haya caducado.")
         courses = props.get("allCourses") or []
         out = []
         for c in courses:
@@ -349,7 +363,9 @@ class Skool:
         Shape: pageProps.course = {course: <root>, children: [modules]}, and every
         node repeats that {course, children} nesting. Leaves are the lessons.
         """
-        props = await self.page_props(f"{BASE}/{community}/classroom/{course_id}") or {}
+        props = await self.page_props(f"{BASE}/{community}/classroom/{course_id}")
+        if props is None:
+            raise SkoolUnavailable(f"El curso {course_id} no devolvio datos")
         node = props.get("course") or {}
         root = node.get("course") or {}
         course_title = (root.get("metadata") or {}).get("title")
