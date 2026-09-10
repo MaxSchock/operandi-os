@@ -6,6 +6,15 @@
 
 set -e
 
+# Las sesiones que lanza el destilador no van al vault: son llamadas internas
+# (`claude -p` con su prompt de analisis), no conversaciones de Max. Ademas este
+# hook coge el JSONL mas reciente de TODOS los proyectos, asi que sin este corte
+# puede volcar la sesion del destilador en lugar de la que de verdad se cierra.
+# 28-08: 15 de los 19 markdown del dia en el vault eran del destilador.
+if [ -n "$CLAUDE_DESTILADOR" ]; then
+    exit 0
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECTS_DIR="$HOME/.claude/projects"
 VAULT_OUTPUT="$HOME/iamasters-os/_wiki/raw/chat-history"
