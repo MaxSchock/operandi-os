@@ -70,7 +70,7 @@ pasada la causa fue nueva: con una tarjeta de borrado en el foco, la voz reinter
 ## Estado al cerrar
 
 Canario `a2-4b46156` con los tres contactos verificados en vivo y sus mismas Kennungen. Rama en `83edd5f`
-(solo banco por encima de main). CI de main sobre `4b46156` lanzada a las 12:15, todavía en marcha al cerrar;
-la de la rama, con el mismo árbol, en verde.
+(solo banco por encima de main). CI de main sobre `4b46156` **verde** (run 35335487184), igual que la de la
+rama.
 
 Horas reales: 4,5 h de trabajo (14 h de reloj, 9,5 h de huecos descontados). ~1,5 h de máquina no contadas.
