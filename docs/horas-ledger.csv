@@ -700,3 +700,4 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-09-24,kisult,start-here,repaso-canales,sesion,0.3,"Segunda pasada de sesiones y bandejas; desconexión de Sergi Pena en Unipile (Kaps, con backup); relevos a c1 y fe"
 2026-09-24,kisult,suritec,talkpilot,sesion,0.2,"Hueco SMS-HUB/App-HUB publicado en Wissenslücken (conv 904, caso 10) tras comprobar inbox y base; hoja del Check-In y RUNBOOK al día"
 2026-09-24,kisult,kisult,informe-horas-max-por-proyecto,sesion,0.6,"Horas reales de Max por proyecto KIsult cruzadas con facturas, PDF para Jonas"
+2026-09-24,kisult,kisult,informe-horas-max-por-proyecto,sesion,0.4,"Llamadas WhatsApp con Jonas sacadas de capturas y sumadas al informe de horas"
