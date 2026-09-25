@@ -707,5 +707,9 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-09-25,kisult,suritec,talkpilot,sesion,0.3,"Llamadas hasta el 25-09 (1 nueva) y las 39 no escaladas revisadas; grabación comprobada (la pausa <break> no se lee en alto); Folie 3 actualizada"
 2026-09-25,kisult,suritec,talkpilot,sesion,0.1,"Informe con Folie 3 enviado a Gregor por WhatsApp y cierre de sesión"
 2026-09-25,kisult,rhp,linus,sesion,0.3,"Linus: antwortAuf integrado en main y a2-bf00aca subido a André y Jonas; working-memory podada"
-2026-09-25,kisult,suritec,talkpilot-checkin,sesion,0.6,Feedback de Gregor en Folie 3 + detector de Rückruf-Zusage en teléfono desplegado
+2026-09-25,kisult,suritec,talkpilot-checkin,sesion,1.2,Feedback de Gregor en Folie 3 + detector de Rückruf-Zusage en teléfono + falso Rückruf en desvíos + limpieza de escalados en el Cockpit + transcripción y acuerdos del Check-In
 2026-09-25,kisult,kisult,gastos-fijos-max-kisult,sesion,0.6,"Gastos fijos de Max por KIsult (Claude, OpenAI, GitHub) y mensaje de costes de Linus a Jonas"
+2026-09-25,interno,iamasters-os,start-here,sesion,0.3,Start-here: repaso de 5 canales y radar de facturación
+2026-09-25,kisult,suritec,talkpilot-checkin,reunion,0.9,Check-In semanal TalkPilot con Gregor Mads Jo y Vanessa (52 min según grabación)
+2026-09-25,rotary,rotary-madrid-yes,convocatorias-calendario,sesion,0.3,Invitaciones de calendario a los socios: 2-oct/6-nov/4-dic con hora y lugar, Rayco añadido
+2026-09-25,operandi,cardeleine,video-motor,sesion,0.8,"Vídeo con Jana: ficha de Madeleine aprobada, guía del asistente, revisión del guion 1236fe27 y arreglo del motor: el guion ve el vídeo subido y elige desde qué segundo empieza cada plano (c36d4f3, cf97cee, 5e157a2, probado en seco con el vídeo de Jana)"
