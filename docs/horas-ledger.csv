@@ -713,3 +713,4 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-09-25,kisult,suritec,talkpilot-checkin,reunion,0.9,Check-In semanal TalkPilot con Gregor Mads Jo y Vanessa (52 min según grabación)
 2026-09-25,rotary,rotary-madrid-yes,convocatorias-calendario,sesion,0.3,Invitaciones de calendario a los socios: 2-oct/6-nov/4-dic con hora y lugar, Rayco añadido
 2026-09-25,operandi,cardeleine,video-motor,sesion,0.8,"Vídeo con Jana: ficha de Madeleine aprobada, guía del asistente, revisión del guion 1236fe27 y arreglo del motor: el guion ve el vídeo subido y elige desde qué segundo empieza cada plano (c36d4f3, cf97cee, 5e157a2, probado en seco con el vídeo de Jana)"
+2026-09-25,operandi,cardeleine,video-motor,sesion,0.9,"Motor y panel de vídeo: imagen del cliente mostrada tal cual (animada o zoom), vídeo solo de ejemplo, voz en off que cabe, selector por archivo en el panel (4835fa3, b7b5b48, dashboardln 5b2c60e); petición de Jana rehecha; pruebas 1,70 $ en fal"
