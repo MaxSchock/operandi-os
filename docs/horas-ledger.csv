@@ -719,4 +719,4 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-09-25,interno,iamasters-os,guard-paja-mensaje,sesion,0.5,Revisor anti-paja de WhatsApp con Sonnet (hook PreToolUse)
 2026-09-25,kisult,rhp,linus-lo-olvidado-diagnostico-y-plan,sesion,1.0,"Queja de Jonas (Heute lleno de correos ya contestados): medido en su base, 47 asuntos abiertos y el cruce con enviados en sombra olvidado desde el 11-09 (15 ya contestados); veredicto de arquitectura y plan de 7 bloques (23-33 h); enlace de Unipile para su WhatsApp Business enviado"
 2026-09-25,kisult,suritec,talkpilot,sesion,0.1,"Agente Kunden de TalkPilot inactivo detectado por API y preguntado a Gregor"
-2026-09-25,Falkenlead,Cardeleine,video-linkedin,sesion,0.4,"Video de Jana producido en el canario para revision de Max (redibujo del visitante, render 15 s)"
+2026-09-25,operandi,cardeleine,video-motor,sesion,0.4,"Vídeo de Jana producido en el canario para revisión de Max (redibujo del visitante, render 15 s)"
