@@ -701,3 +701,11 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-09-24,kisult,suritec,talkpilot,sesion,0.2,"Hueco SMS-HUB/App-HUB publicado en Wissenslücken (conv 904, caso 10) tras comprobar inbox y base; hoja del Check-In y RUNBOOK al día"
 2026-09-24,kisult,kisult,informe-horas-max-por-proyecto,sesion,0.6,"Horas reales de Max por proyecto KIsult cruzadas con facturas, PDF para Jonas"
 2026-09-24,kisult,kisult,informe-horas-max-por-proyecto,sesion,0.4,"Llamadas WhatsApp con Jonas sacadas de capturas y sumadas al informe de horas"
+2026-09-24,falkenlead,aitor,asistente-ia-talkpilot,sesion,0.4,"Presupuesto PDF asistente voz + WhatsApp (precios Gregor 01-09), margen a 50 €/mes"
+2026-09-24,kisult,rhp,linus,sesion,1.3,"Linus: la respuesta declara a qué correo contesta (antwortAuf + Kennung), andre-21-09 verde 2 de 2 en canario a2-bf00aca (aparte ~1 h de máquina: suites y banco)"
+2026-09-24,kisult,suritec,talkpilot,sesion,0.4,"Informe Woche 2 de TalkPilot revisado contra phone_calls (60 llamadas, 33 desvíos cuadran) y Folie 3 de KIsult añadida (Wissenslücken y 4 observaciones)"
+2026-09-25,kisult,suritec,talkpilot,sesion,0.3,"Llamadas hasta el 25-09 (1 nueva) y las 39 no escaladas revisadas; grabación comprobada (la pausa <break> no se lee en alto); Folie 3 actualizada"
+2026-09-25,kisult,suritec,talkpilot,sesion,0.1,"Informe con Folie 3 enviado a Gregor por WhatsApp y cierre de sesión"
+2026-09-25,kisult,rhp,linus,sesion,0.3,"Linus: antwortAuf integrado en main y a2-bf00aca subido a André y Jonas; working-memory podada"
+2026-09-25,kisult,suritec,talkpilot-checkin,sesion,0.6,Feedback de Gregor en Folie 3 + detector de Rückruf-Zusage en teléfono desplegado
+2026-09-25,kisult,kisult,gastos-fijos-max-kisult,sesion,0.6,"Gastos fijos de Max por KIsult (Claude, OpenAI, GitHub) y mensaje de costes de Linus a Jonas"
