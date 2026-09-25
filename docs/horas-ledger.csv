@@ -714,3 +714,9 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-09-25,rotary,rotary-madrid-yes,convocatorias-calendario,sesion,0.3,Invitaciones de calendario a los socios: 2-oct/6-nov/4-dic con hora y lugar, Rayco añadido
 2026-09-25,operandi,cardeleine,video-motor,sesion,0.8,"Vídeo con Jana: ficha de Madeleine aprobada, guía del asistente, revisión del guion 1236fe27 y arreglo del motor: el guion ve el vídeo subido y elige desde qué segundo empieza cada plano (c36d4f3, cf97cee, 5e157a2, probado en seco con el vídeo de Jana)"
 2026-09-25,operandi,cardeleine,video-motor,sesion,0.9,"Motor y panel de vídeo: imagen del cliente mostrada tal cual (animada o zoom), vídeo solo de ejemplo, voz en off que cabe, selector por archivo en el panel (4835fa3, b7b5b48, dashboardln 5b2c60e); petición de Jana rehecha; pruebas 1,70 $ en fal"
+2026-09-25,interno,consultoria-ia,grupo-gonzalo-david,sesion,0.2,Grupo Consultoría IA: audios de David transcritos y mensaje de proyectos enviado
+2026-09-25,operandi,operandi,talkpilot-clon-estimacion,sesion,1.0,"Estimación de clonar TalkPilot: docs públicas, OpenAPI, web y API de Suritec en lectura"
+2026-09-25,interno,iamasters-os,guard-paja-mensaje,sesion,0.5,Revisor anti-paja de WhatsApp con Sonnet (hook PreToolUse)
+2026-09-25,kisult,rhp,linus-lo-olvidado-diagnostico-y-plan,sesion,1.0,"Queja de Jonas (Heute lleno de correos ya contestados): medido en su base, 47 asuntos abiertos y el cruce con enviados en sombra olvidado desde el 11-09 (15 ya contestados); veredicto de arquitectura y plan de 7 bloques (23-33 h); enlace de Unipile para su WhatsApp Business enviado"
+2026-09-25,kisult,suritec,talkpilot,sesion,0.1,"Agente Kunden de TalkPilot inactivo detectado por API y preguntado a Gregor"
+2026-09-25,Falkenlead,Cardeleine,video-linkedin,sesion,0.4,"Video de Jana producido en el canario para revision de Max (redibujo del visitante, render 15 s)"
