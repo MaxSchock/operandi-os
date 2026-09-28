@@ -736,3 +736,4 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-09-28,kisult,rhp,linus,sesion,1.1,"Linus lo olvidado bloque 3: notas de Gemini como fuente (guion FALLA en a2-5f19841, PASA 7/7 en a2-523a6df), WhatsApp como prueba y fuente con arreglo de LID, revisión de Codex (3 de 4 arreglados); aparte ~0,7 h de máquina en CI"
 2026-09-28,kisult,rhp,linus,sesion,0.4,"Linus: subida de lo olvidado bloques 2-3 (a2-523a6df) a Jonas y André con MAX_ABGLEICH=an, revisión de la primera pasada de cierre y de la bandeja de errores"
 2026-09-28,falkenlead,interno,portatil-thinkpad,sesion,0.8,"ThinkPad: biblioteca rekordbox copiada del PC viejo por red y verificada, rekordbox 6.8.7 instalado, accesos de Asana y rekordbox reparados"
+2026-09-28,kisult,rhp,linus,sesion,0.5,"Linus: main a 523a6df, relevo del despliegue Jonas/André (abgleich an) a otra sesión, revisión de la prueba de voz de Max con Jonas (aviso de 06:00 leído como actual, lista vieja de pendientes)"
