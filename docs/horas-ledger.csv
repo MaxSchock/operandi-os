@@ -749,3 +749,6 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-09-28,kisult,rhp,linus,sesion,1.8,"Linus bloque 4: Codex del bloque, MAX_ABGLEICH=an y guion mach-mal-beides en canario, «Hilf mir» arreglado (ref codificada, borrador a sí mismo, firma como dirección dictada) con segunda pasada de Codex, merge dc113bb y subida a Jonas y André"
 2026-09-29,falkenlead,tojo-store,google-ads,sesion,1.2,Revisión en vivo de lo aplicado por Seybold (nada); sugerencias a Nacho por WhatsApp y respuesta a Ralf enviadas
 2026-09-29,operandi,cardeleine,video-dialogo-panel,sesion,0.3,"Cierre: rehacer escena probado en canario (0,19 $), consentimiento de voz del canario revertido, regla de deploy del video-engine"
+2026-09-29,falkenlead,estoko,conversiones offline,sesion,0.6,Revisión Excel de leads de Rafa vs hoja Conversiones Estoko y sincronización HubSpot-Ads
+2026-09-29,falkenlead,cloudsecretary,yorespondo-google-ads,sesion,0.6,"Clarity verificado y condicionado a consentimiento (GTM v6), genérica: móvil excluido y RSA viejos pausados, borrador a David"
+2026-09-29,kisult,rhp,linus-hilf-mir,sesion,1.0,"Hilf mir: destinatario, un borrador por asunto, hora real + Meet al aprobar; guion e2e FALLA/PASA en canario, Codex, merge 022e4e0"
