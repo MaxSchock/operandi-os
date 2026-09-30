@@ -775,3 +775,4 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-09-30,kisult,rhp,linus-tareas-por-contacto,sesion,0.3,Linus: canario en modo preguntar y prueba de punta a punta 9/9
 2026-09-30,operandi,operandi,dashboard,sesion,0.6,"Harvey releído con enfoque llamada primero; arreglo: respuesta en LinkedIn corta la secuencia de correos (5311968), canario y despliegue"
 2026-09-30,kisult,rhp,linus-tareas-por-contacto,sesion,0.2,Linus: tareas por contacto en modo preguntar subido a Jonas y André con copia de bases
+2026-09-30,operandi,operandi,dashboard,sesion,1.1,"Llamada primero fases 1-6: seguimiento en /calling, base por cliente y país, chuleta de objeciones, DM de LinkedIn tras llamada, rebotes con pausa de buzón, Apollo desde el panel con tope"
