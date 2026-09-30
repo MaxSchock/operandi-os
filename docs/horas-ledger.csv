@@ -790,3 +790,4 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-09-30,kisult,rhp,erp-aufwand,sesion,0.6,"Aufwandsschätzung ERP con Sergio: Dolibarr añadido, tabla de suma Aufbau/Betreuung/Gesamt, Aufbau +40 % (145/130/136 PT); dos versiones enviadas a Sergio"
 2026-09-30,kisult,kisult,facturacion,sesion,0.4,"Búsqueda en transcripts y WhatsApp del momento en que Jonas acordó el % por proyecto; cadena de pruebas para Max"
 2026-09-30,operandi,cardeleine,dashboard-video,sesion,0.5,"Variantes A y B del vídeo puestas en el Dashboard de Jana, borrador de respuesta, plan del formulario de un solo campo (el agente elige el estilo) y traspaso a la sesión d7"
+2026-09-30,operandi,cardeleine,dashboard-video,sesion,0.8,"Formulario de vídeo de un solo campo: el agente elige estilo, duración y frases (decide.py), formulario detallado solo admin, 6 pruebas con el canario, revisión de Codex con 5 arreglos (cola del storyboard bloqueada)"
