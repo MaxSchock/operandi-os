@@ -766,10 +766,12 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-09-29,kisult,rhp,linus-subida-hilf-mir,sesion,0.6,"E2E de aprobación de «Hilf mir» en canario (Meet y calendario OK) y subida de a2-022e4e0 a Jonas y André con copia previa de sus bases"
 2026-09-30,kisult,rhp,linus-tareas-por-contacto,sesion,0.4,"Plan de tareas cerradas por contacto y por cualquier canal (juez por significado, modos observar/preguntar/tachar) y traspaso a sesión nueva"
 2026-09-30,falkenlead,tojo-store,google-ads,sesion,0.2,correo a Gerald/Ralf pasado a texto normal (Drafts 638) y envío verificado
-2026-09-30,kisult,hemmersbach,traspaso,sesion,0.9,"Consentimiento einsnullwerk verificado, 10 workflows a info@, canario follow-up, corpus sin follow-ups, borradores a Jonas"
-2026-09-30,kisult,rhp,linus,sesion,1.2,"Avisos viejos en Heute de Jonas: causa (lectura en frío 28-09), arreglo untergegangen-alt probado en canario"
+2026-09-30,kisult,hemmersbach,traspaso,sesion,1.2,"Consentimiento einsnullwerk verificado, 10 workflows a info@, canario y activación del follow-up, corpus sin follow-ups, doc de traspaso actualizado, WhatsApp a Jonas"
+2026-09-30,kisult,rhp,linus,sesion,1.5,"Avisos viejos en Heute de Jonas: causa (lectura en frío 28-09), arreglo untergegangen-alt en canario, André y Jonas, WhatsApp a Jonas"
 2026-09-30,kisult,rhp,linus-tareas-por-contacto,sesion,2.5,"Fases 1-4: tareas atadas a su contacto, juez en sombra, aviso «Sieht erledigt aus», llamadas/notas/citas como prueba, banco del juez 51/51"
 2026-09-30,operandi,operandi,dashboard,sesion,0.5,"Investigación Harvey (gate, handler, aprobación, perfilador, skills) contra strategist y panel; propuesta priorizada"
 2026-09-30,operandi,operandi,dashboard,sesion,1.3,"Barrera previa al envío y detección de bajas multidioma en strategist (22abe24): prueba contra datos reales, canario, despliegue v20260930-gate"
 2026-09-30,falkenlead,yorespondo,google-ads,sesion,0.4,"Negativas de Cloudsecretary frente a Yo Respondo: 876 de 897 ya copiadas; 75 de estudiantes añadidas a la genérica; borrador a David (Drafts 639)"
 2026-09-30,kisult,rhp,linus-tareas-por-contacto,sesion,0.3,Linus: canario en modo preguntar y prueba de punta a punta 9/9
+2026-09-30,operandi,operandi,dashboard,sesion,0.6,"Harvey releído con enfoque llamada primero; arreglo: respuesta en LinkedIn corta la secuencia de correos (5311968), canario y despliegue"
+2026-09-30,kisult,rhp,linus-tareas-por-contacto,sesion,0.2,Linus: tareas por contacto en modo preguntar subido a Jonas y André con copia de bases
