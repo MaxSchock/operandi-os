@@ -766,7 +766,7 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-09-29,kisult,rhp,linus-subida-hilf-mir,sesion,0.6,"E2E de aprobación de «Hilf mir» en canario (Meet y calendario OK) y subida de a2-022e4e0 a Jonas y André con copia previa de sus bases"
 2026-09-30,kisult,rhp,linus-tareas-por-contacto,sesion,0.4,"Plan de tareas cerradas por contacto y por cualquier canal (juez por significado, modos observar/preguntar/tachar) y traspaso a sesión nueva"
 2026-09-30,falkenlead,tojo-store,google-ads,sesion,0.2,correo a Gerald/Ralf pasado a texto normal (Drafts 638) y envío verificado
-2026-09-30,kisult,hemmersbach,traspaso,sesion,1.2,"Consentimiento einsnullwerk verificado, 10 workflows a info@, canario y activación del follow-up, corpus sin follow-ups, doc de traspaso actualizado, WhatsApp a Jonas"
+2026-09-30,kisult,hemmersbach,traspaso,sesion,1.6,"Consentimiento einsnullwerk verificado, canario y activación del follow-up, cambio a info@ revertido (carpetas solo en kisult@), corpus sin follow-ups, doc de traspaso, WhatsApp a Jonas, pregunta a David"
 2026-09-30,kisult,rhp,linus,sesion,1.5,"Avisos viejos en Heute de Jonas: causa (lectura en frío 28-09), arreglo untergegangen-alt en canario, André y Jonas, WhatsApp a Jonas"
 2026-09-30,kisult,rhp,linus-tareas-por-contacto,sesion,2.5,"Fases 1-4: tareas atadas a su contacto, juez en sombra, aviso «Sieht erledigt aus», llamadas/notas/citas como prueba, banco del juez 51/51"
 2026-09-30,operandi,operandi,dashboard,sesion,0.5,"Investigación Harvey (gate, handler, aprobación, perfilador, skills) contra strategist y panel; propuesta priorizada"
@@ -775,4 +775,13 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-09-30,kisult,rhp,linus-tareas-por-contacto,sesion,0.3,Linus: canario en modo preguntar y prueba de punta a punta 9/9
 2026-09-30,operandi,operandi,dashboard,sesion,0.6,"Harvey releído con enfoque llamada primero; arreglo: respuesta en LinkedIn corta la secuencia de correos (5311968), canario y despliegue"
 2026-09-30,kisult,rhp,linus-tareas-por-contacto,sesion,0.2,Linus: tareas por contacto en modo preguntar subido a Jonas y André con copia de bases
+2026-09-30,operandi,operandi,dashboard,sesion,0.4,"Plan outreach llamada primero: búsqueda Apollo desde el panel, ficha web, seguimiento multipaís (projects/briefs/operandi-llamadas-primero)"
+2026-09-30,operandi,operandi,dashboard,sesion,0.3,"Revisión de /calling para el seguimiento de leads llamados y plan reordenado (fase Seguimiento primero)"
+2026-09-30,kisult,rhp,erp-aufwand,sesion,0.4,"Aufwandsschätzung ERP: cifra única por bloque, reparto en 24 meses y media mensual, plazo en tiempo de Max, frases corregidas; lista para revisar con Sergio"
+2026-09-30,operandi,operandi,dashboard,sesion,0.2,"Traspaso a la sesión 62 y cierre de la sesión (registro, wiki, memoria de trabajo)"
+2026-09-30,falkenlead,gbs-group,cro-landing,sesion,0.3,"Estado tras accesos de Juan: 7 de 8 cambios del correo del 29-09 sin hacer, PMax 124 € y 157 clics sin formularios; prueba del formulario bloqueada por Turnstile"
 2026-09-30,operandi,operandi,dashboard,sesion,1.1,"Llamada primero fases 1-6: seguimiento en /calling, base por cliente y país, chuleta de objeciones, DM de LinkedIn tras llamada, rebotes con pausa de buzón, Apollo desde el panel con tope"
+2026-09-30,falkenlead,gbs-group,google-ads,sesion,0.6,"Revisión PMax 28-30/09 (97 % Display en apps y prensa, 0 búsquedas, conversiones = clics en teléfono) contra GA4 y revisión del GTM v23 (Clarity y Smartlook sin consentimiento, banner que tapa el móvil)"
+2026-09-30,falkenlead,gbs-group,google-ads,sesion,0.2,"Token Clarity GBS instalado; contraste Clarity-Ads-GA4 de la PMax 28-30/09"
+2026-09-30,falkenlead,gbs-group,google-ads,sesion,0.7,"Click Tel y Whatsapp a secundarias; exclusiones de cuenta: 78 webs de prensa, 67 apps y 145 categorías de apps; GTM v24: Clarity con consentimiento vía cookie_consent_statistics, Smartlook fuera; verificado en vivo"
+2026-09-30,operandi,operandi,dashboard,sesion,0.3,"WhatsApp a Zayd con instrucciones del panel; público LinkedIn de HNT comprobado vía Unipile y respondido"
