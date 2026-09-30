@@ -785,3 +785,5 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-09-30,falkenlead,gbs-group,google-ads,sesion,0.2,"Token Clarity GBS instalado; contraste Clarity-Ads-GA4 de la PMax 28-30/09"
 2026-09-30,falkenlead,gbs-group,google-ads,sesion,0.7,"Click Tel y Whatsapp a secundarias; exclusiones de cuenta: 78 webs de prensa, 67 apps y 145 categorías de apps; GTM v24: Clarity con consentimiento vía cookie_consent_statistics, Smartlook fuera; verificado en vivo"
 2026-09-30,operandi,operandi,dashboard,sesion,0.3,"WhatsApp a Zayd con instrucciones del panel; público LinkedIn de HNT comprobado vía Unipile y respondido"
+2026-09-30,falkenlead,gbs-group,google-ads,sesion,0.5,"Leads offline cruzados con Ads; Search MAD reactivada a 10 €/día: URLs, sitelinks, nombre DIM S.L., formulario Google fuera, sin reparación"
+2026-09-30,operandi,operandi,dashboard,sesion,0.6,"Revisión de Codex de llamada primero: 7 fallos reales arreglados (envío único, consentimiento, aprobación vs respuesta, Apollo concurrente), tests y despliegue calling9"
