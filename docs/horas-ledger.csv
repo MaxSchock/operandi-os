@@ -814,3 +814,6 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-10-01,kisult,rhp,linus,sesion,0.4,Asuntos viejos retirados en canario/André/Jonas con copia previa
 2026-10-01,falkenlead,aitor,asistente-voz,sesion,0.2,"Presupuesto pasado por la skill de precios (claude-skills-founder) con precios de mercado comprobados; recomendación de niveles"
 2026-10-01,kisult,rhp,linus,sesion,0.9,"Feedback de Jonas 01-10: línea «untergegangen» con origen y frases completas, un push por tanda, «Hilf mir» sin callejón; a2-a3f23f87 en canario con e2e"
+2026-10-01,interno,iamasters-os,start-here,sesion,0.5,"Arranque: repaso de canales, traspaso de GBS, LinkedIn ajeno cerrado y cierre de sesión"
+2026-10-01,operandi,cardeleine,video-engine,sesion,0.5,"Revisor del vídeo final en el motor (fotogramas + audio, solo aviso), probado con dos vídeos del canario y una copia rota, desplegado solo para el canario"
+2026-10-01,kisult,rhp,linus,sesion,0.7,"Prioridad de pendientes: peso por señales, porqué en la línea, «Alle ansehen», pregunta antes de caducar y aprendizaje de toques; a2-b897c437 en canario con guion 12/12"
