@@ -811,3 +811,6 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-10-01,interno,iamasters-os,skool-radar,sesion,0.2,"Instagram: heytony.agency y itstundeanthony recogidas por Apify (30 publicaciones y perfil de cada una), descripción y lista corta de reels para autorizar"
 2026-10-01,interno,iamasters-os,skool-radar,sesion,0.3,"Instagram: 6 reels y 2 carruseles de heytony.agency e itstundeanthony analizados; factorhype.com/tools bloqueado por comprobación anti-robots"
 2026-10-01,operandi,operandi,llamada-primero,sesion,0.2,Tope de Apollo comprobado contra el saldo real de la cuenta
+2026-10-01,kisult,rhp,linus,sesion,0.4,Asuntos viejos retirados en canario/André/Jonas con copia previa
+2026-10-01,falkenlead,aitor,asistente-voz,sesion,0.2,"Presupuesto pasado por la skill de precios (claude-skills-founder) con precios de mercado comprobados; recomendación de niveles"
+2026-10-01,kisult,rhp,linus,sesion,0.9,"Feedback de Jonas 01-10: línea «untergegangen» con origen y frases completas, un push por tanda, «Hilf mir» sin callejón; a2-a3f23f87 en canario con e2e"
