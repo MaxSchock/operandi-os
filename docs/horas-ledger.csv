@@ -817,3 +817,5 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-10-01,interno,iamasters-os,start-here,sesion,0.5,"Arranque: repaso de canales, traspaso de GBS, LinkedIn ajeno cerrado y cierre de sesión"
 2026-10-01,operandi,cardeleine,video-engine,sesion,0.5,"Revisor del vídeo final en el motor (fotogramas + audio, solo aviso), probado con dos vídeos del canario y una copia rota, desplegado solo para el canario"
 2026-10-01,kisult,rhp,linus,sesion,0.7,"Prioridad de pendientes: peso por señales, porqué en la línea, «Alle ansehen», pregunta antes de caducar y aprendizaje de toques; a2-b897c437 en canario con guion 12/12"
+2026-10-01,operandi,cardeleine,video-engine,sesion,1.0,"Revisor del vídeo final completo: mide negro, congelados, silencios y duración, mira cada plano y escucha las frases; los defectos retienen la entrega, panel con liberar y aviso por Telegram; e2e en canario"
+2026-10-01,falkenlead,aitor,asistente-voz,sesion,0.2,"Audios de Aitor transcritos y WhatsApp con tres huecos para la llamada"
