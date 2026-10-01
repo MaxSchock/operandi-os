@@ -5,6 +5,7 @@
 #   send-whatsapp.sh resolve "<nombre parcial de grupo/chat>"   -> lista JIDs que matchean
 #   send-whatsapp.sh peek <jid>                                 -> ultimos 8 mensajes del hilo
 #   send-whatsapp.sh send-file <jid> <archivo local> [caption]  -> envia documento
+#   send-whatsapp.sh send-video <jid> <video local> [caption]   -> envia video reproducible
 #   send-whatsapp.sh send-text <jid> "<texto>"                  -> envia texto
 #
 # REGLA IRROMPIBLE: hacer SIEMPRE `peek` y juzgar el hilo antes de cualquier send.
@@ -25,25 +26,39 @@ CMD="${1:?comando: resolve|peek|send-file|send-text}"
 
 pg() { ssh "$VPS" "docker exec \$(docker ps -q -f name=postgres_postgres) psql -U postgres -d evolution -Atc \"$1\""; }
 
+# WhatsApp esta pasando los chats del identificador por telefono (@s.whatsapp.net) al nuevo
+# (@lid). Si el hilo ya vive en @lid, un envio al identificador por telefono se queda en
+# "Esperando el mensaje" en el movil del destinatario (2026-10-01, Habiba). Por eso, si hay
+# hilo @lid para ese numero, se envia ahi.
+lid_of() {
+  case "$1" in
+    *@s.whatsapp.net)
+      pg "SELECT w.lid FROM \\\"IsOnWhatsapp\\\" w WHERE w.\\\"remoteJid\\\"='$1' AND w.lid LIKE '%@lid' AND EXISTS (SELECT 1 FROM \\\"Message\\\" m WHERE m.key->>'remoteJid'=w.lid) LIMIT 1;" ;;
+  esac
+}
+target() { local l; l=$(lid_of "$1" || true); if [ -n "$l" ]; then echo "enviando a $l (hilo nuevo de $1)" >&2; echo "$l"; else echo "$1"; fi; }
+
 case "$CMD" in
   resolve)
     NAME="${2:?nombre a buscar}"
     pg "SELECT \\\"remoteJid\\\"||' | '||COALESCE(name,'') FROM \\\"Chat\\\" WHERE name ILIKE '%${NAME}%' ORDER BY \\\"updatedAt\\\" DESC LIMIT 10;"
     ;;
   peek)
-    JID="${2:?jid}"
-    pg "SELECT to_timestamp(\\\"messageTimestamp\\\")::timestamp||' | '||CASE WHEN (key->>'fromMe')::bool THEN 'YO' ELSE COALESCE(\\\"pushName\\\",'?') END||' | '||left(COALESCE(message->>'conversation', message->'extendedTextMessage'->>'text', message->'documentMessage'->>'fileName', \\\"messageType\\\"),120) FROM \\\"Message\\\" WHERE key->>'remoteJid'='${JID}' ORDER BY \\\"messageTimestamp\\\" DESC LIMIT 8;"
+    JID="${2:?jid}"; LID=$(lid_of "$JID" || true)
+    pg "SELECT to_timestamp(\\\"messageTimestamp\\\")::timestamp||' | '||CASE WHEN (key->>'fromMe')::bool THEN 'YO' ELSE COALESCE(\\\"pushName\\\",'?') END||' | '||left(COALESCE(message->>'conversation', message->'extendedTextMessage'->>'text', message->'documentMessage'->>'fileName', \\\"messageType\\\"),120) FROM \\\"Message\\\" WHERE key->>'remoteJid' IN ('${JID}','${LID:-_}') ORDER BY \\\"messageTimestamp\\\" DESC LIMIT 8;"
     ;;
-  send-file)
-    JID="${2:?jid}"; FILE="${3:?archivo}"; CAPTION="${4:-}"
+  send-file|send-video)
+    JID=$(target "${2:?jid}"); FILE="${3:?archivo}"; CAPTION="${4:-}"
     BASENAME=$(basename "$FILE")
     MIME=$(file -b --mime-type "$FILE")
+    # send-video: reproducible en el chat; send-file: adjunto que hay que descargar
+    [ "$CMD" = "send-video" ] && MEDIATYPE=video || MEDIATYPE=document
     scp -q "$FILE" "$VPS:/tmp/wa-send-$BASENAME"
     ssh "$VPS" "TOKEN=\$(docker exec \$(docker ps -q -f name=evolution_evolution) printenv AUTHENTICATION_API_KEY); \
       python3 - <<'PYEOF'
 import base64, json, urllib.request, os
 media = base64.b64encode(open('/tmp/wa-send-$BASENAME','rb').read()).decode()
-payload = {'number': '$JID', 'mediatype': 'document', 'mimetype': '$MIME',
+payload = {'number': '$JID', 'mediatype': '$MEDIATYPE', 'mimetype': '$MIME',
            'fileName': '$BASENAME', 'media': media}
 cap = '''$CAPTION'''
 if cap: payload['caption'] = cap
@@ -57,7 +72,7 @@ os.remove('/tmp/wa-send-$BASENAME')
 PYEOF"
     ;;
   send-text)
-    JID="${2:?jid}"; TEXT="${3:?texto}"
+    JID=$(target "${2:?jid}"); TEXT="${3:?texto}"
     ssh "$VPS" "python3 - <<'PYEOF'
 import json, urllib.request, os
 req = urllib.request.Request('$API/message/sendText/$INSTANCE',
