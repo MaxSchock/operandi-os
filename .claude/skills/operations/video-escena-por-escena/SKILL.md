@@ -1,0 +1,69 @@
+---
+name: video-escena-por-escena
+description: Producción manual de un vídeo del motor de Operandi escena por escena con Max (guion del cliente, imágenes inicial/final, filmación por plano, labios, montaje con transiciones, música y subtítulos, entrega al panel). Úsala cuando Max pida filmar, refilmar, montar o entregar un vídeo de cliente (Cardeleine u otro) fuera del flujo automático del Dashboard.
+---
+
+# Vídeo escena por escena (Operandi video-engine, manual)
+
+Protocolo destilado de Cardeleine, 03 a 05-10-2026. Cada regla nació de un error real de esos días.
+Reglas hermanas ya activas (no repetirlas aquí, se activan solas): `feedback-no-regenerar-imagenes-por-criterio-propio-ni-gastar-sin-max`, `feedback-imagen-final-y-pantalla-con-vida-y-fiel-a-la-referencia`, `feedback-no-meter-avisos-legales-no-pedidos`.
+
+## 0. Antes de tocar nada
+
+1. **El guion es del cliente y de Max.** Leer el prompt original en `video_requests.brief` (campos `request`, `lines`, `end_text`, `visual_directions`) ANTES de afirmar nada sobre lo que falta o sobra. Error 05-10: dije que el cartel final no seguía el prompt sin mirarlo; sí lo seguía palabra por palabra.
+2. **Tabla de planos antes de gastar.** Por plano: escena (lugar), quién sale, qué se dice (texto exacto), tipo (`persona`, `pantalla`, `silent`, `clip`), cámara, ¿corte de escena o continuidad con el anterior?, ¿labios en quién y dónde?, duración = duración del audio + 0,3 s de cabeza. Max la aprueba. Nada se filma que no esté en esa tabla (error 05-10: escena 3a montada sin estar en el guion).
+3. **Un plano con texto dura lo que dura el texto.** Nunca acortar, acelerar ni recortar un plano hablado por criterio propio (error 05-10: retime de la escena 3 a 3,4 s: «¿Qué mierda acabas de hacer?»).
+4. **Cada gasto se anuncia con su coste y espera un OK explícito.** Elegir entre tomas («B») NO es un OK al siguiente paso de pago (error 05-10: 1,46 $ en Kling tomando «B» como OK). Tras dos intentos fallidos de lo mismo: parar y enseñar lo que hay.
+
+## 1. Imágenes (Nano Banana Pro, 0,15 $/imagen)
+
+- **Corte de escena** (otro lugar, otro encuadre, otro sujeto): la imagen inicial NO tiene que coincidir con la final del plano anterior ni la final con la inicial del siguiente. **Continuidad** (misma escena, otra posición de cámara): la final del plano anterior es la inicial del siguiente.
+- Imagen final de un plano: con vida (gente del fondo con gesto nuevo, mano o cámara movida), móvil sólido con la pantalla pegada, mano sin anillos, **avatar con la boca cerrada** (error 05-10: end frame con la boca abierta).
+- Pantalla de app: la interfaz de referencia del cliente, no una invención. Texto pequeño inclinado y fuera de foco no tiene que leerse; en primer plano del móvil sí (pasar la captura limpia como referencia).
+- Un cambio de opinión de Max sobre una escena reescribe esa escena entera (imágenes nuevas), no se parchea la anterior.
+
+## 2. Filmación por plano (fal, `app.models`)
+
+| Plano | Modelo | Por qué |
+|---|---|---|
+| Personas, continuidad | `flux3-first-last` (0,17 $/s, 704x1280, 5-20 s) | respeta las dos imágenes |
+| Primer plano de móvil con pantalla | `flux3-image` desde una imagen ya en primer plano | mantiene la pantalla pegada al móvil al balancear |
+| Pantalla de móvil | NUNCA `kling3-pro-image` | despega la pantalla y dibuja una barra de estado fantasma (captura de Max 05-10) |
+| Personas reales | NUNCA Veo 3.1 | rechaza parecidos reales, máximo 8 s |
+| Texto pequeño en pantalla | NUNCA minimax H3 | deforma el texto |
+
+- **FLUX ignora «acercamiento en el primer segundo»** (dos veces). Si hace falta un primer plano, el plano arranca ya en primer plano desde su propia imagen; el acercamiento es otro plano o no existe.
+- **No cambiar de modelo sin probar la perspectiva** en un plano corto antes del largo (error 05-10: Kling elegido por mí, pantalla despegada, dinero perdido).
+- Un plano largo (13 s de FLUX) tarda más de 15 min: lanzar con `run_in_background` y timeout alto; el proceso sigue vivo en el contenedor aunque muera el ssh (comprobar por `/proc/*/cmdline`), no relanzar.
+- Prompt de FLUX para pantallas: «camera holds this framing… the screen content stays attached to the phone and tilts with it… screen text stays sharp and unchanged… no rings».
+
+## 3. Voz y labios
+
+- TTS con `talk.speak`; nombres de marca en `talk.PRONUNCIATIONS` (`Cardeleine → Kardelehn`, `Madeleine → Madlen`). Marca nueva: tres tomas y Max elige, luego fijar en `talk.py`, commit y `docker service update --force video-engine_app` (deploy.sh no reinicia si la etiqueta no cambia).
+- Audio de un plano: 0,3 s de silencio delante (`adelay`), duración del plano = audio + cola.
+- **Lipsync `veed/lipsync/v2` (0,07 $/s) elige la cara más grande.** Avatar dentro de un móvil: recortar la región del móvil (x,y,w,h), sincronizar solo el recorte, pegarlo con `overlay`. Comprobar el recorte con `drawbox` en tres fotogramas ANTES de pagar (error 05-10: labios en la Madeleine del fondo).
+- Visitante de frente preguntando: labios a cuadro completo (es la cara más grande).
+
+## 4. Montaje (ffmpeg solo existe en el contenedor)
+
+- Normalizar cada entrada: `scale=704:1280:force_original_aspect_ratio=increase,crop=704:1280,fps=24,format=yuv420p,setsar=1,settb=AVTB`; `xfade` exige misma resolución, fps y timebase.
+- Transiciones: `xfade=transition=dissolve:duration=0.4` entre planos de la historia, `fadewhite:duration=0.6` al cartel final; audio con `acrossfade` de la misma duración. Sin transición el corte suena a golpe (Max 05-10: «¿tu programa no permite hacer transiciones?»).
+- Recortar el silencio al final de un plano hablado (fin de la voz + 0,5 s), si no quedan segundos muertos.
+- **Música:** automatización fija, no compresor (sidechaincompress solo bajó 2-3 dB): `volume='if(lt(t,T_cartel),0.09,...0.25)'` con `eval=frame`, fade in 1,2 s y fade out 2,7 s. Al 0,35 tapaba la voz.
+- **Subtítulos siempre:** STT del motor (`render.STT_MODEL`, 0,10 $) sobre la pista de voz montada → tiempos por palabra → bloques por frase ≤ 42 caracteres → `ffmpeg.write_srt` → filtro `subtitles` con el `force_style` de `ffmpeg.concat_and_mix`. Corregir la ortografía de marca que el STT invente («Cardelaine»).
+- Cartel final: el texto del cliente (`end_text`) tal cual; el motor lo dibuja con `dialogue.end_card_png`.
+- Antes de entregar: tira de fotogramas (`tile`) y tres fotogramas con subtítulo; medir niveles con `volumedetect` (voz −23 dB media, música bajo voz con máximo ≤ −20 dB).
+
+## 5. Entrega
+
+1. Copia en `/mnt/c/Users/PC/Downloads/<cliente>-completo-vN-<fecha>.mp4` + `SendUserFile`.
+2. WhatsApp al chat propio de Max (`179830280736869@lid`) con la versión `-wa.mp4` (720p, crf 27): `peek` como comando separado ANTES del `send-video` en el mismo turno (el hook bloquea si no).
+3. Panel del cliente: entregar como versión nueva de SU petición (`deliverables/<id>/vN.mp4` + `thumb.jpg`, `video_requests` a `delivered`, fila en `video_assets`), copiando antes la fila a `clients/<empresa>/clients/<cliente>/backups/`. Nunca una fila nueva si la petición del cliente existe.
+4. Al cliente solo se le escribe cuando Max lo pide; borrador en su buzón (Cardeleine: Drafts de `max@falkenlead.com` por IMAP, copia `.eml` en backups), dos o tres frases, sin explicar lo que se cambió por dentro.
+5. Ledger de horas con el tiempo real de la sesión.
+
+## Operativa del contenedor
+
+- Scripts siempre desde archivo: `scp` a `/tmp` del VPS, `docker cp /tmp/x.py $C:/app/x.py`, `docker exec -w /app $C python3 x.py` (`C=$(docker ps -q -f name=video-engine_app | head -1)`). Un heredoc a `docker exec` sin `-i` no llega.
+- Material de trabajo en `/tmp/s1` del contenedor: se pierde al redesplegar. Copia en `/root/backups/video-engine-s1-<fecha>/` antes de `service update`.
+- Artefactos intermedios en storage bajo `scratch/manual-escenas-<fecha>/`.

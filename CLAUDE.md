@@ -240,6 +240,7 @@ No vienen del upstream; sobreviven a `/actualiza` y no se desinstalan con `/skil
 | `canvas-design` | Diseño visual en canvas (posters, arte generativo) |
 | `skill-creator` | Crear, mejorar y medir skills (upstream Anthropic) |
 | `frontend-design` | Diseño visual intencional de UI: dirección estética, tipografía, evitar look de plantilla (upstream Anthropic, instalada 2026-07-22) |
+| `video-escena-por-escena` | Producción manual de un vídeo del motor de Operandi escena por escena (guion, imágenes, planos, labios, montaje, entrega); reglas nacidas de Cardeleine 03-05-10-2026 (`operations/`) |
 
 ### Plugins Anthropic (instalación vía marketplace)
 
