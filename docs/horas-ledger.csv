@@ -882,3 +882,4 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-10-06,falkenlead,gbs-group,medicion,sesion,0.4,"Número de reenvío: clic real de prueba, causa (etiqueta antes del consentimiento), arreglo GTM v26 y comprobación en vivo"
 2026-10-06,falkenlead,cloudsecretary,medicion,sesion,0.3,"Número de reenvío: mismo arreglo GTM v8, clave de evento en Analytics, diagnóstico del error 3 de Google"
 2026-10-06,kisult,rhp,linus-arbeiter,sesion,0.8,"Bürorechner busca en carpetas locales: cableado del índice, carpetas con --ordner, clave en fichero, workflow que monta y prueba el paquete, guía rehecha; probado en el ThinkPad contra el canario por voz (16/16)"
+2026-10-06,operandi,operandi,video-engine,sesion,0.4,"Vídeo por etapas A2: petición de Tunde recreada en canario (c788f665), guion doblado aprobado, persona dibujada y plano 1 con avatar y doblaje al español (3,10 $ gastados)"
