@@ -919,3 +919,5 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-10-08,interno,iamasters-os,os-mantenimiento,sesion,0.2,"Tope de compactación automática localizado (300.000 desde el 17-09) y subido a 600.000; cierre de la sesión a8"
 2026-10-08,interno,iamasters-os,claude-code-repos,sesion,0.6,"Repos de Claude Code: investigacion de 10, rtk instalado en prueba (hook, exclusiones, PATH por CLAUDE_ENV_FILE, verificado en sesion nueva) y context7 por comando; dos reglas indexadas"
 2026-10-08,operandi,operandi,dashboardln,sesion,0.5,"Refresco de 30 s del layout retirado: cada pantalla pregunta una marca de sus datos (GET /api/pulse) y solo se redibuja cuando cambia; comprobado con el canario en producción; registro de sesión y poda de memoria"
+2026-10-08,kisult,rhp,linus,sesion,0.2,"Investigación del repo mattpocock/skills para el desarrollo de Linus: qué piezas sirven y cuáles no"
+2026-10-08,operandi,operandi,video-engine,sesion,0.9,"M12 híbrido: presentadora sacada de la web del cliente (Isabella) que abre y cierra el vídeo launch, voz por plano, música; canario 8f546f4b entregado (3,28 $), arreglos de música y cortes preparados sin desplegar"
