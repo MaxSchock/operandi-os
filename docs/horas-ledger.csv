@@ -948,3 +948,4 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-10-08,kisult,rhp,linus,sesion,1.1,"Kartenbau T1: red de 17 tests de extremo a extremo antes de reformar real-backend.ts (rama local kartenbau), comprobados rompiendo cada barrera; medición de transcripción literal en canario (0 de 15, insuficiente); traspaso T2-T4"
 2026-10-08,operandi,cardeleine,video-engine,sesion,0.2,"Vídeo de Jana v7b: fundido limpio entre planos, CEO en la ficha del móvil y exportación en yuv420p"
 2026-10-08,kisult,rhp,linus,sesion,0.8,"Envío real de prueba en canario, dos líneas falsas de «Konnte nicht senden» arregladas con prueba, eedf4840 desplegado en canario, André y Jonas con copias, main al día"
+2026-10-08,operandi,cardeleine,video-engine,sesion,0.9,"Vídeo de Jana v7c: plano del móvil rehecho con MiniMax Hailuo 3 con vídeo de referencia (2 tomas), labios en el recorte, franja y esquina corregidas, remontado"
