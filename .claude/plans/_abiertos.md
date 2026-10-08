@@ -1,0 +1,17 @@
+# Planes abiertos fuera de esta carpeta
+
+Registro de planes con fases sin terminar que viven en otras rutas. Lo lee `salud-os.py` al arrancar cada sesión para que ninguno caiga en el olvido. Una línea por plan: `- ruta | hecho | falta | pide: quién tiene que mover ficha`. Cuando un plan se termina o se descarta, se borra su línea. Inventario inicial del 08-10-2026 (contrastado con session-logs, no con los sistemas en vivo).
+
+- projects/briefs/outreach-v2/brief.md | 4 de 11 hitos | S3 reconciler v2, S4 Phcom, S5 Helexia y Belgo, S6 Kaps, S7 bandit y email, S8 cierre; el brief está desfasado | pide: Max decide retomarlo o aparcarlo
+- ~/.claude/plans/spicy-munching-wren.md (Linus aprende) | 2 de 8 bloques | bloques 3, 4, 5a, 5b, 5c y 6 sin empezar | pide: Max, las «Decisiones tuyas» del plan
+- clients/operandi/investigacion-alcance-2026-09/PLAN-AUDITORIA.md (alcance Madeleine) | fases 1 y 5 casi, 0 a medias, de 6 | fases 2, 3 y 4 sin prueba; 4 decisiones Tier 3 del apartado 4 | pide: Max, apartado 4 y criterio sobre Jana
+- clients/falkenlead/google-ads/plan-saneamiento-medicion-2026-07-22.md | 0 de 3 cuentas | Tojo: compra contada doble; Estoko: YouTube como primaria | pide: Seybold, Ralf y Gerald (Tojo); Rafa (Estoko)
+- clients/kisult/clients/rhp/linus-lo-olvidado-plan-2026-09-25.md | 5 de 7 bloques | bloque 5 (push y escalada por WhatsApp), bloque 6 (sombra de 14 días) | pide: Max, segunda línea de WhatsApp y prueba de voz
+- ~/.claude/plans/majestic-splashing-marble.md (Linus tareas por contacto) | 3,5 de 5 fases | fase 4 (frases del jefe como prueba), fase 5 (tachar solo con deshacer) | pide: Max y datos reales de Jonas y André
+- ~/.claude/plans/cheeky-pondering-flute.md (Dashboard dirige el motor de vídeo) | 14 de 17 bloques | aceptación A con Jana, A2 (b, c, d), UI de voz del presentador, cola de 7c | pide: Max, «Release» del revisor, juicio de labios y prueba real
+- ~/.claude/plans/bubbly-spinning-rain.md (Linus «Sekretärin») | F5 y F6 hechas, resto sin registro por fase | F7 (documento continuar o cortar), sesión 3 «Amplitud», certificado de firma | pide: Max, alcance de la sesión 3
+- clients/falkenlead/google-ads/cloudsecretary/plan-2026-09-23-consolidacion-yorespondo.md | tareas 1 a 3 hechas | marca a 10 €/día, acceso Arimetrics, primera subida de altas, lectura de la genérica el 13-10 | pide: David, Christian y Fernando
+- clients/kisult/clients/hemmersbach/plan-hemmersbach-2026-09-08.md | puntos 1a, 1b y 2 | sección 3 (ASSESS_TIMEOUT_S, 7 MB de Dennis, 44 correos de test) y sección 4 | pide: Max contesta a David y da OK al cuestionario
+- projects/briefs/marca-personal/brief.md | capas, Günther y avatar definidos; 3 posts | 3 decisiones (objetivo, idioma, choque con Falkenlead), primer vídeo de Günther, 5 guiones | pide: Max
+- clients/kisult/clients/rhp/linus-plan-una-tarjeta-2026-09-18.md | casi todo | preguntas de solo lectura con tarjeta en foco | pide: Max
+- clients/kisult/clients/rhp/linus-testing-plan-2026-08-18.md | sin prueba del paquete e2e | decidir si el banco kundenpruefung lo sustituye; CI de main roja | pide: nadie, decisión técnica pendiente

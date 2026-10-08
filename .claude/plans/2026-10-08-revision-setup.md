@@ -1,6 +1,6 @@
 # Revisión a conciencia del setup de Claude Code
 
-Estado: propuesto 08-10-2026, revisado el mismo día con datos (v2). Sin empezar. Una sesión por fase; cada fase deja aquí sus hallazgos, un commit y una línea en el ledger (`interno,iamasters-os`).
+Estado: en marcha 08-10-2026. Hechas: 0a, 0, 1 (parte del repo), 3, 4 y 6. Abiertas: 0b y 2 (pide: Max decide si se apagan los activadores de Sinapsis), 1 (pide: Max, CLAUDE.md global y lectura de arranque), 5 (Linus). «Una sesión por fase» queda anulado por Max el 08-10: el plan se ejecuta seguido hasta el final.
 
 ## Por qué
 
@@ -73,11 +73,42 @@ Datos del operador: `clients/`, `context/` (salvo poda acordada), `brand-context
 
 **1. Instrucciones fijas.** CLAUDE.md global y del repo, MEMORY.md (pasa del tope), working-memory (pasa del tope), `context/`. Contradicciones, datos caducados (Sinapsis 4.6.1, rutas) e instrucciones que no cambian nada. Qué se carga siempre y qué solo cuando toca. El ritual de arranque: o lo ejecuta un hook o se recorta a lo que de verdad se usa. Limpieza: las 133 copias `.bak` y `backups/` de Linus salen del repo a `~/.claude/backups/`.
 
+*Hecho el 08-10 (parte del repo):*
+
+- `CLAUDE.md` del repo de 18,1 a 14,8 KB: aplicados los cambios del original, registro de skills reducido a lo que la lista de la sesión no enseña ya, y corregido «Sinapsis v4.6.1» (corre la 4.1).
+- 133 copias de working-memory, 114 del ledger, la carpeta `backups/` (122 ficheros de Linus y del VPS) y 3 copias de hooks trasladadas a `~/.claude/backups/os-repo-copias-20261008/`. `.gitignore` ignora `*.bak-*`, `*.backup-*` y `/backups/`. Quedan 136 copias dentro de `clients/` y `projects/`, sin tocar. Las copias las hacen las sesiones a mano (regla 1), no un hook: volverán, y la rutina semanal avisa cuando pasen de 20.
+- El arranque de sesión recuerda ahora los planes sin terminar: `salud-os.py` lista los de `.claude/plans/` cuyo `Estado:` no empiece por terminado, cerrado o descartado, más los de `.claude/plans/_abiertos.md` (13 planes de otras rutas, inventariados el 08-10 contra session-logs). Sin caché: sale en cada sesión.
+- Regla nueva `feedback-planes-se-terminan-hasta-la-ultima-fase` (irrompible), pedida por Max el 08-10.
+- **Pendiente de Max:** el `CLAUDE.md` global (26 KB) y su «lectura obligatoria al inicio» (clients.private.md, consulta de errores n8n, cinco ficheros de `context/`), que no se cumple y nada lo detecta. MEMORY.md está en su tope (17,0 KB) y working-memory lo pasa (3,7 de 2,5 KB).
+
 **2. Reglas.** Con la tabla de la fase 0: fusionar duplicadas, archivar las que no se activan, revisar una a una las 67 irrompibles. Las que acumulan reincidencias pasan a comprobación automática que bloquea, en vez de texto. Un único sistema entre activador, instincts y passive rules; arreglar el indexador para que refresque reglas editadas. Las 117 propuestas de instinct: revisar tras portar el arreglo de 0b, porque parte serán falsas.
+
+*Hecho el 08-10 (lo que no depende de la decisión sobre Sinapsis):*
+
+- **Dónde viven de verdad las reincidencias.** Las cuatro reglas más incumplidas ya son comprobaciones de `guard-respuesta.py` desde el 31-08; sus contadores (49, 36, 24, 8) son en buena parte anteriores. Las reglas de conducta («no digas que no puedes», «revisa a fondo», «no preguntes si sigues») no dependen de lo que escribe Max, así que un activador por palabras del mensaje no puede cazarlas: su sitio es el guard que mira la respuesta.
+- **Dos comprobaciones nuevas en `guard-respuesta.py`:** (5) pedir permiso o aparcar trabajo («¿sigo?», «avísame», «queda para otra sesión») cuando la frase no habla de un envío, borrado o producción; (6) encargar a Max una comprobación. Probadas con 10 casos y contra 1.239 respuestas reales de dos semanas: la 5 habría saltado 59 veces (4,8 %), la 6 cuatro. Los ejemplos son incumplimientos de verdad («¿Sigo con GBS o cambias el orden?», «Avísame»).
+- **El indexador refresca las reglas editadas** (guarda la fecha del fichero por entrada) y retira las que ya no existen. De paso arreglada la llamada desde `destilador.py`, que se habría roto con el cambio.
+- **Poda con datos: `~/.claude/hooks/podar-reglas.py`.** Archiva en `memory/_archivadas/` las reglas con más de 60 días y cero activaciones en 60 días, nunca irrompibles. Hoy lista 17 y no aplica: el activador existe desde el 27-08 y no hay 60 días de datos hasta el 27-10. La fecha de creación sale del primer commit en `~/sinapsis-state` cuando el fichero no la trae (la del disco no vale: el cambio de portátil las igualó).
+- **Lo útil de Sinapsis ya está en el activador:** 63 instincts y passive rules técnicos volcados en cinco reglas `reference-gotchas-*` (n8n, Docker y servidor, Supabase y Postgres, APIs externas y LLM, WSL y entorno). Probado: saltan con mensajes de cada tema. Los 20 restantes son de conducta y ya están en el `CLAUDE.md` global.
+- **Pendiente de Max:** apagar los cinco hooks de Sinapsis (observe pre y post, `_project-context.sh`, `_passive-activator.sh`, `_instinct-activator.sh`). Ahorra unos 7 MB de texto inyectado al mes y 187 cortes por tiempo. Los datos no se tocan y se revierte desde la copia de `settings.json`. Con eso queda un solo sistema de reglas. Pendientes también: revisar una a una las 50 irrompibles y las 6 que no saltan nunca.
 
 **3. Hooks.** Orden, tiempo medido, bloqueos falsos, los que ya no hacen nada, copias `.bak` sueltas en `~/.claude/hooks/`.
 
+*Hecho el 08-10:*
+
+- La cadena de 11 hooks por orden de terminal tarda 0,24 s en frío (medido, 5 pasadas). El tiempo no es el problema; lo es el texto inyectado y los cortes cuando la máquina va cargada.
+- Tope de los cuatro guards de envío y borrado subido de 5 a 20 s en `settings.json`: se cortaban 16-17 veces cada uno en cuatro semanas, y un guard cortado deja pasar la orden sin mirarla.
+- Filtro de secretos previo al commit (`.githooks/pre-commit`): ya no vuelve a escanear ficheros que solo cambian de ruta. Probado que sigue bloqueando una clave nueva.
+- Las 3 copias `.bak` de `~/.claude/hooks/` trasladadas a la carpeta de copias.
+
 **4. Skills y plugins.** Con las skills ya cargando: duplicados entre el OS y el plugin de Anthropic, las que la fase 0 dice que no se usan, choques de nombre. Aquí entra mattpocock/skills (análisis del 08-10: revisión de arquitectura, depuración, glosario, revisión en dos ejes, retro, prototipo, preguntas de producto, trozos con test primero; renombrar `code-review` al copiar).
+
+*Hecho el 08-10:*
+
+- `mcp-builder` y `skill-creator` archivadas en `.claude/skills/_archived/`: eran copia del 19-05 de las del plugin de Anthropic, que ya carga las suyas. `canvas-design` se queda porque los scripts de la propuesta de Intelart leen sus fuentes (ruta arreglada).
+- `/backup` existe dos veces con sentidos distintos (el de Sinapsis exporta su estado; el del OS copia todos los datos). Se resuelve con la decisión sobre Sinapsis.
+- No se desinstala ninguna skill por «no usada»: hasta hoy no cargaban. Se vuelve a medir el 22-10 con la rutina semanal.
+- mattpocock/skills entra con la fase 5.
 
 **5. Flujo de desarrollo.** Instalar la cadena en Linus y dejarla como plantilla para los demás productos (dashboard Operandi, motor de vídeo, Suritec). Primera pasada: revisión de arquitectura sobre `real-backend.ts` (11.730 líneas, 36 % de los commits).
 
@@ -93,6 +124,16 @@ Lo que se construye, por orden:
 4. **Vigilancia de fuera.** `salud-os.py` compara contra `upstream` (iamasters-os) y contra los tags de Sinapsis; avisa con la lista de cambios que afectan al motor que corre aquí. `/doctor` entra en la rutina para cazar roturas de estructura como la de las skills anidadas.
 5. **Sesión de mantenimiento programada, no manual.** Una vez al mes, en cron (ThinkPad) o rutina cloud: lee la medición, aplica la poda con evidencia, escala reincidencias, revisa propuestas de instinct, comprueba upstream, y deja un informe de una pantalla con el diff. Permisos: escribe solo en memoria, reglas y hooks del OS; nada de clientes, envíos ni producción. Max lee el informe; no revisa el trabajo.
 6. **Los avisos de `salud-os.py` tienen dueño.** Hoy dice «díselo a Max y ofrece resolverlo»; MEMORY.md y working-memory llevan semanas pasados de tope. Lo que es poda de ficheros propios lo ejecuta la rutina; a Max solo llega lo que toca producción o contradice una decisión suya.
+
+*Hecho el 08-10:*
+
+- 1. `scripts/medir-setup.py` (informe en `docs/medicion-setup/` y datos en `~/.claude/session-env/medicion-setup-<dias>d.json`).
+- 2. `podar-reglas.py` e indexador que refresca. Falta la caducidad de instincts, que depende de la decisión sobre Sinapsis.
+- 3. `salud-os.py` ya listaba las reincidentes; las de conducta van a `guard-respuesta.py` (ver fase 2).
+- 4. `salud-os.py` compara contra el original (`upstream`) usando `.claude/.original-aplicado`, con un fetch al día como mucho.
+- 5. `scripts/mantenimiento-setup.sh` en cron, lunes 08:30: mide, poda, reindexa, mira el original y deja una nota que `salud-os.py` enseña en la sesión siguiente. Lo que exige juicio lo hace esa sesión. No arranca un Claude por su cuenta: es la parte determinista.
+- 6. La nota de mantenimiento dice qué hacer y se borra al terminar.
+
 
 Comprobación final: repetir la medición y comparar con la tabla del inicio; a partir de ahí la compara la rutina cada mes.
 
