@@ -57,6 +57,8 @@ Datos del operador: `clients/`, `context/` (salvo poda acordada), `brand-context
 - **El arreglo de caducidad (4.6.2) falta en local**, comprobado comparando `_instinct-activator.sh`: las rebajas solo se guardan cuando hay coincidencia. El registro lo delata: 12.023 anotaciones «DECAYED» en cuatro semanas sobre los mismos 3 instincts.
 - **No se porta nada todavía.** Portar ese arreglo hace que el motor empiece a escribir rebajas en `_instincts-index.json` (fichero que este plan no toca) para mantener vivo un sistema que su autor ha dado por muerto. La pregunta ya no es «¿porto dos arreglos?» sino «¿siguen encendidos los activadores de Sinapsis?». Decisión de Max, con propuesta en la fase 2.
 
+*Decidido por Max el 08-10: apagar. Hecho:* quitados de `~/.claude/settings.json` los cinco hooks de Sinapsis (observador antes y después, `_project-context.sh`, `_passive-activator.sh`, `_instinct-activator.sh`). Datos intactos en `~/.claude/skills/`. Vuelta atrás: `~/.claude/backups/os-repo-copias-20261008/settings.json.antes-apagar-sinapsis-20261008`. No se portó ningún arreglo: ya no hace falta. En la comunidad de IA Masters no hay sustituto oficial ni respuesta de Ángel al hilo del 19-09 que lo pregunta; el OS original sigue describiéndose con Sinapsis pero no tiene commits desde el 19-08.
+
 **0. Medir con datos (solo lectura).** Fuente: los 137 transcripts de la carpeta del proyecto (1,3 GB; el activador no lleva registro propio, pero su salida queda en el transcript como aviso del hook), `_instinct.log` (3,2 MB) para instincts, `_session-learner.log` para propuestas. Últimas 4 semanas. Sale una tabla: qué reglas, instincts, passive rules, hooks y skills se activan, cuántas veces, cuáles nunca; qué reglas se incumplen pese a activarse (cruzando con las reincidencias); cuánto tarda la cadena de 11 hooks por comando de terminal. Todo lo demás depende de esta tabla.
 
 *Hecho el 08-10. La medición es ya un script: `scripts/medir-setup.py` (3 s, solo lectura), informe en `docs/medicion-setup/2026-10-08.md`. Ventana de 28 días: 133 sesiones, 4.203 mensajes de Max, 33.652 llamadas a herramientas (26.887 de terminal). Hallazgos:*
@@ -81,6 +83,8 @@ Datos del operador: `clients/`, `context/` (salvo poda acordada), `brand-context
 - Regla nueva `feedback-planes-se-terminan-hasta-la-ultima-fase` (irrompible), pedida por Max el 08-10.
 - **Pendiente de Max:** el `CLAUDE.md` global (26 KB) y su «lectura obligatoria al inicio» (clients.private.md, consulta de errores n8n, cinco ficheros de `context/`), que no se cumple y nada lo detecta. MEMORY.md está en su tope (17,0 KB) y working-memory lo pasa (3,7 de 2,5 KB).
 
+*Decidido por Max el 08-10 y hecho:* la «lectura obligatoria» del `CLAUDE.md` global pasa a «Arranque de sesión»: el hook `salud-os.py` inyecta la memoria de trabajo, los planes abiertos y los avisos; `clients.private.md` y los errores de n8n se leen cuando toca y con `/start-here`. Mismo cambio en el `CLAUDE.md` del repo, que además marca Sinapsis como apagado. Copia del global en `~/.claude/backups/os-repo-copias-20261008/CLAUDE.global.md.antes-20261008`.
+
 **2. Reglas.** Con la tabla de la fase 0: fusionar duplicadas, archivar las que no se activan, revisar una a una las 67 irrompibles. Las que acumulan reincidencias pasan a comprobación automática que bloquea, en vez de texto. Un único sistema entre activador, instincts y passive rules; arreglar el indexador para que refresque reglas editadas. Las 117 propuestas de instinct: revisar tras portar el arreglo de 0b, porque parte serán falsas.
 
 *Hecho el 08-10 (lo que no depende de la decisión sobre Sinapsis):*
@@ -91,6 +95,13 @@ Datos del operador: `clients/`, `context/` (salvo poda acordada), `brand-context
 - **Poda con datos: `~/.claude/hooks/podar-reglas.py`.** Archiva en `memory/_archivadas/` las reglas con más de 60 días y cero activaciones en 60 días, nunca irrompibles. Hoy lista 17 y no aplica: el activador existe desde el 27-08 y no hay 60 días de datos hasta el 27-10. La fecha de creación sale del primer commit en `~/sinapsis-state` cuando el fichero no la trae (la del disco no vale: el cambio de portátil las igualó).
 - **Lo útil de Sinapsis ya está en el activador:** 63 instincts y passive rules técnicos volcados en cinco reglas `reference-gotchas-*` (n8n, Docker y servidor, Supabase y Postgres, APIs externas y LLM, WSL y entorno). Probado: saltan con mensajes de cada tema. Los 20 restantes son de conducta y ya están en el `CLAUDE.md` global.
 - **Pendiente de Max:** apagar los cinco hooks de Sinapsis (observe pre y post, `_project-context.sh`, `_passive-activator.sh`, `_instinct-activator.sh`). Ahorra unos 7 MB de texto inyectado al mes y 187 cortes por tiempo. Los datos no se tocan y se revierte desde la copia de `settings.json`. Con eso queda un solo sistema de reglas. Pendientes también: revisar una a una las 50 irrompibles y las 6 que no saltan nunca.
+
+*Cierre de la fase 2 (08-10):*
+
+- **Un solo sistema:** activador más guards. Sinapsis apagado.
+- **El activador ya no repite la regla entera.** La primera vez en la sesión sale completa; si vuelve a tocar en los 45 minutos o 12 activaciones siguientes, sale solo su titular. Era el mayor gasto que quedaba: 9.138 activaciones en cuatro semanas, hasta 10 veces la misma regla por sesión. Por eso no se han estrechado los disparadores anchos (Linus, Unipile): con la repetición resuelta ya no cuestan.
+- **Las 50 irrompibles, revisadas una a una.** Dos duplicadas fusionadas en el índice (`feedback_unipile_for_personal_gmail` en `reference-unipile-enviar-como-max`; `feedback-cuentas-reales-de-cliente-en-su-propia-instancia` en `feedback-cuenta-de-una-persona-en-su-propia-instancia`), con sus disparadores pasados a la que queda. Las 5 que no saltaron en cuatro semanas son de situaciones raras y graves (secretos en pantalla, tomas de vídeo con coste, bugs en producción): se quedan. Una está caducada en su texto y la decide Max: `feedback-un-agente-pesado-a-la-vez-en-el-pc` habla del PC de 8 GB y el ThinkPad da 16 GB a WSL desde el 27-09.
+- **Las 117 propuestas de instinct** no se revisan: salían del observador de Sinapsis, ya apagado, y parte eran falsas por el fallo que el propio autor documentó. Siguen en `_instinct-proposals.json`.
 
 **3. Hooks.** Orden, tiempo medido, bloqueos falsos, los que ya no hacen nada, copias `.bak` sueltas en `~/.claude/hooks/`.
 
@@ -134,8 +145,23 @@ Lo que se construye, por orden:
 - 5. `scripts/mantenimiento-setup.sh` en cron, lunes 08:30: mide, poda, reindexa, mira el original y deja una nota que `salud-os.py` enseña en la sesión siguiente. Lo que exige juicio lo hace esa sesión. No arranca un Claude por su cuenta: es la parte determinista.
 - 6. La nota de mantenimiento dice qué hacer y se borra al terminar.
 
+*Fase 5, decidida por Max el 08-10 (rama aparte, sin desplegar):* rama `pocock-skills` en `~/max-assistent-pocock` (desde `origin/main`, commit ec6a1084), con once skills en `.claude/skills/`: `improve-codebase-architecture`, `codebase-design`, `diagnosing-bugs`, `domain-modeling`, `prototype`, `retro`, `tdd`, `writing-for-agents` tal cual; `revision-dos-ejes` (era `code-review`, se suma a Codex); `grilling` limitada a preguntas de producto; `trozos-con-test-primero` escrita a partir de `implement-spec`. Origen y licencia en `ORIGEN-mattpocock.md`. No toca `canary-0810` ni código. Se fusiona en main cuando Max dé el OK a `canary-0810`. Primera pasada de arquitectura sobre `real-backend.ts`: ver el cierre de esta fase más abajo.
 
-Comprobación final: repetir la medición y comparar con la tabla del inicio; a partir de ahí la compara la rutina cada mes.
+
+**Comprobación final (08-10-2026), contra la tabla del inicio:**
+
+| Pieza | Antes | Después |
+|---|---|---|
+| Texto fijo por sesión | ~61 KB (global 26, repo 17, MEMORY 17) | 58,5 KB (global 27,4; repo 14,1; MEMORY 17,0) más 6,7 KB que ahora inyecta el arranque (memoria de trabajo y planes abiertos, que antes había que acordarse de leer) |
+| Texto inyectado por hooks en 4 semanas | ~11 MB | Sinapsis fuera (unos 6,9 MB menos); el activador deja de repetir reglas enteras. Cifra real: informe del lunes 13-10 |
+| Reglas | 341 en el índice | 345 (310 vigentes): +5 de gotchas, +1 de planes, 2 fusionadas, 2 retiradas por no existir. 17 listas para archivar el 27-10 |
+| Sistemas de reglas | 3 | 1 |
+| Hooks | 23 órdenes, 11 antes de cada orden de terminal | 18 y 7 |
+| Skills del OS | 34, ninguna cargaba | 32 cargando, 2 duplicadas archivadas |
+| Lectura obligatoria al arrancar | ~10 ficheros, no se cumplía | la hace el hook |
+| Copias sueltas en el repo | 133 `.bak` y `backups/` | fuera, en `~/.claude/backups/os-repo-copias-20261008/` |
+
+No se cumplió «menos texto fijo»: se queda igual. Lo que baja de verdad es lo que se inyecta por orden y por mensaje, que era veinte veces mayor. La rutina de los lunes compara a partir de ahora.
 
 ## Reglas del trabajo
 
