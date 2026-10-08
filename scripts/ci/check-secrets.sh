@@ -34,7 +34,7 @@ for name in tracked:
         ".github/workflows/validate.yml",
         ".githooks/pre-commit",
         "scripts/chat-to-md.py",
-        ".claude/skills/automation/mcp-builder/reference/evaluation.md",
+        ".claude/skills/mcp-builder/reference/evaluation.md",
     ):
         continue
     if "vendor" in path.parts:
@@ -42,6 +42,12 @@ for name in tracked:
     try:
         text = path.read_text(encoding="utf-8")
     except UnicodeDecodeError:
+        continue
+    except (FileNotFoundError, IsADirectoryError, PermissionError):
+        # Trackeado en git pero ausente en disco: el operador lo movió o borró sin
+        # commitear todavía (p. ej. tras la migración de estructura de v0.11.0).
+        # No hay nada que escanear y crashear aquí dejaba un traceback de Python
+        # en la cara de cualquiera que corriese el check tras actualizar.
         continue
     for line_no, line in enumerate(text.splitlines(), start=1):
         lower = line.lower()

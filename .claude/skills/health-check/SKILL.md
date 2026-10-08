@@ -53,16 +53,21 @@ Esta sección es la que evita "instalaciones fantasma". No te fíes de que el ar
 | `_operator-state.json` parseable | `node -e "JSON.parse(require('fs').readFileSync('~/.claude/skills/_operator-state.json'))"` no falla | 🔴 |
 | `_operator-state.json` tiene campos mínimos | `.operator.name` y `.operator.language` no son null/empty | 🟡 (sin esto el wizard no ha terminado) |
 | `_catalog.json` parseable | mismo | 🟡 |
-| Hooks ejecutables (5 hooks) | `_passive-activator.sh`, `_instinct-activator.sh`, `_session-learner.sh`, `_project-context.sh`, `_eod-gather.sh` existen Y tienen permiso `+x` | 🔴 si falla ≥2, 🟡 si falla 1 |
+| Hooks ejecutables (7 hooks) | `_passive-activator.sh`, `_instinct-activator.sh`, `_session-learner.sh`, `_project-context.sh`, `_eod-gather.sh`, `_dream.sh`, `_precompact-guard.sh` existen Y tienen permiso `+x` | 🔴 si falla ≥2, 🟡 si falla 1 |
 | ≥1 SKILL.md instalada | `find ~/.claude/skills -maxdepth 3 -name SKILL.md` devuelve ≥1 resultado | 🔴 |
-| Hooks registrados en settings.json | `~/.claude/settings.json` parseable Y contiene la sección `hooks.PreToolUse` con referencias a `_passive-activator.sh` | 🟡 |
+| Hooks REALMENTE cableados en settings.json | `~/.claude/settings.json` parseable Y `hooks` referencia `_passive-activator.sh`, `_instinct-activator.sh` (PreToolUse) y `_session-learner.sh` (Stop). **Este es el check funcional real**: si faltan, Sinapsis está instalado pero el motor de aprendizaje NO se dispara (muerte silenciosa). Ojo: que exista la palabra `"hooks"` NO basta. | 🔴 |
 | Install-gate registrado | `~/.claude/settings.json` contiene `hooks.SessionStart` con referencia a `_install-gate.sh` | 🟡 |
 | **DRIFT check** | Si `_install-state.json.phases.sinapsis-engine.status == "done"` Y alguno de los anteriores falla → **DRIFT** | 🔴 con flag "STATE DRIFT" |
 
 Para los checks de hooks ejecutables, usa Bash:
 ```bash
-for h in _passive-activator.sh _instinct-activator.sh _session-learner.sh _project-context.sh _eod-gather.sh; do
+for h in _passive-activator.sh _instinct-activator.sh _session-learner.sh _project-context.sh _eod-gather.sh _dream.sh _precompact-guard.sh; do
   [ -x "$HOME/.claude/skills/$h" ] && echo "OK $h" || echo "FAIL $h"
+done
+
+# Check funcional real: ¿están los hooks de Sinapsis cableados en settings.json?
+for h in _passive-activator.sh _instinct-activator.sh _session-learner.sh; do
+  grep -q "$h" "$HOME/.claude/settings.json" 2>/dev/null && echo "WIRED $h" || echo "NOT-WIRED $h"
 done
 ```
 
@@ -123,38 +128,45 @@ Reporte sugerido:
 
 ### Paso 5 · Verificación skills curadas
 
-Lista skills core (v0.6 Capa 1) = 27 (23 del manifiesto original + 4 importadas de upstream Anthropic: skill-creator, mcp-builder, canvas-design, content-engine). NO incluye `_meta/_optional/cognito` (opcional). En disco hay 28 `SKILL.md` (27 core + cognito).
+Lista skills CORE (siempre instaladas — 17):
 
 ```
-.claude/skills/_meta/meta-skill-creator/SKILL.md
-.claude/skills/_meta/skill-creator/SKILL.md
-.claude/skills/_meta/meta-onboarding-wizard/SKILL.md
-.claude/skills/_meta/meta-deep-dive/SKILL.md
-.claude/skills/_meta/meta-start-here/SKILL.md
-.claude/skills/_meta/meta-wrap-up/SKILL.md
-.claude/skills/_meta/welcome-quick-win/SKILL.md
-.claude/skills/_meta/seis-sombreros/SKILL.md
-.claude/skills/_meta/decisions-log/SKILL.md
-.claude/skills/_meta/health-check/SKILL.md
-.claude/skills/_meta/find-skills/SKILL.md
-.claude/skills/marketing/marketing-brand-voice/SKILL.md
-.claude/skills/marketing/marketing-positioning/SKILL.md
-.claude/skills/marketing/marketing-icp/SKILL.md
-.claude/skills/marketing/marketing-copywriting/SKILL.md
-.claude/skills/marketing/marketing-content-repurposing/SKILL.md
-.claude/skills/marketing/marketing-email-sequence/SKILL.md
-.claude/skills/marketing/content-engine/SKILL.md
-.claude/skills/automation/automation-loop-engine/SKILL.md
-.claude/skills/automation/automation-n8n-to-claude/SKILL.md
-.claude/skills/automation/automation-n8n-builder/SKILL.md
-.claude/skills/automation/mcp-builder/SKILL.md
-.claude/skills/strategy/strategy-web-research/SKILL.md
-.claude/skills/tools/tool-firecrawl-scraper/SKILL.md
-.claude/skills/tools/tool-humanizer/SKILL.md
-.claude/skills/tools/tool-output-verifier/SKILL.md
-.claude/skills/visualization/tool-visual-explainer/SKILL.md
-.claude/skills/visualization/canvas-design/SKILL.md
+.claude/skills/meta-skill-creator/SKILL.md
+.claude/skills/meta-onboarding-wizard/SKILL.md
+.claude/skills/meta-deep-dive/SKILL.md
+.claude/skills/meta-start-here/SKILL.md
+.claude/skills/meta-wrap-up/SKILL.md
+.claude/skills/welcome-quick-win/SKILL.md
+.claude/skills/decisions-log/SKILL.md
+.claude/skills/health-check/SKILL.md
+.claude/skills/find-skills/SKILL.md
+.claude/skills/recuerda/SKILL.md
+.claude/skills/marketing-brand-voice/SKILL.md
+.claude/skills/marketing-positioning/SKILL.md
+.claude/skills/marketing-icp/SKILL.md
+.claude/skills/automation-loop-engine/SKILL.md
+.claude/skills/tool-firecrawl-scraper/SKILL.md
+.claude/skills/tool-humanizer/SKILL.md
+.claude/skills/tool-output-verifier/SKILL.md
 ```
+
+Las de `skills-library/` NO van en esta lista: son opt-in y su ausencia es normal, no un fallo.
+Para verlas: `bash scripts/skills.sh list`.
+
+**Estructura (🔴 crítico):** toda skill debe estar a UN nivel — `.claude/skills/<nombre>/SKILL.md`.
+Claude Code solo indexa un nivel: una carpeta de categoría intermedia deja la skill invisible para
+el tool Skill (`Unknown skill: <nombre>`) aunque el archivo exista y el frontmatter sea válido.
+
+```bash
+find .claude/skills -mindepth 3 -name SKILL.md -not -path "*_archived*"
+```
+
+Cualquier resultado → 🔴 "skill anidada, no la carga nadie" · acción: mover a `.claude/skills/<nombre>/`
+(o reinstalar con `bash scripts/skills.sh add <nombre>`). `_archived/` está anidado A PROPÓSITO para
+que no cargue: es la excepción esperada.
+
+**Nombre = carpeta (🟡):** para las skills de proyecto el nombre de invocación lo da el NOMBRE DE LA
+CARPETA, no el frontmatter. Si `name:` y la carpeta no coinciden, avisa: se invoca por la carpeta.
 
 Por cada faltante: 🟡 con sugerencia "ejecuta `bash scripts/update.sh` para sincronizar".
 

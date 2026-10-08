@@ -222,10 +222,41 @@ json.dump(s, open(f, 'w'), indent=2)
     esac
 }
 
+clear_phase_errors() {
+    # $1 = phase — elimina del array global s.errors las entradas de esa fase.
+    # Sin esto, un error de un intento previo persiste para siempre y sigue
+    # apareciendo en /install-status aunque el reintento acabe en 'done'.
+    case "$JSON_RUNTIME" in
+        node)
+            node -e "
+                const fs = require('fs');
+                const f = '$WIN_STATE_FILE';
+                const s = JSON.parse(fs.readFileSync(f, 'utf8'));
+                s.errors = (s.errors || []).filter(e => e.phase !== '$1');
+                s.lastUpdatedAt = new Date().toISOString();
+                fs.writeFileSync(f, JSON.stringify(s, null, 2));
+            "
+            ;;
+        python3|python)
+            "$JSON_RUNTIME" -c "
+import json, datetime
+f = '$WIN_STATE_FILE'
+s = json.load(open(f))
+s['errors'] = [e for e in s.get('errors', []) if e.get('phase') != '$1']
+s['lastUpdatedAt'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+json.dump(s, open(f, 'w'), indent=2)
+"
+            ;;
+    esac
+}
+
 mark_phase_done() {
     # $1 = phase name
     json_set_phase "$1" "status" '"done"'
     json_set_phase "$1" "validatedAt" "\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\""
+    # Purga los errores de esta fase: si un intento previo falló y ahora pasa,
+    # el error viejo NO debe seguir mostrándose (era un fantasma que asustaba).
+    clear_phase_errors "$1"
 
     # Append to completedPhases array
     case "$JSON_RUNTIME" in
@@ -423,8 +454,10 @@ validate_sinapsis_deep() {
         fi
     fi
 
-    # Hooks ejecutables (los que Sinapsis instala)
-    for hook in _passive-activator.sh _instinct-activator.sh _session-learner.sh; do
+    # Hooks ejecutables — los 7 que Sinapsis instala (antes solo se validaban 3,
+    # así que una instalación con hooks a medias pasaba como buena).
+    for hook in _passive-activator.sh _instinct-activator.sh _session-learner.sh \
+                _project-context.sh _eod-gather.sh _dream.sh _precompact-guard.sh; do
         if [ ! -f "$SKILLS_DIR/$hook" ]; then
             warn "  validación: falta hook $hook"
             issues=$((issues+1))
@@ -436,21 +469,31 @@ validate_sinapsis_deep() {
 
     # ≥1 skill real instalada (SKILL.md, no archivos vacíos)
     local skill_count
-    skill_count=$(find "$SKILLS_DIR" -maxdepth 3 -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
+    skill_count=$(find -L "$SKILLS_DIR" -maxdepth 3 -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
     if [ "$skill_count" -lt 1 ]; then
         warn "  validación: no se encontró ninguna SKILL.md en $SKILLS_DIR"
         issues=$((issues+1))
     fi
 
-    # settings.json con sección hooks (señal de que Sinapsis registró sus hooks)
-    if [ -f "$CLAUDE_HOME/settings.json" ]; then
-        if ! grep -q '"hooks"' "$CLAUDE_HOME/settings.json"; then
-            warn "  validación: ~/.claude/settings.json existe pero no tiene sección 'hooks'"
-            issues=$((issues+1))
-        fi
-    else
+    # settings.json debe existir Y tener los hooks de Sinapsis REALMENTE cableados.
+    # No basta con que aparezca la palabra "hooks": eso daba falso OK cuando el
+    # usuario ya tenía settings.json con hooks de otra cosa y los de Sinapsis
+    # nunca se registraron → motor de aprendizaje muerto en silencio.
+    if [ ! -f "$CLAUDE_HOME/settings.json" ]; then
         warn "  validación: ~/.claude/settings.json no existe"
         issues=$((issues+1))
+    elif ! json_validate "$CLAUDE_HOME/settings.json"; then
+        warn "  validación: ~/.claude/settings.json no es JSON parseable"
+        issues=$((issues+1))
+    else
+        local missing_wired=0 h
+        for h in _passive-activator.sh _instinct-activator.sh _session-learner.sh; do
+            grep -q "$h" "$CLAUDE_HOME/settings.json" || missing_wired=$((missing_wired+1))
+        done
+        if [ "$missing_wired" -gt 0 ]; then
+            warn "  validación: settings.json no cablea los hooks de Sinapsis ($missing_wired/3 activadores ausentes) · ejecuta el instalador para arreglarlo"
+            issues=$((issues+1))
+        fi
     fi
 
     return $issues
@@ -472,9 +515,26 @@ record_sinapsis_validation() {
         [ -x "$SKILLS_DIR/$hook" ] || hooks_ok=false
     done
     local skill_count
-    skill_count=$(find "$SKILLS_DIR" -maxdepth 3 -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
+    skill_count=$(find -L "$SKILLS_DIR" -maxdepth 3 -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
     json_set_phase "sinapsis-engine" "validation" \
         "{\"operator_state_json_valid\": $op_valid, \"catalog_json_valid\": $cat_valid, \"hooks_executable\": $hooks_ok, \"skills_count\": ${skill_count:-0}}"
+}
+
+ensure_sinapsis_hooks() {
+    # FIX capa OS: el instalador vendored de Sinapsis NO registra sus hooks si
+    # ~/.claude/settings.json YA existe (solo imprime "merge manually"). Como casi
+    # todos los usuarios ya tienen settings.json, sus hooks nunca se cableaban y el
+    # motor de aprendizaje quedaba inerte (y en el peor caso la validación abortaba
+    # toda la instalación). Aquí hacemos un DEEP-MERGE IDEMPOTENTE de los hooks de
+    # la plantilla de Sinapsis dentro del settings.json del usuario, preservando
+    # cualquier hook/permiso/config previo. Re-ejecutar = no-op.
+    # Delega en el script compartido (mismo merge que usa update.sh, DRY).
+    local template="$SINAPSIS_VENDOR/core/settings.template.json"
+    if [ ! -f "$template" ]; then
+        warn "  no encontrado $template · no se pueden cablear los hooks de Sinapsis"
+        return 1
+    fi
+    bash "$SCRIPT_DIR/_ensure-sinapsis-hooks.sh" "$template" "$CLAUDE_HOME/settings.json"
 }
 
 phase_sinapsis_engine() {
@@ -484,6 +544,7 @@ phase_sinapsis_engine() {
         # Aún así re-validamos para detectar drift (alguien borró archivos manualmente)
         if validate_sinapsis_deep >/dev/null 2>&1; then
             record_sinapsis_validation
+            clear_phase_errors "sinapsis-engine"  # purga fantasmas de intentos viejos ya resueltos
             skip "sinapsis-engine · ya instalado y validado (status=done)"
             return 0
         else
@@ -527,6 +588,15 @@ phase_sinapsis_engine() {
     fi
     cd "$prev_dir"
 
+    # FIX capa OS: cablear los hooks de Sinapsis en settings.json (idempotente).
+    # El instalador vendored NO lo hace si settings.json ya existía.
+    info "Cableando hooks de Sinapsis en ~/.claude/settings.json..."
+    if ensure_sinapsis_hooks; then
+        ok "Hooks de Sinapsis cableados en settings.json"
+    else
+        warn "No se pudieron cablear los hooks automáticamente · revisa ~/.claude/settings.json"
+    fi
+
     # Validación POST-instalación (esto es lo que evita "instalaciones fantasma")
     info "Validando instalación de Sinapsis (validación profunda)..."
     if ! validate_sinapsis_deep; then
@@ -544,9 +614,9 @@ compute_and_store_checksum() {
     # Hash de los archivos clave de Sinapsis para detectar drift posterior
     local files_hash
     if command -v shasum >/dev/null 2>&1; then
-        files_hash=$(find "$SKILLS_DIR" -maxdepth 1 -type f -name "_*.json" -o -name "_*.sh" 2>/dev/null | sort | xargs shasum -a 256 2>/dev/null | shasum -a 256 | awk '{print $1}')
+        files_hash=$(find -L "$SKILLS_DIR" -maxdepth 1 -type f \( -name "_*.json" -o -name "_*.sh" \) 2>/dev/null | sort | xargs shasum -a 256 2>/dev/null | shasum -a 256 | awk '{print $1}')
     elif command -v sha256sum >/dev/null 2>&1; then
-        files_hash=$(find "$SKILLS_DIR" -maxdepth 1 -type f -name "_*.json" -o -name "_*.sh" 2>/dev/null | sort | xargs sha256sum 2>/dev/null | sha256sum | awk '{print $1}')
+        files_hash=$(find -L "$SKILLS_DIR" -maxdepth 1 -type f \( -name "_*.json" -o -name "_*.sh" \) 2>/dev/null | sort | xargs sha256sum 2>/dev/null | sha256sum | awk '{print $1}')
     else
         files_hash="sha-tool-not-found"
     fi
@@ -556,7 +626,7 @@ compute_and_store_checksum() {
   "operator_state_json_valid": true,
   "catalog_json_valid": true,
   "hooks_executable": true,
-  "skills_count": $(find "$SKILLS_DIR" -maxdepth 3 -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
+  "skills_count": $(find -L "$SKILLS_DIR" -maxdepth 3 -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
 }
 EOF
 )

@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/iamasters-academy/iamasters-os/releases"><img src="https://img.shields.io/badge/version-v0.10.1-orange.svg" alt="Version"></a>
+  <a href="https://github.com/iamasters-academy/iamasters-os/releases"><img src="https://img.shields.io/badge/version-v0.11.2-orange.svg" alt="Version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
   <a href="vendor/sinapsis/"><img src="https://img.shields.io/badge/engine-Sinapsis%20v4.6.1-purple.svg" alt="Powered by Sinapsis"></a>
   <a href="https://angelaparicio.com"><img src="https://img.shields.io/badge/maintained%20by-Angel%20Aparicio-ff8c42.svg" alt="Maintained by Angel Aparicio"></a>
@@ -21,7 +21,14 @@
 
 ## 🚀 Instalación (v0.6+ — con install gate)
 
-**Camino corto (recomendado)** — desde terminal:
+**Camino recomendado — sin terminal.** Clona el repo, abre Claude Code (Claude Desktop) en la carpeta y escribe:
+
+> **instala esto**
+
+Claude ejecuta el installer por ti (dispara el comando `/instala`), verifica la instalación y sigue con tu onboarding. Funciona en **Mac y Windows** (en Windows, Claude Code ya usa Git Bash, que es lo único que necesita el installer).
+
+<details>
+<summary>Camino manual (terminal) — si lo prefieres</summary>
 
 ```bash
 git clone https://github.com/iamasters-academy/iamasters-os.git ~/iamasters-os
@@ -29,7 +36,10 @@ cd ~/iamasters-os
 bash scripts/install.sh
 ```
 
-Esto instala las fases técnicas (prereqs + Sinapsis engine) con validación profunda. Cuando termine, abre Claude Code en esta carpeta y el resto se completa por dentro:
+En **Windows** ejecútalo desde una terminal **Git Bash** (incluida en [Git para Windows](https://git-scm.com/download/win)), no desde cmd/PowerShell.
+</details>
+
+Esto instala las fases técnicas (prereqs + Sinapsis engine) con validación profunda. Cuando termine, el resto se completa dentro de Claude Code:
 
 1. El hook **SessionStart** detecta que faltan fases (onboarding + welcome) y guía al agente.
 2. El agente invoca el comando `/install` que orquesta las 4 fases conversacionales restantes.

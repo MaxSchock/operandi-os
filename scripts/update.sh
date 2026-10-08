@@ -18,6 +18,7 @@ YELLOW='\033[1;33m'
 PURPLE='\033[0;35m'
 NC='\033[0m'
 BOLD='\033[1m'
+DIM='\033[2m'
 
 # Paths
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -72,9 +73,39 @@ if [ -n "$LOCALLY_MODIFIED" ]; then
     fi
 fi
 
+# ── Base upstream ya aplicada ────────────────────────────────────────────────
+# update.sh no hace merge ni mueve HEAD: trae archivos con `git checkout
+# origin/<rama> -- <archivo>` para no pisar nunca los datos del operador. El
+# efecto secundario era que TODO se medía contra HEAD, que se queda atrás para
+# siempre: un archivo traído por el update anterior parecía "editado por el
+# operador" en cada actualización siguiente, y el informe se llenaba de
+# conflictos falsos (33 en una segunda pasada seguida, con el árbol al día).
+# Guardamos qué commit upstream se aplicó y medimos contra ÉL.
+UPSTREAM_STATE="$REPO_ROOT/.claude/.upstream-state"
+APPLIED_COMMIT=""
+if [ -f "$UPSTREAM_STATE" ]; then
+    APPLIED_COMMIT=$(head -1 "$UPSTREAM_STATE" 2>/dev/null | tr -d '[:space:]')
+    # si el commit ya no existe (rebase, clon nuevo, historial reescrito), se ignora
+    git cat-file -e "${APPLIED_COMMIT}^{commit}" 2>/dev/null || APPLIED_COMMIT=""
+fi
+BASE_REF="${APPLIED_COMMIT:-HEAD}"
+
 is_locally_modified() {
-    # $1 = ruta relativa; 0 si el archivo tiene cambios locales sin commitear
-    [ -n "$LOCALLY_MODIFIED" ] && echo "$LOCALLY_MODIFIED" | grep -qxF "$1"
+    # 0 = el OPERADOR tocó este archivo (hay que preservarlo y preguntar)
+    local f="$1"
+    if [ -n "$APPLIED_COMMIT" ]; then
+        if git cat-file -e "$APPLIED_COMMIT:$f" 2>/dev/null; then
+            # coincide con la versión upstream ya aplicada -> lo trajo el update
+            # anterior, no es una edición del operador
+            git diff --quiet "$APPLIED_COMMIT" -- "$f" 2>/dev/null && return 1
+            return 0
+        fi
+        # no existía en la base upstream: si está en disco, lo creó el operador
+        [ -e "$REPO_ROOT/$f" ] && return 0
+        return 1
+    fi
+    # primer update sin estado: comportamiento anterior
+    [ -n "$LOCALLY_MODIFIED" ] && echo "$LOCALLY_MODIFIED" | grep -qxF "$f"
 }
 
 CURRENT_BRANCH=$(git branch --show-current)
@@ -146,7 +177,8 @@ if [ -z "$REMOTE" ]; then
     exit 0
 fi
 
-if [ "$LOCAL" = "$REMOTE" ]; then
+BASE_SHA=$(git rev-parse "$BASE_REF" 2>/dev/null || echo "$LOCAL")
+if [ "$BASE_SHA" = "$REMOTE" ] || [ "$LOCAL" = "$REMOTE" ]; then
     echo -e "${GREEN}  OK${NC} Ya estás al día. Nada nuevo upstream."
     echo
     echo "Update completado (sin cambios)."
@@ -155,16 +187,33 @@ fi
 
 echo -e "${CYAN}  ->${NC} Hay cambios upstream. Analizando..."
 
+# ¿El operador retiró esta skill a propósito? (issue #16)
+# Retirar = mover la carpeta a .claude/skills/_archived/<nombre>/ con el nombre
+# EXACTO. Se exige exacto para no confundirla con las copias que archiva
+# _flatten-skills.sh, que llevan sufijo "-anidada-<fecha>".
+skill_archived_by_operator() {
+    local rest name
+    case "$1" in .claude/skills/*) ;; *) return 1 ;; esac
+    rest="${1#.claude/skills/}"
+    name="${rest%%/*}"
+    [ -n "$name" ] || return 1
+    case "$name" in _archived) return 1 ;; esac
+    [ -d "$REPO_ROOT/.claude/skills/_archived/$name" ]
+}
+
 # ── Step 5: Categorize changes ──
 echo -e "${BLUE}[5/6]${NC} Clasificando cambios..."
 
-CHANGED_FILES=$(git diff --name-only HEAD..origin/"$CURRENT_BRANCH")
+CHANGED_FILES=$(git diff --name-only "$BASE_REF"..origin/"$CURRENT_BRANCH")
+# rutas que existían en la base y upstream ya no tiene (renombradas o retiradas)
+DELETED_UPSTREAM=$(git diff --name-only --diff-filter=D "$BASE_REF"..origin/"$CURRENT_BRANCH")
 
 # Categorize
 SAFE_TO_UPDATE=()
 USER_DATA_CONFLICT=()
 SKILLS_NEW=()
 SKILLS_MODIFIED=()
+SKILLS_OBSOLETE=()
 
 while IFS= read -r file; do
     case "$file" in
@@ -172,9 +221,15 @@ while IFS= read -r file; do
         brand-context/*|context/*|projects/*|clients/*|.env)
             USER_DATA_CONFLICT+=("$file")
             ;;
-        # Skills: detect new vs modified
+        # Skills: obsoleta upstream vs nueva vs modificada
         .claude/skills/*)
-            if [ -f "$REPO_ROOT/$file" ]; then
+            if ! git cat-file -e "origin/$CURRENT_BRANCH:$file" 2>/dev/null; then
+                # La ruta ya NO existe upstream: renombrada o retirada. NO es un
+                # conflicto del operador — marcarla como tal llenaba el informe de
+                # falsos conflictos en cada rename (v0.11.0 movió 17 skills).
+                # La limpia _flatten-skills.sh, archivando y sin borrar nada.
+                SKILLS_OBSOLETE+=("$file")
+            elif [ -f "$REPO_ROOT/$file" ]; then
                 SKILLS_MODIFIED+=("$file")
             else
                 SKILLS_NEW+=("$file")
@@ -197,6 +252,9 @@ echo -e "  ${GREEN}Safe to update${NC}: ${#SAFE_TO_UPDATE[@]} archivos (system, 
 echo -e "  ${CYAN}Skills nuevas${NC}: ${#SKILLS_NEW[@]} archivos"
 echo -e "  ${YELLOW}Skills modificadas${NC}: ${#SKILLS_MODIFIED[@]} archivos (potencial conflicto)"
 echo -e "  ${RED}User data${NC}: ${#USER_DATA_CONFLICT[@]} archivos (NUNCA se tocan, ignoramos upstream)"
+if [ ${#SKILLS_OBSOLETE[@]} -gt 0 ]; then
+    echo -e "  ${DIM}Rutas obsoletas${NC}: ${#SKILLS_OBSOLETE[@]} archivos (renombrados upstream, se archivan)"
+fi
 echo
 
 # ── Step 6: Apply updates ──
@@ -211,8 +269,15 @@ echo -e "${BLUE}[6/6]${NC} Aplicando updates..."
 # Apply safe updates (sin pisar archivos con cambios locales sin commitear)
 PENDING_CONFLICTS=()
 UPDATED=0
+RESPECTED_ARCHIVED=()
 for file in "${SAFE_TO_UPDATE[@]}" "${SKILLS_NEW[@]}"; do
     [ -z "$file" ] && continue
+    if skill_archived_by_operator "$file"; then
+        # El operador la archivó para no cargarla (contexto por sesión). Antes se
+        # restauraba en cada /actualiza y había que volver a quitarla a mano.
+        RESPECTED_ARCHIVED+=("$file")
+        continue
+    fi
     if is_locally_modified "$file"; then
         PENDING_CONFLICTS+=("$file")
         continue
@@ -220,6 +285,11 @@ for file in "${SAFE_TO_UPDATE[@]}" "${SKILLS_NEW[@]}"; do
     git checkout "origin/$CURRENT_BRANCH" -- "$file" 2>/dev/null || true
     UPDATED=$((UPDATED+1))
 done
+
+if [ ${#RESPECTED_ARCHIVED[@]} -gt 0 ]; then
+    ARCHIVED_NAMES=$(printf '%s\n' "${RESPECTED_ARCHIVED[@]}" | sed 's|^.claude/skills/||; s|/.*||' | sort -u | tr '\n' ' ')
+    echo -e "  ${DIM}·${NC} Respetadas como archivadas (no se reinstalan): ${ARCHIVED_NAMES}"
+fi
 
 if [ "$UPDATED" -gt 0 ]; then
     echo -e "${GREEN}  OK${NC} $UPDATED archivos actualizados (safe + new skills)"
@@ -285,12 +355,81 @@ if [ ${#PENDING_CONFLICTS[@]} -gt 0 ]; then
     echo -e "  O dile a Claude: ${CYAN}\"aplica la versión nueva de <archivo>\"${NC}"
 fi
 
+# ── Rutas que upstream ya no tiene ───────────────────────────────────────────
+# `git checkout origin/<rama> -- <ruta>` falla en silencio para una ruta que ya no
+# existe en remoto (el `|| true` se lo come), así que un archivo retirado o
+# renombrado upstream se quedaba en el repo del operador para siempre.
+# Se retiran con tres salvaguardas: nunca datos del operador, nunca si el
+# operador editó el archivo, y copia al backup antes de tocarlo.
+# `.claude/skills/` se excluye a propósito: de ese árbol se encarga
+# _flatten-skills.sh, que además rescata los SKILL.local.md antes de archivar.
+RETIRED=0
+RETIRED_KEPT=()
+if [ -n "${DELETED_UPSTREAM:-}" ] && [ -n "$APPLIED_COMMIT" ]; then
+    while IFS= read -r gone; do
+        [ -n "$gone" ] || continue
+        [ -e "$REPO_ROOT/$gone" ] || continue
+        case "$gone" in
+            brand-context/*|context/*|projects/*|clients/*|.env|.env.*) continue ;;
+            .claude/skills/*) continue ;;
+            .claude/settings.json|loops/*) continue ;;
+        esac
+        # ¿lo editó el operador? entonces no se toca
+        if ! git diff --quiet "$APPLIED_COMMIT" -- "$gone" 2>/dev/null; then
+            RETIRED_KEPT+=("$gone")
+            continue
+        fi
+        mkdir -p "$BACKUP_DIR/$(dirname "$gone")"
+        cp -R "$REPO_ROOT/$gone" "$BACKUP_DIR/$gone" 2>/dev/null || true
+        rm -rf "$REPO_ROOT/$gone"
+        RETIRED=$((RETIRED+1))
+    done <<EOF
+$DELETED_UPSTREAM
+EOF
+fi
+if [ "$RETIRED" -gt 0 ]; then
+    echo -e "  ${DIM}·${NC} $RETIRED archivo(s) retirados por upstream (copia en el backup)"
+fi
+if [ ${#RETIRED_KEPT[@]} -gt 0 ]; then
+    echo -e "  ${YELLOW}!${NC} Upstream retiró ${#RETIRED_KEPT[@]} archivo(s) que TÚ habías editado · se mantienen:"
+    for f in "${RETIRED_KEPT[@]}"; do echo -e "    ${YELLOW}·${NC} $f"; done
+fi
+
+# ── Migración de estructura: aplanar skills anidadas (v0.11.0) ──
+# Se invoca como script APARTE a propósito: update.sh se sobrescribe a sí mismo
+# durante este update y bash seguiría ejecutando la versión antigua ya cargada,
+# así que una migración escrita aquí dentro no correría hasta el update siguiente.
+# Con `bash <script>` se ejecuta la versión recién descargada.
+if [ -f "$REPO_ROOT/scripts/_flatten-skills.sh" ]; then
+    echo -e "${BLUE}[+]${NC} Verificando estructura de skills (Claude Code solo indexa un nivel)..."
+    bash "$REPO_ROOT/scripts/_flatten-skills.sh" || true
+fi
+
 # ── Sync skills instaladas desde la biblioteca ──
 # Si el update trajo versiones nuevas de skills que el operador tiene
 # instaladas, refrescarlas (SKILL.local.md se preserva siempre)
 if [ -f "$REPO_ROOT/scripts/skills.sh" ]; then
     bash "$REPO_ROOT/scripts/skills.sh" sync || true
 fi
+
+# ── Re-cablear hooks de Sinapsis (idempotente) ──
+# Clave: /actualiza también REPARA instalaciones antiguas cuyos hooks nunca se
+# registraron (settings.json preexistente en la instalación original → el motor
+# de aprendizaje quedaba inerte). Preserva permisos/config/hooks del operador.
+if [ -d "$HOME/.claude/skills" ] && [ -f "$REPO_ROOT/scripts/_ensure-sinapsis-hooks.sh" ]; then
+    echo -e "${BLUE}[+]${NC} Verificando hooks de Sinapsis en ~/.claude/settings.json..."
+    if bash "$REPO_ROOT/scripts/_ensure-sinapsis-hooks.sh" >/dev/null 2>&1; then
+        echo -e "${GREEN}  OK${NC} Hooks de Sinapsis cableados/confirmados (activos al reiniciar Claude Code)"
+    else
+        echo -e "${YELLOW}  !${NC} No se pudieron verificar los hooks · si algo falla, di 'instala esto'"
+    fi
+fi
+
+# ── Registrar qué commit upstream se ha aplicado ─────────────────────────────
+# Sin esto, el próximo /actualiza volvería a medir contra HEAD (que no se mueve)
+# y reportaría como conflicto todo lo que acaba de traer.
+mkdir -p "$REPO_ROOT/.claude"
+printf '%s\n' "$REMOTE" > "$UPSTREAM_STATE"
 
 # ── Done ──
 echo

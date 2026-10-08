@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Pre-commit hook · iAmasters OS
+# Protección para quien DESARROLLA el repo (no para los miembros que instalan):
+#   1. Bloquea secretos hardcodeados antes de commitear (incondicional).
+#   2. Avisa de archivos grandes (>1 MB) y pide confirmación (si hay terminal).
+#
+# Activar en tu clon del repo (una sola vez):
+#   git config core.hooksPath hooks
+#
+# Idea original: contribución de la comunidad (PR #10). Adaptada y simplificada.
+set -uo pipefail
+
+echo "🔍 Verificando commit..."
+
+# Staged reales (excluye borrados/renames para no procesar rutas inexistentes)
+STAGED="$(git diff --cached --name-only --diff-filter=d --no-renames)"
+
+# ─── Secretos (bloqueante, incondicional) ───────────────────────────────────
+# Se escanean SOLO las líneas AÑADIDAS del diff staged, no el contenido íntegro
+# de cada archivo tocado: de lo contrario un simple rename (o una edición de una
+# línea) vuelve a levantar hallazgos que ya llevaban meses en el repo, y el hook
+# acaba enseñando a usar --no-verify, que es lo peor que le puede pasar a un
+# guardarraíl. Requiere asignación ([:=]) tras la palabra clave y descarta los
+# placeholders de documentación (..., xxxxx, <TU_CLAVE>, $VAR, your-key, vacío).
+PLACEHOLDER='[:=][[:space:]]*[^[:space:]"]{0,24}([.]{3}|[xX]{3,}|<|[$]|[{]|[[]|tu[-_]|TU[-_]|[Yy]our|YOUR|[Ee]xample|EXAMPLE|changeme|CHANGEME|placeholder|dummy|fake|redacted|REDACTED|aqui|AQUI)'
+LEAK="$(git diff --cached -U0 --diff-filter=d \
+  | grep -E '^\+' | grep -vE '^\+\+\+' \
+  | grep -IE '(API_KEY|APIKEY|SECRET|PASSWORD|PRIVATE_KEY|ACCESS_TOKEN|AUTH_TOKEN)[[:space:]]*[:=]' \
+  | grep -vE "$PLACEHOLDER" \
+  | grep -vE '[:=][[:space:]]*("")?(.{0,2})$' \
+  || true)"
+if [ -n "$LEAK" ]; then
+  echo "❌ Posibles secretos hardcodeados en las líneas nuevas del commit:"
+  echo "$LEAK" | sed 's/^/  /'
+  echo "Usa variables de entorno (.env.local), no claves en el código. Revisa y reintenta."
+  exit 1
+fi
+
+# ─── Archivos grandes (>1 MB) ───────────────────────────────────────────────
+LARGE=""
+if [ -n "$STAGED" ]; then
+  LARGE="$(printf '%s\n' "$STAGED" | xargs -r du -k 2>/dev/null | awk '$1 >= 1024 {print $2}' || true)"
+fi
+if [ -n "$LARGE" ]; then
+  echo "⚠️  Archivos grandes detectados (>1 MB):"
+  echo "$LARGE"
+  if [ -t 0 ]; then
+    printf '¿Commitearlos igualmente? (s/N) '
+    read -r response
+    [ "$response" = "s" ] || { echo "Cancelado."; exit 1; }
+  else
+    echo "(sin terminal: los dejo pasar, pero revísalos — ¿deberían ir en .gitignore?)"
+  fi
+fi
+
+echo "✅ Verificación completa."
+exit 0

@@ -21,6 +21,86 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.11.2] — 2026-08-19
+
+### Fixed
+- **`/actualiza` reportaba como conflicto tuyo lo que él mismo acababa de traer.** `update.sh` no hace merge ni mueve `HEAD` —trae archivos con `git checkout origin/<rama> -- <archivo>` para no pisar nunca los datos del operador—, pero medía **todo** contra `HEAD`, que se queda atrás para siempre. Consecuencia: un archivo traído por una actualización previa parecía "editado por el operador" en cada actualización siguiente. Medido en sandbox: **33 conflictos falsos en una segunda pasada seguida, con el árbol perfectamente al día**, y un `git status` permanentemente sucio. Fue lo que hizo sospechar a `/doctor` de "archivos staged sin commit" al diagnosticar [#17](https://github.com/iamasters-academy/iamasters-os/issues/17), y la raíz que compartía con [#16](https://github.com/iamasters-academy/iamasters-os/issues/16). Ahora `update.sh` registra en `.claude/.upstream-state` (local, gitignored) qué commit upstream aplicó y mide contra **esa base**: si un archivo coincide con la versión ya aplicada, lo trajo el update anterior y no es una edición tuya. Una segunda pasada seguida responde **"Ya estás al día"**.
+- **Los archivos que upstream retira nunca desaparecían de tu repo.** `git checkout origin/<rama> -- <ruta>` falla en silencio para una ruta que ya no existe en remoto (el `|| true` se lo comía), así que cada archivo renombrado o retirado upstream se quedaba para siempre. Ahora se retiran con tres salvaguardas: **nunca** datos del operador (`brand-context/`, `context/`, `projects/`, `clients/`, `.env`, `loops/`, `settings.json`), **nunca** si tú habías editado el archivo (se mantiene y se avisa), y **copia al backup** antes de tocar nada. `.claude/skills/` se excluye a propósito: de ese árbol se encarga `_flatten-skills.sh`, que además rescata los `SKILL.local.md`.
+- **`rollback.sh` invalida el estado de upstream.** Volver atrás deja el árbol en un punto anterior, así que el commit registrado como aplicado ya no describe lo que hay en disco; el siguiente `/actualiza` vuelve a medir contra `HEAD` en vez de fiarse de una base falsa.
+
+### Notas
+- Verificado con 8 escenarios en sandbox: convergencia en dos pasadas, edición real del operador preservada y reportada, datos del operador intocables, primer update sin estado (retrocompatible), retirada de archivos obsoletos con copia en backup, retirada bloqueada cuando el operador editó el archivo, camino completo de migración desde v0.10.2 (0 → 17 skills, 6/6 checks) y rollback.
+- Si vienes de **≤ v0.10.2**: el ruido de conflictos aparece una última vez (tu `update.sh` en disco es el antiguo y no registra la base todavía) y a partir de la actualización siguiente queda limpio.
+
+---
+
+## [0.11.1] — 2026-08-19
+
+Ronda de auditoría tras la v0.11.0: se revisaron los scripts, las skills, la documentación y los issues/PRs abiertos. Todo lo de aquí son fallos reales encontrados y verificados, no limpieza cosmética.
+
+### Fixed
+- **Las skills que el operador archiva reaparecían en cada `/actualiza`** ([#16](https://github.com/iamasters-academy/iamasters-os/issues/16), reportado por un miembro el 21-jul). Quien retira una skill core de `.claude/skills/` (para no gastar contexto por sesión) la veía volver en cada actualización y tenía que quitarla otra vez a mano. La causa **no** era `skills.sh sync` como suponía el reporte —ese salta las core a propósito— sino el `git checkout origin/<branch> -- <archivo>` de `update.sh`: al no existir la ruta en local, la clasificaba como "skill nueva" y la restauraba. Ahora `update.sh` comprueba si la skill está en `.claude/skills/_archived/<nombre>/` y respeta la decisión del operador, informando de cuáles ha respetado. Verificado en sandbox: las archivadas no vuelven y el resto se actualiza con normalidad.
+- **`/doctor` daba errores rojos falsos justo después de actualizar** ([#19](https://github.com/iamasters-academy/iamasters-os/pull/19)). El check de profundidad recorría también el `.backup/<fecha>/` que crea `update.sh`, que guarda **a propósito** la estructura antigua anidada. Se excluyen los roots `.backup*/`, `vendor/`, `_archivado/`, `node_modules/` y `.git/`.
+- **El escáner de secretos crasheaba con un traceback de Python** ([#20](https://github.com/iamasters-academy/iamasters-os/pull/20)). Leía todas las rutas de `git ls-files` sin tolerar que un archivo esté en el índice pero ya no en disco — exactamente el estado que deja la migración de estructura antes de commitear.
+- **Seis skills remitían a un `references/examples.md` que nunca se creó**: `marketing-icp`, `marketing-positioning`, `marketing-brand-voice` y `tool-output-verifier` (core), `marketing-copywriting` y `marketing-content-repurposing` (biblioteca). Claude seguía la instrucción, intentaba leer el archivo y fallaba en silencio. Donde los casos ya estaban enumerados en el propio `SKILL.md` se conservan; donde la sección quedaba vacía se retira. Los ejemplos de ICP, posicionamiento y voz salen del criterio del operador: no se inventan aquí.
+- **Una skill de la biblioteca invocaba una skill personal del autor que no existe en el repo**: `tool-web-legal-audit` hacía "invoca la skill `whatsapp`" con el `.docx` de la auditoría. Ningún miembro tiene esa skill. Ahora entrega la ruta y ofrece usar la skill de envío que el operador tenga, sin asumirla.
+- **`marketing-content-repurposing` citaba `strategy-trending-research`** como si existiera; esa skill nunca se creó (aparece como "futura" en la presentación de equipo). Reformulado sin la dependencia fantasma.
+- **`docs/multi-client-guide.md` mandaba ejecutar `bash scripts/sync-synapsis.sh`** ("futura skill v0.5") — script que no existe, y con "Sinapsis" mal escrito. Reescrito el troubleshooting con el comportamiento real: las skills se cargan desde el directorio de arranque hacia arriba, las de un subdirectorio (`clients/<nombre>/`) no entran hasta que Claude toca un archivo de ahí, y toda skill debe estar a un nivel.
+- **Precedencia de `find` en `scripts/install.sh`**: `-type f -name "_*.json" -o -name "_*.sh"` no aplicaba `-type f` al segundo patrón, así que un directorio llamado `_algo.sh` entraba en el checksum de integridad de Sinapsis y podía provocar un falso positivo de drift. Agrupado con paréntesis.
+
+### Added
+- **`skill_archived_by_operator()`** en `scripts/update.sh`: para retirar una skill core, mueve su carpeta a `.claude/skills/_archived/<nombre>/` con el nombre exacto. Las copias que archiva `_flatten-skills.sh` llevan sufijo `-anidada-<fecha>` y no cuentan como decisión del operador, así que no interfieren.
+
+### Notas
+- Los arreglos de `update.sh` viajan dentro de `update.sh`, que se sobrescribe a sí mismo durante `/actualiza`: **empiezan a aplicar a partir de la actualización siguiente**. Si vienes de ≤ v0.10.2 y tenías skills archivadas, en la primera pasada pueden volver una vez; vuelve a archivarlas y no reaparecerán más.
+
+---
+
+## [0.11.0] — 2026-08-18
+
+### Fixed
+- **🔴 NINGUNA skill del OS cargaba en Claude Code.** Reportado por **Andrés Arias** (miembro de la comunidad) con reproducción en dos entornos independientes — [issue #17](https://github.com/iamasters-academy/iamasters-os/issues/17). Toda skill instalada en `.claude/skills/<categoria>/<nombre>/SKILL.md` (las 17 core y cualquiera añadida desde la biblioteca) respondía `Error: Unknown skill: <nombre>` al invocarla, y no aparecía en el listado de la sesión. **Causa raíz**: Claude Code descubre skills a **exactamente un nivel** — `<skills-dir>/<nombre>/SKILL.md`. El loader del CLI lee `<dir>/SKILL.md`, y si no lo encuentra prueba `<dir>/<entrada>/SKILL.md` y se detiene ahí: no hay recursión. Una carpeta de categoría intermedia deja la skill invisible aunque el archivo exista y el frontmatter sea válido. Las subcarpetas de una skill son sus recursos (`references/`, `scripts/`), nunca skills anidadas. **No era un bug de Claude Code ni una regresión de una versión reciente: el patrón nunca funcionó.** Lo que sí cargaba —y ocultaba el problema— eran los `.claude/commands/*.md`.
+- **`/doctor` fallaba con el mismo error** (`.claude/commands/doctor.md`): invocaba la skill por ruta (`_meta/health-check`) en vez de por nombre (`health-check`). Una ruta no es un nombre de skill válido.
+- **Drift en la lista de skills mínimas** (skill `health-check`): declaraba 24 rutas "v0.6 Capa 1" cuando solo 17 son core — 8 pasaron a la biblioteca en v0.10.0 (opt-in) y faltaba `recuerda` (core desde v0.8.1). Provocaba avisos 🟡 fantasma por skills cuya ausencia es normal.
+- **Rutas de instalación rotas dentro de la biblioteca**: `tool-transcribe-social` documentaba un `python3 .claude/skills/tools/tool-transcribe-social/transcribe.py` que no existiría tras instalarse (ruta **ejecutable**, fallaba al correr). Igual en el README de `strategy-investigacion-profunda` y en los wrappers de `arnes` y `cognito`, que además describían el patrón `_optional/` retirado en v0.10.0.
+- **`.github/CODEOWNERS`** apuntaba a `/.claude/skills/_meta/` y `/.claude/skills/marketing/`, rutas que dejan de existir: las reglas quedaban muertas. Ahora cubre `/.claude/skills/` y `/skills-library/`.
+
+### Changed
+- **`/actualiza` ya no reporta un rename como conflicto del operador** (`scripts/update.sh`). Clasificaba cualquier ruta presente en local como "skill modificada → potencial conflicto", sin comprobar si seguía existiendo upstream. Al mover 17 skills, el informe se llenaba de conflictos falsos y el operador no sabía qué mirar. Ahora una ruta que ya no existe en `origin` se marca como obsoleta y la archiva la migración. Verificado en el E2E: de 5 falsos conflictos a 0.
+- **Estructura de instalación PLANA (breaking).** El destino pasa a `.claude/skills/<nombre>/SKILL.md`. Las 17 core aplanadas con `git mv` (historial preservado) y `scripts/skills.sh` instala, lista, sincroniza y desinstala en plano. **La categoría no se pierde**: sigue viva en la **biblioteca** (`skills-library/<categoria>/<nombre>/`, que es un catálogo y por diseño NO se indexa) y en el **prefijo del nombre** (`marketing-`, `tool-`, `strategy-`, `automation-`).
+- **Documentación corregida en origen.** `docs/skill-creation-guide.md` documentaba el patrón roto como "estructura canónica" — de ahí se propagó a todo el repo. Reescrita explicando el contrato de un nivel, por qué falla el anidamiento y dónde vive la categoría. Actualizadas 20 referencias más en `AGENTS.md`, `CLAUDE.md`, commands, `meta-skill-creator`, `docs/` y `scripts/validate-skill.sh`. `CHANGELOG` histórico intacto a propósito.
+- **El nombre de invocación lo da la CARPETA**, no el `name:` del frontmatter (para skills de proyecto). Documentado y validado.
+
+### Added
+- **`scripts/_flatten-skills.sh`** — migración de estructura como script autónomo, invocado por `/actualiza`. Idempotente, **no borra nada** (si el destino ya existe, la copia anidada se archiva en `.claude/skills/_archived/`) y **rescata el `SKILL.local.md`** del operador a la ruta nueva antes de archivar. Vive en su propio archivo por dos razones verificadas en un E2E que reproduce una instalación v0.10.2 real: (a) `update.sh` se sobrescribe a sí mismo durante el update y bash sigue ejecutando la versión antigua ya cargada, así que una migración escrita dentro de `update.sh` no corre hasta el update *siguiente*; (b) suelto, da a quien ya tenía el OS instalado un comando único: `bash scripts/_flatten-skills.sh`.
+- **Guardarraíl de CI** `scripts/ci/check-skills-depth.sh` (cableado en `validate.yml`): falla si aparece una `SKILL.md` a más de un nivel bajo cualquier `.claude/skills/` del repo, si `skills-library/` pierde su categoría, y avisa si `name:` no coincide con la carpeta. `_archived/` exento: está anidado a propósito para no cargar. Verificado que caza la regresión.
+- **Check de estructura en la skill `health-check`** (`/doctor`): ahora detecta skills anidadas con severidad 🔴 y explica el arreglo. Es el chequeo que habría cazado esto antes de llegar a la comunidad.
+
+### Cómo actualizar si ya tenías el OS instalado (≤ v0.10.2)
+
+Di **"actualiza"**. Eso te trae ya las skills en la ruta correcta y **empiezan a funcionar**. Como tu `update.sh` en disco era el antiguo, la limpieza de las carpetas viejas necesita una pasada más — cualquiera de las dos:
+
+```bash
+bash scripts/_flatten-skills.sh
+```
+
+o simplemente di **"actualiza"** otra vez. Reinicia Claude Code al terminar. No se borra nada: lo viejo se archiva en `.claude/skills/_archived/` y tus `SKILL.local.md` se rescatan a la ruta nueva. `/doctor` avisa 🔴 si queda algo anidado.
+
+---
+
+## [0.10.2] — 2026-07-17
+
+### Fixed
+- **Los hooks de Sinapsis no se cableaban si `~/.claude/settings.json` ya existía** (`scripts/install.sh`). El instalador vendored de Sinapsis, ante un `settings.json` preexistente (el caso de casi todos los usuarios de Claude Code), solo imprimía *"merge manually"* y NO registraba sus hooks. Consecuencias: (a) en máquinas cuyo `settings.json` no tenía sección `hooks`, la validación profunda abortaba la instalación con *"Sinapsis se ejecutó pero la validación profunda falla"*; (b) en las que sí tenían hooks de otra cosa, la validación pasaba en falso y **el motor de aprendizaje de Sinapsis quedaba inerte sin avisar**. Nuevo `ensure_sinapsis_hooks()`: deep-merge **idempotente** de los 7 hooks de la plantilla de Sinapsis dentro del `settings.json` del operador, preservando permisos/config/hooks previos. El upstream de Luis (v4.8.0) tampoco resuelve esto, por eso se arregla en la capa OS.
+- **Validación profunda endurecida** (`scripts/install.sh`, skill `health-check`): antes comprobaba solo 3 de los 7 hooks y un `grep '"hooks"'` que daba falso OK. Ahora valida los 7 hooks y el **cableado real** de los activadores en `settings.json`.
+- **Error fantasma en `/install-status`** (`scripts/install.sh`): `mark_phase_done` no limpiaba el array global `errors[]`, así que un fallo de un intento previo seguía apareciendo tras un reintento exitoso. Nuevo `clear_phase_errors()`; se purga al completar o revalidar una fase.
+
+### Changed
+- **Instalación sin terminal (primary path).** Claude Code ahora **ejecuta el installer por ti** con tu OK, en vez de mandarte a una terminal. Nuevo comando **`/instala`** (y disparadores en lenguaje natural: "instala esto", "install this", "set this up") que detecta el SO, corre `bash scripts/install.sh` (Mac/Linux y Windows vía Git Bash), verifica y sigue con el onboarding. Alineados `CLAUDE.md` (install gate), `/install`, `AGENTS.md` y `README.md`, que antes se contradecían (AGENTS decía "ejecútalo" y el gate lo prohibía).
+- **`/actualiza` ahora también REPARA los hooks.** `update.sh` re-cablea los hooks de Sinapsis al final (vía el nuevo `scripts/_ensure-sinapsis-hooks.sh`, compartido con `install.sh`). Así, los miembros que ya tenían el motor de aprendizaje inerte (por haber instalado con la versión previa) quedan arreglados con solo decir **"actualiza"** — sin reinstalar. Idempotente y preserva permisos/config/hooks del operador.
+
+---
+
 ## [0.10.1] — 2026-06-12
 
 ### Changed
