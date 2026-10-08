@@ -66,24 +66,12 @@ Antes de responder al primer mensaje del usuario en este repo, **debes** comprob
 - **Daily summaries**: `~/.claude/skills/_daily-summaries/`
 - **Catalog**: `~/.claude/skills/_catalog.json`
 
-### MANDATORY first action (post-gate)
+### Arranque (post-gate)
 
-Una vez confirmado que la instalación está completa, antes de responder al primer mensaje del usuario:
+El hook de arranque (`~/.claude/hooks/salud-os.py`) ya pone delante la memoria de trabajo (`context/working-memory.md`), los planes sin terminar y los avisos de mantenimiento. No hay más lectura obligatoria en el primer mensaje.
 
-1. Lee `~/.claude/skills/_operator-state.json` (Sinapsis: perfil del operador, decisiones, lecciones).
-2. Lee `context/working-memory.md` — **scratchpad de trabajo** (hilos activos / notas de entorno / decisiones pendientes). Es lo primero que te pone al día sobre el estado actual, sin buscar nada.
-3. Lee los 5 archivos sectorizados de `context/` si existen: `me.md`, `work.md`, `team.md`, `current-priorities.md`, `goals.md`.
-4. Lee `context/decisions-log.md` (últimas 5 entradas) para mantener coherencia.
-5. Lee cualquier plan activo en `.claude/plans/` si la carpeta existe (planes en progreso de sesiones anteriores).
-6. Lee `synapsis/daily-summaries/<TODAY>.md` o `<YESTERDAY>.md` (continuidad diaria).
-
-### Session continuity (operativa diaria)
-
-Cuando todo está configurado y la instalación está completa:
-1. Daily summary de ayer (Sinapsis)
-2. `context/learnings.md` (feedback consolidado de skills)
-3. Proyectos abiertos en `projects/briefs/*/brief.md` con `status: active`
-4. Saluda con: "Ayer dejaste X. Sigues con Y o cambias?"
+- Si hay planes abiertos, recuérdaselos al operador con la fase en la que están y lo que falta de su parte, y sigue ejecutando el que toque hasta la última fase.
+- El ritual completo (canales, sesiones abiertas, errores de n8n, resumen de ayer, `context/` sectorizado, `decisions-log.md`, briefs con `status: active`) lo hace `/start-here` cuando el operador lo pide.
 
 ---
 
@@ -107,18 +95,7 @@ Cuando lo lanzas tú (sin terminal del usuario), `update.sh` detecta que no hay 
 ## Sobre el sistema
 
 ### Sinapsis (engine de memoria)
-Sinapsis es el sistema que hace que Claude Code aprenda de ti. Vive instalado en `~/.claude/` (no en este repo). El repo lo trae vendored en `vendor/sinapsis/` para instalación.
-
-Sinapsis te da:
-- **Operator state**: tu identidad, stack, decisiones — persiste en TODOS los proyectos
-- **Instincts**: patrones aprendidos que se inyectan automáticamente cuando aplican
-- **Passive rules**: guardrails técnicos (seguridad, calidad, workflow)
-- **Skills on-demand**: solo carga las relevantes (~2.800 tokens vs ~25.000)
-- **Dream cycle**: limpieza periódica de memoria
-- **Dashboard** (`/dashboard-sinapsis`): métricas reales
-
-Comandos Sinapsis instalados global:
-- `/system-status` · `/evolve` · `/instinct-status` · `/passive-status` · `/eod` · `/dream` · `/analyze-session`
+El repo lo trae vendored en `vendor/sinapsis/` para instalaciones nuevas. **En esta máquina está apagado desde el 08-10-2026** (su autor lo abandonó el 21-08-2026): sus hooks no corren y sus datos siguen intactos en `~/.claude/skills/`. Las reglas viven en el activador (`~/.claude/hooks/activador-reglas.py`, memoria en `~/.claude/projects/-home-max-iamasters-os/memory/`) y en los guards. Siguen en uso `/eod`, `/dream` y `/session-end`.
 
 ### Capa OS (este repo)
 Lo que aporta este repo encima de Sinapsis:
