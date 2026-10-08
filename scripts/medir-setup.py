@@ -287,9 +287,21 @@ def main():
     usadas = set(skills) | set(comandos)
     w(f"- Skills del OS sin un solo uso: {', '.join(s for s in skills_os if s not in usadas and 'meta-' + s not in usadas)}.")
 
+    # Machine-readable sidecar for podar-reglas.py and the maintenance routine.
+    datos = {"fecha": hoy, "dias": args.dias, "desde": desde.date().isoformat(),
+             "sesiones": len(sesiones), "reglas": dict(reglas),
+             "instintos": dict(inst_log), "pasivas": pas_cuenta,
+             "skills": dict(skills), "comandos": dict(comandos),
+             "kb_hooks": {k: round(h["car"] / 1024) for k, h in hooks.items() if h["car"]},
+             "timeouts": {k: h["timeouts"] for k, h in hooks.items() if h["timeouts"]}}
+    lateral = os.path.join(HOME, ".claude/session-env")
+    os.makedirs(lateral, exist_ok=True)
+    with open(os.path.join(lateral, f"medicion-setup-{args.dias}d.json"), "w", encoding="utf-8") as fh:
+        json.dump(datos, fh, ensure_ascii=False)
+
     destino = os.path.join(REPO, "docs/medicion-setup")
     os.makedirs(destino, exist_ok=True)
-    ruta = os.path.join(destino, f"{hoy}.md")
+    ruta = os.path.join(destino, f"{hoy}.md" if args.dias == 28 else f"{hoy}-{args.dias}d.md")
     with open(ruta, "w", encoding="utf-8") as fh:
         fh.write("\n".join(o) + "\n")
     print(ruta)

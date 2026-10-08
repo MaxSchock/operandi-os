@@ -40,10 +40,19 @@ done <<< "$staged"
 # ---- 2. Secret patterns in staged content ---------------------------------
 secret_re='sk-ant-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|gho_[A-Za-z0-9]{30,}|AIza[A-Za-z0-9_-]{30,}|xox[bpars]-[A-Za-z0-9-]{20,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|(api[_-]?key|token|secret|password|passphrase)["'"'"' ]*[:=]["'"'"' ]*[A-Za-z0-9_/+=.-]{16,}'
 
+renamed_identical=$(git diff --cached --name-status -M100% --diff-filter=R | awk -F'\t' '$1=="R100"{print $3}')
+
 while IFS= read -r f; do
     [ -z "$f" ] && continue
     # Scan the INDEX (staged content), not the worktree: a file staged and then
     # deleted from disk still gets scanned.
+    # Pure renames (content byte-identical to what HEAD already holds) add nothing
+    # new to history: skip the content scan, the path check above still applies.
+    # Without this every `git mv` of a file with placeholder keys was rejected
+    # (2026-10-08: content-engine/.env.example and mcp-builder evaluation.md, twice).
+    if printf '%s\n' "$renamed_identical" | grep -qxF "$f"; then
+        continue
+    fi
     if git show ":$f" 2>/dev/null | grep -aiEq "$secret_re"; then
         echo "[pre-commit] BLOCKED secret-like content in: $f" >&2
         fail=1

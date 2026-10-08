@@ -137,3 +137,8 @@ _wiki/
 
 # Commit upstream ya aplicado por scripts/update.sh (estado local)
 .claude/.upstream-state
+
+# Copias de seguridad hechas a mano junto al fichero (van a ~/.claude/backups/)
+*.bak-*
+*.backup-*
+/backups/

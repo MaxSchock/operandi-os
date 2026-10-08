@@ -34,7 +34,7 @@ for name in tracked:
         ".github/workflows/validate.yml",
         ".githooks/pre-commit",
         "scripts/chat-to-md.py",
-        ".claude/skills/mcp-builder/reference/evaluation.md",
+        ".claude/skills/_archived/mcp-builder/reference/evaluation.md",
     ):
         continue
     if "vendor" in path.parts:

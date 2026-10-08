@@ -1,7 +1,7 @@
 # iAmasters OS — CLAUDE.md (project root)
 
 > Sistema operativo agéntico para operadores de IA.
-> Sinapsis v4.6.1 (engine) + capa OS (brand context, agent context, skills curadas, multi-cliente).
+> Sinapsis (engine) + capa OS (brand context, agent context, skills curadas, multi-cliente). En esta máquina corre Sinapsis 4.1; la 4.6.1 de `vendor/sinapsis/` es solo para instalaciones nuevas.
 
 ---
 
@@ -14,9 +14,12 @@ Antes de responder al primer mensaje del usuario en este repo, **debes** comprob
 **Comprobación obligatoria** (en este orden):
 
 1. **¿Existe el state file?**
-   - Si NO existe → la instalación técnica nunca corrió. Indica al usuario:
-     > "iAmasters OS no está instalado. Necesito que ejecutes desde terminal: `bash scripts/install.sh`. Cuando termine, vuelve aquí."
-   - NO crees archivos manualmente para simular instalación. NO marques nada como instalado.
+   - Si NO existe → la instalación técnica nunca corrió. **Ofrécete a instalarlo tú** (es lo más cómodo: el usuario no suele usar terminal):
+     > "iAmasters OS aún no está instalado. Te lo instalo yo ahora mismo (Sinapsis + capa OS, ~30s). ¿Le doy?"
+     - Con su OK, ejecuta `bash scripts/install.sh` con la tool `Bash` (ya está permitido en `.claude/settings.json`, no pide permiso). En Windows corre igual vía Git Bash, que Claude Code ya requiere; si `bash` no está disponible, pídele instalar Git Bash.
+     - Parsea la salida estructurada (`[OK]`/`[SKIP]`/`[WARN]`/`[ERROR]`). Si hay `[ERROR]`, diagnostica y explícalo en castellano.
+     - Cuando termine bien, continúa con `/install` para las fases conversacionales.
+   - NO crees archivos manualmente para simular instalación. NO marques nada como instalado a mano — de eso se encarga `install.sh`.
 
 2. **Si existe, ¿todas las fases `required: true` están en `status: "done"`?**
    - Si NO → la instalación está incompleta. Invoca el comando `/install` (o el wizard directamente, según la fase pendiente).
@@ -145,102 +148,15 @@ Lo que aporta este repo encima de Sinapsis:
 
 ---
 
-## Skills registry (v0.10.0)
+## Skills registry (v0.11.2)
 
-Modelo **Core + Biblioteca**: 17 skills core siempre instaladas (el OS las necesita) + 20 en `skills-library/` que el operador instala a demanda con `/skills`. Cada skill instalada consume contexto en cada sesion (recomendacion Anthropic: <50 cargadas) — instala solo lo que uses.
+Modelo **Core + Biblioteca**. Todas las skills instaladas viven a UN nivel, en `.claude/skills/<nombre>/SKILL.md` (es lo único que Claude Code indexa; anidadas por categoría no cargan). Las instaladas ya aparecen con su descripción en la lista de skills de cada sesión: no se repiten aquí.
 
-**Routing por intencion (IMPORTANTE)**: si el usuario pide algo que resuelve una skill de la BIBLIOTECA que no tiene instalada, NO digas que no puedes — ofrece instalarla: "Eso lo hace la skill `<nombre>`. ¿La instalo?" → `bash scripts/skills.sh add <nombre>`. Catalogo en vivo: `bash scripts/skills.sh list`.
+- **Core (17)**: las necesita el OS. Sistema: `meta-skill-creator`, `meta-onboarding-wizard`, `meta-deep-dive`, `meta-start-here`, `meta-wrap-up`, `welcome-quick-win`, `decisions-log`, `health-check`, `find-skills`, `recuerda`. Marca y motor: `marketing-brand-voice`, `marketing-positioning`, `marketing-icp`, `automation-loop-engine`, `tool-firecrawl-scraper`, `tool-humanizer`, `tool-output-verifier`.
+- **Propias del operador (5)**: no vienen del original, sobreviven a `/actualiza` y no se quitan con `/skills remove`: `content-engine`, `canvas-design`, `frontend-design`, `video-escena-por-escena`, `marketing-google-ads-auditor`. `mcp-builder` y `skill-creator` se archivaron el 08-10-2026 en `.claude/skills/_archived/` por ser copia de las del plugin de Anthropic (`anthropic-skills:mcp-builder`, `anthropic-skills:skill-creator`), que es la que se usa.
+- **Biblioteca** en `skills-library/` (cero coste de contexto hasta instalarlas). Instalar: `bash scripts/skills.sh add <nombre>` · quitar: `remove` · catálogo en vivo: `bash scripts/skills.sh list`. No instaladas hoy: `marketing-meta-ads-analyzer`, `cognito`, `strategy-investigacion-profunda`, `strategy-stack-recommender`, `arnes`, `tool-seguridad-ia`, `tool-quality-gate`, `tool-transcribe-social`, `tool-web-legal-audit`, `tool-web-security-audit`.
 
-### Core — siempre instaladas (17)
-
-#### `_meta/` — sistema (10)
-
-| Skill | Descripción corta |
-|---|---|
-| `meta-skill-creator` | Crea skills nuevas |
-| `meta-onboarding-wizard` | Entrevista express por **4 sub-fases con commits incrementales** (v0.6) |
-| `meta-deep-dive` | Entrevista profunda (22-25 dimensiones) — opcional |
-| `meta-start-here` | Ritual diario de inicio |
-| `meta-wrap-up` | Ritual diario de cierre |
-| `welcome-quick-win` | Primer entregable en 5 min |
-| `decisions-log` | Diario append-only de decisiones |
-| `health-check` | Diagnóstico del OS con **validación profunda y detección de drift** (v0.6) |
-| `find-skills` | Descubre e instala skills por intención del usuario |
-| `recuerda` | **Recall de memoria local** (SQLite+FTS5) con fuente citada — base para todos, semántico opt-in (v0.8.2) |
-
-#### Fundación de marca + motor (7)
-
-| Skill | Descripción |
-|---|---|
-| `marketing-brand-voice` | Voice profile + 3 registros |
-| `marketing-positioning` | Posicionamiento competitivo |
-| `marketing-icp` | Cliente ideal |
-| `automation-loop-engine` | Loop Engineering: convierte trabajo repetitivo en sistemas con verificación, compuertas humanas y aprendizaje |
-| `tool-firecrawl-scraper` | Wrapper Firecrawl |
-| `tool-humanizer` | Quita patrones AI-tell |
-| `tool-output-verifier` | Gate de calidad |
-
-### Biblioteca — instalables con `/skills` (20)
-
-Viven en `skills-library/` (cero coste de contexto hasta instalarlas). Instalar: `bash scripts/skills.sh add <nombre>` · Quitar: `remove` · Catálogo: `list`.
-
-#### `marketing/` (4)
-
-| Skill | Descripción |
-|---|---|
-| `marketing-copywriting` | Copy con humanizer gate |
-| `marketing-content-repurposing` | Distribución multiplataforma |
-| `marketing-email-sequence` | Secuencias de email con brand voice y gate obligatorio |
-| `marketing-meta-ads-analyzer` | Diagnóstico experto de campañas Meta Ads con Breakdown Effect |
-
-#### `strategy/` (6)
-
-| Skill | Descripción |
-|---|---|
-| `metodo-ias` | Método I.A.S. (Intención · Acción · Síntesis) anti-AI-brain-fry — diario + semanal (v0.7) |
-| `seis-sombreros` | Seis sombreros de De Bono con **anti-ancla, 7 variantes, marcos divergentes y matriz de decisión** (v0.7) |
-| `cognito` | Sistema Operativo de Pensamiento de Luis Pitik |
-| `strategy-web-research` | Búsqueda ligera citada con 3-5 fuentes |
-| `strategy-investigacion-profunda` | Informes completos con triangulación, scoring y verificación |
-| `strategy-stack-recommender` | Recomendación de stack tecnológico antes de construir |
-
-#### `tools/` (7)
-
-| Skill | Descripción |
-|---|---|
-| `arnes` | Arrancar proyectos software por niveles (Express/Estándar/PRO). Concepto fs-scaffold de Fernando Montero. Vendoreada en `vendor/arnes/` |
-| `tool-zoom-summary` | Resumen HTML interactivo de reuniones Zoom (transcripción + chat + topics + recursos) (v0.7) |
-| `tool-seguridad-ia` | Prompts preventivos y checklist de seguridad para desarrollo con IA |
-| `tool-quality-gate` | Validación pre-deploy con score 0-100 |
-| `tool-transcribe-social` | Transcripción de vídeos sociales con Groq Whisper |
-| `tool-web-legal-audit` | Auditoría RGPD/LSSI/cookies/accesibilidad para webs |
-| `tool-web-security-audit` | Auditoría defensiva de seguridad web autorizada |
-
-#### `automation/` (2)
-
-| Skill | Descripción |
-|---|---|
-| `automation-n8n-to-claude` | Migra workflows n8n al ecosistema Claude |
-| `automation-n8n-builder` | Crea workflows n8n vía MCP `n8n-mcp` |
-
-#### `visualization/` (1)
-
-| Skill | Descripción |
-|---|---|
-| `tool-visual-explainer` | HTML autocontenido compartible |
-
-### Skills propias del operador (5)
-
-No vienen del upstream; sobreviven a `/actualiza` y no se desinstalan con `/skills remove`.
-
-| Skill | Descripción |
-|---|---|
-| `content-engine` | Motor de contenido LinkedIn multi-cliente (Operandi) — opera junto al daemon del VPS |
-| `mcp-builder` | Guía para crear servidores MCP de calidad |
-| `canvas-design` | Diseño visual en canvas (posters, arte generativo) |
-| `skill-creator` | Crear, mejorar y medir skills (upstream Anthropic) |
-| `frontend-design` | Diseño visual intencional de UI: dirección estética, tipografía, evitar look de plantilla (upstream Anthropic, instalada 2026-07-22) |
-| `video-escena-por-escena` | Producción manual de un vídeo del motor de Operandi escena por escena (guion, imágenes, planos, labios, montaje, entrega); reglas nacidas de Cardeleine 03-05-10-2026 (`operations/`) |
+**Routing por intención**: si el usuario pide algo que resuelve una skill de la biblioteca que no tiene instalada, NO digas que no puedes: ofrece instalarla ("Eso lo hace la skill `<nombre>`. ¿La instalo?").
 
 ### Plugins Anthropic (instalación vía marketplace)
 
@@ -250,9 +166,9 @@ No vienen del upstream; sobreviven a `/actualiza` y no se desinstalan con `/skil
 
 ### Slash commands
 
-`/install` · `/install-status` · `/start-here` · `/wrap-up` · `/doctor` · `/actualiza` · `/restaura` · `/backup` · `/skills` · `/add-client` · `/install-skill` · `/install-mcp` · `/aprende` · `/deep-dive` · `/recuerda` · `/loops` · `/evalua-loop`
+`/instala` · `/install` · `/install-status` · `/start-here` · `/wrap-up` · `/doctor` · `/actualiza` · `/restaura` · `/backup` · `/skills` · `/add-client` · `/install-skill` · `/install-mcp` · `/aprende` · `/deep-dive` · `/recuerda` · `/loops` · `/evalua-loop`
 
-Los dos primeros (`/install`, `/install-status`) son nuevos en v0.6 y son la **única vía oficial** para gestionar la instalación desde dentro de Claude Code.
+`/instala` es el punto de entrada **sin terminal**: se dispara con "instala esto" / "install this" y ejecuta el installer por ti (Mac y Windows con Git Bash). `/install` e `/install-status` gestionan/consultan la instalación por fases una vez arrancada.
 
 ### Capa 2 — skills externas
 
@@ -287,7 +203,7 @@ Si el operador quiere cambiar el comportamiento de una skill curada ("a partir d
 
 ## Cómo registrar skills nuevas (auto)
 
-Cuando se añade una skill nueva en `.claude/skills/<categoria>/<nombre>/`:
+Cuando se añade una skill nueva en `.claude/skills/<nombre>/`:
 - `/start-here` la detecta y registra en catalog
 - `/wrap-up` actualiza el registry de este CLAUDE.md
 - El comando `/install-skill <github-url>` la valida antes de añadirla
