@@ -23,7 +23,9 @@ MEM = os.path.join(PROY, "memory")
 SKILLS = os.path.join(HOME, ".claude/skills")
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-RE_REGLA = re.compile(r"^### ([\w.-]+\.md) \[(\w+)\]", re.M)
+# Full blocks ("### file [level]") and, since 2026-10-08, one-line repeats
+# ("- file [level]: ...") that the activator prints for rules already shown in the session.
+RE_REGLA = re.compile(r"^(?:### |- )([\w.-]+\.md) \[(\w+)\]", re.M)
 RE_COMANDO = re.compile(r"<command-name>/?([\w:-]+)</command-name>")
 
 
