@@ -15,3 +15,4 @@ Registro de planes con fases sin terminar que viven en otras rutas. Lo lee `salu
 - projects/briefs/marca-personal/brief.md | capas, Günther y avatar definidos; 3 posts | 3 decisiones (objetivo, idioma, choque con Falkenlead), primer vídeo de Günther, 5 guiones | pide: Max
 - clients/kisult/clients/rhp/linus-plan-una-tarjeta-2026-09-18.md | casi todo | preguntas de solo lectura con tarjeta en foco | pide: Max
 - clients/kisult/clients/rhp/linus-testing-plan-2026-08-18.md | sin prueba del paquete e2e | decidir si el banco kundenpruefung lo sustituye; CI de main roja | pide: nadie, decisión técnica pendiente
+- ~/max-assistent-pocock (rama pocock-skills: cadena de revisión y revisión de arquitectura de real-backend.ts) | skills instaladas y primera revisión hecha, sin fusionar | fusionar en main; elegir cuál de los 7 candidatos se explora (recomendado el 1) | pide: Max, OK a canary-0810 y elegir candidato

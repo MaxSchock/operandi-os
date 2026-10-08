@@ -1,6 +1,6 @@
 # Revisión a conciencia del setup de Claude Code
 
-Estado: en marcha 08-10-2026. Hechas: 0a, 0, 1 (parte del repo), 3, 4 y 6. Abiertas: 0b y 2 (pide: Max decide si se apagan los activadores de Sinapsis), 1 (pide: Max, CLAUDE.md global y lectura de arranque), 5 (Linus). «Una sesión por fase» queda anulado por Max el 08-10: el plan se ejecuta seguido hasta el final.
+Estado: terminado 08-10-2026. Las siete fases están hechas. Lo que sigue vive fuera de este plan y está en `_abiertos.md`: fusionar la rama `pocock-skills` de Linus (tras el OK de Max a canary-0810) y elegir candidato de la revisión de arquitectura. La rutina de los lunes mide a partir de ahora.
 
 ## Por qué
 
@@ -145,7 +145,7 @@ Lo que se construye, por orden:
 - 5. `scripts/mantenimiento-setup.sh` en cron, lunes 08:30: mide, poda, reindexa, mira el original y deja una nota que `salud-os.py` enseña en la sesión siguiente. Lo que exige juicio lo hace esa sesión. No arranca un Claude por su cuenta: es la parte determinista.
 - 6. La nota de mantenimiento dice qué hacer y se borra al terminar.
 
-*Fase 5, decidida por Max el 08-10 (rama aparte, sin desplegar):* rama `pocock-skills` en `~/max-assistent-pocock` (desde `origin/main`, commit ec6a1084), con once skills en `.claude/skills/`: `improve-codebase-architecture`, `codebase-design`, `diagnosing-bugs`, `domain-modeling`, `prototype`, `retro`, `tdd`, `writing-for-agents` tal cual; `revision-dos-ejes` (era `code-review`, se suma a Codex); `grilling` limitada a preguntas de producto; `trozos-con-test-primero` escrita a partir de `implement-spec`. Origen y licencia en `ORIGEN-mattpocock.md`. No toca `canary-0810` ni código. Se fusiona en main cuando Max dé el OK a `canary-0810`. Primera pasada de arquitectura sobre `real-backend.ts`: ver el cierre de esta fase más abajo.
+*Fase 5, decidida por Max el 08-10 (rama aparte, sin desplegar):* rama `pocock-skills` en `~/max-assistent-pocock` (desde `origin/main`, commit ec6a1084), con once skills en `.claude/skills/`: `improve-codebase-architecture`, `codebase-design`, `diagnosing-bugs`, `domain-modeling`, `prototype`, `retro`, `tdd`, `writing-for-agents` tal cual; `revision-dos-ejes` (era `code-review`, se suma a Codex); `grilling` limitada a preguntas de producto; `trozos-con-test-primero` escrita a partir de `implement-spec`. Origen y licencia en `ORIGEN-mattpocock.md`. No toca `canary-0810` ni código. Se fusiona en main cuando Max dé el OK a `canary-0810`. Primera pasada de arquitectura sobre `real-backend.ts` hecha con la skill, en solo lectura y leyendo las 11.730 líneas (no 10.600): informe en `docs/arquitectura/revision-2026-10-08.md` y `.html` de esa rama (commit df8a2e74) y copia en Descargas. Datos: una sola clase de 9.462 líneas con 90 métodos públicos y 134 privados; 110 de 165 commits desde el 08-09 son arreglos; no hay `GLOSSARY.md` ni `docs/adr/` y la historia de los incidentes vive en 3.313 líneas de comentario. Siete candidatos; el primero, «de la acción propuesta a la tarjeta que espera» (32 arreglos de 42 commits en sus rangos, con una función de 380 líneas en el centro). La skill pide que Max elija candidato antes de proponer interfaces. Plantilla para los demás productos: `scripts/instalar-cadena-revision.sh <repo>` copia las once skills sin pisar las que ya existan.
 
 
 **Comprobación final (08-10-2026), contra la tabla del inicio:**
