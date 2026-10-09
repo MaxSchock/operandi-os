@@ -949,3 +949,8 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-10-08,operandi,cardeleine,video-engine,sesion,0.2,"Vídeo de Jana v7b: fundido limpio entre planos, CEO en la ficha del móvil y exportación en yuv420p"
 2026-10-08,kisult,rhp,linus,sesion,0.8,"Envío real de prueba en canario, dos líneas falsas de «Konnte nicht senden» arregladas con prueba, eedf4840 desplegado en canario, André y Jonas con copias, main al día"
 2026-10-08,operandi,cardeleine,video-engine,sesion,0.9,"Vídeo de Jana v7c: plano del móvil rehecho con MiniMax Hailuo 3 con vídeo de referencia (2 tomas), labios en el recorte, franja y esquina corregidas, remontado"
+2026-10-08,kisult,jaeger,meeting-summaries,sesion,0.9,"Alcance fijado con Jonas pasado al PDF y rehecho con formato de oferta (CiBomed/Goldspitze): incluido/no incluido, 108 h cerradas, supuestos y aceptación; enviado a Jonas"
+2026-10-08,interno,interno,setup,sesion,1.6,"Barrera de envíos (visto por Max), investigación de frases de IA, lista única y barreras de mensajes, documentos y chat, regla irrompible 3"
+2026-10-09,kisult,jaeger,meeting-summaries,sesion,0.3,"Hilo de Jonas leído (12 audios transcritos) y PDF ajustado: filtro de datos personales como bloque aparte, base 96 h"
+2026-10-09,falkenlead,gbs-group,google-ads,sesion,0.4,"Campaña de desinfección creada en pausa: volumen de búsqueda en la zona, dos grupos, anuncios, negativas y recursos copiados de la de climatización; validada con Google antes de crearla"
+2026-10-09,operandi,cardeleine,video-engine,sesion,0.5,"Vídeo de Jana v7d: muesca superior del móvil eliminada (queda la isla), ventana del avatar a ras de ambos biseles, remontado y revisado ampliado"
