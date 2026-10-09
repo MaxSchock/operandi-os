@@ -6,7 +6,7 @@ description: Producción manual de un vídeo del motor de Operandi escena por es
 # Vídeo escena por escena (Operandi video-engine, manual)
 
 Protocolo destilado de Cardeleine, 03 a 05-10-2026. Cada regla nació de un error real de esos días.
-Reglas hermanas ya activas (no repetirlas aquí, se activan solas): `feedback-no-regenerar-imagenes-por-criterio-propio-ni-gastar-sin-max`, `feedback-imagen-final-y-pantalla-con-vida-y-fiel-a-la-referencia`, `feedback-no-meter-avisos-legales-no-pedidos`.
+Reglas hermanas ya activas (no repetirlas aquí, se activan solas): `feedback-no-regenerar-imagenes-por-criterio-propio-ni-gastar-sin-max`, `feedback-imagen-final-y-pantalla-con-vida-y-fiel-a-la-referencia`, `feedback-no-meter-avisos-legales-no-pedidos`, `feedback-video-dentro-de-video-siempre-minimax`, `feedback-revisar-video-a-dos-fotogramas-por-segundo-no-muestra`, `feedback-editar-solo-el-clip-pedido-no-regenerar-lo-aprobado`.
 
 ## 0. Antes de tocar nada
 
@@ -30,7 +30,8 @@ Reglas hermanas ya activas (no repetirlas aquí, se activan solas): `feedback-no
 | Primer plano de móvil con pantalla | `flux3-image` desde una imagen ya en primer plano | mantiene la pantalla pegada al móvil al balancear |
 | Pantalla de móvil | NUNCA `kling3-pro-image` | despega la pantalla y dibuja una barra de estado fantasma (captura de Max 05-10) |
 | Personas reales | NUNCA Veo 3.1 | rechaza parecidos reales, máximo 8 s |
-| Texto pequeño en pantalla | NUNCA minimax H3 | deforma el texto |
+| Texto pequeño en pantalla | NUNCA minimax H3 imagen-a-vídeo | deforma el texto |
+| Vídeo dentro de vídeo (avatar hablando en la pantalla del móvil) | `fal-ai/minimax/hailuo-03/reference-to-video` (0,19 $/s) con foto de referencia aprobada + vídeo real del cliente + audio | única vía que dejó el contenido dentro del bisel (08/09-10); pegar la grabación a mano o editar con Kling rompió los márgenes dos veces |
 
 - **FLUX ignora «acercamiento en el primer segundo»** (dos veces). Si hace falta un primer plano, el plano arranca ya en primer plano desde su propia imagen; el acercamiento es otro plano o no existe.
 - **No cambiar de modelo sin probar la perspectiva** en un plano corto antes del largo (error 05-10: Kling elegido por mí, pantalla despegada, dinero perdido).
@@ -61,6 +62,20 @@ Reglas hermanas ya activas (no repetirlas aquí, se activan solas): `feedback-no
 3. Panel del cliente: entregar como versión nueva de SU petición (`deliverables/<id>/vN.mp4` + `thumb.jpg`, `video_requests` a `delivered`, fila en `video_assets`), copiando antes la fila a `clients/<empresa>/clients/<cliente>/backups/`. Nunca una fila nueva si la petición del cliente existe.
 4. Al cliente solo se le escribe cuando Max lo pide; borrador en su buzón (Cardeleine: Drafts de `max@falkenlead.com` por IMAP, copia `.eml` en backups), dos o tres frases, sin explicar lo que se cambió por dentro.
 5. Ledger de horas con el tiempo real de la sesión.
+
+## 6. Pantallas de móvil con vídeo dentro (aprendido del 08 al 09-10-2026, vídeo de Jana)
+
+Cuatro versiones rechazadas por Max antes de acertar. El orden que funcionó:
+
+1. **Partir del clip o la foto antigua que ya dio bien el teléfono** (mano, bisel, inclinación, fondo), no de un fotograma nuevo. Si el clip bueno no está en la copia del VPS, buscarlo antes de usar otro: en v7/v7b partí de la toma de Kling rechazada porque la buena no estaba, y heredé sus marcas fantasma.
+2. **Foto de referencia con homografía, nunca un rectángulo recto.** Localizar las cuatro esquinas de la pantalla (recta ajustada a cada lado), proyectar la interfaz real del cliente sobre ese cuadrilátero y recortarla con la silueta de esquinas redondeadas. El modelo copia la referencia al píxel, defectos incluidos: escalón en una esquina, franja clara del borde de la grabación, muesca más isla dinámica a la vez.
+3. **Anatomía del teléfono en la referencia:** UN solo recorte de cámara (la muesca del propio teléfono), barra de estado coherente (hora a la izquierda de la muesca, iconos a la derecha), ventana del vídeo a ras de ambos biseles, ficha debajo tal cual la enseña la grabación del cliente (aunque quede media pantalla en blanco). Si la grabación del cliente es de un Mac, la barra de estado se maqueta a mano y se dice.
+4. **Max aprueba la foto antes de pagar la generación.** Enseñarla a resolución original más una lámina x3 con cuadrícula horizontal (`drawgrid`) de la parte alta, los dos bordes y una esquina de la ventana; en el mensaje, ángulo del borde superior del bisel y de la ventana en grados (±0,3°) y distancia bisel-ventana en px a ambos lados en cuatro alturas (0-2 px a 704).
+5. **Generación:** Hailuo 3 reference-to-video con Imagen 1 = la foto aprobada, Imagen 2 = captura limpia de la interfaz, Vídeo 1 = grabación real del cliente, Audio 1 = la frase. Una sola; si falla, se enseña y decide Max. Con audio de referencia el modelo dice la frase a su ritmo con su propia voz: si los labios están bien, se usa esa pista (transcribirla y comprobarla palabra por palabra, medir tono frente a la referencia) y veed sobra.
+6. **Revisión de la toma y del montaje, medida, no mirada:** parte alta del móvil x3 con cuadrícula en seis momentos (incluidos los dos fundidos), ángulos y distancias en números, esquinas de la ventana, hoja a 2 fps, fotogramas enteros a 704. Fallos que pasaron tres revisiones mías por mirar a ojo: muesca doble, isla pegada al borde del vídeo, franjas de 10-15 px, contenido horizontal dentro de un teléfono inclinado.
+7. **Cola de audio:** al cambiar la duración de un plano, recalcular el fundido de la música y medir los últimos 4 s en pasos de 0,5 s; en v7e la música se apagaba a 28,5 s y volvía a 29 s, y Max lo oyó antes que yo.
+8. **Formato de salida:** `-pix_fmt yuv420p`, perfil High, faststart. El v6 salió en yuv444p (High 4:4:4), que iPhone y muchos Android no reproducen.
+9. **Transiciones:** xfade `fade`, no `dissolve` (lluvia de granos a tamaño real).
 
 ## Operativa del contenedor
 
