@@ -958,3 +958,5 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-10-09,falkenlead,gbs-group,google-ads,sesion,0.2,"Revisión previa a la activación de la campaña de desinfección y tarea programada que la enciende el 13-10 con aviso por Telegram"
 2026-10-09,kisult,rhp,linus,sesion,0.5,"Quejas de Jonas del 08-10 noche: capturas leídas, estado de las otras sesiones, análisis de código de las cuatro quejas y plan en tres bloques (Heute, voz, barra iOS)"
 2026-10-09,kisult,rhp,linus,sesion,0.6,"Tobi a eedf4840 y nova-3 fuera en las cuatro instancias, aviso 567 cerrado, diagnóstico de las cuatro quejas nocturnas de Jonas, traspaso a 5a y WhatsApp a Jonas"
+2026-10-09,kisult,rhp,linus,sesion,0.3,"Kartenbau: preguntas de producto cerradas con Max (ADR 0002, ante la duda Linus pregunta), ADR 0001 aceptado y traspasos de T1 y de T2-T4 a sesiones nuevas (horas estimadas)"
+2026-10-09,operandi,cardeleine,video-engine,sesion,1.6,"Vídeo de Jana v7e: referencia del móvil con homografía (v2 y v3), toma 3 de MiniMax medida y aprobada, montaje con su voz, revisión completa y entrega como v2 en el panel de Jana"
