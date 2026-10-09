@@ -967,3 +967,4 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-10-09,kisult,hemmersbach,workflow-a,sesion,0.3,"Túnel para n8n: Murat no instala Tailscale sin licencia; respuesta enviada (puerto en su cortafuegos sin coste, o Tailscale Standard), con copia a David y Jonas"
 2026-10-09,operandi,operandi,video-engine,sesion,0.6,"M12: despliegue del formulario único, bocetos y receta de lanzamiento (motor 7741cd2, panel ff46d10) y recorrido en producción como canario a 1280 y 390 px con lista de reparos"
 2026-10-09,operandi,operandi,video-engine,sesion,0.2,"M12: relevo a sesión nueva; traspaso con el orden de trabajo (siete reparos, revisor ampliado, remontaje solo con OK) y cabos sueltos del canario"
+2026-10-09,operandi,operandi,video-engine,sesion,1.6,"M12 bloque A: siete reparos del recorrido en un despliegue (motor 3de0a75, panel 78b5447), medición de recargas y segundo recorrido como canario a 1280 y 390 px"
