@@ -77,6 +77,22 @@ Cuatro versiones rechazadas por Max antes de acertar. El orden que funcionó:
 8. **Formato de salida:** `-pix_fmt yuv420p`, perfil High, faststart. El v6 salió en yuv444p (High 4:4:4), que iPhone y muchos Android no reproducen.
 9. **Transiciones:** xfade `fade`, no `dissolve` (lluvia de granos a tamaño real).
 
+## 7. Elegir la técnica por el requisito del plano, no por el último caso que salió bien (13-10-2026)
+
+Antes de encargar o pagar cualquier plano, escribir en una línea qué ve el espectador: **estado inicial, estado final, qué se mueve, qué tiene que quedar idéntico**. La técnica sale de esa línea con esta tabla, nunca de «lo que funcionó la última vez»:
+
+| Requisito del plano | Técnica | Prueba de aceptación antes de pagar el siguiente paso |
+|---|---|---|
+| Un vídeo real tiene que verse dentro de un marco (pantalla de móvil, ventana) | MiniMax Hailuo 3 con vídeo de referencia y foto de referencia aprobada por Max | contenido dentro del bisel 0-2 px en seis momentos, anatomía del aparato, inclinación |
+| Una foto fija que ya está en la composición cobra vida y vuelve a quedarse (avatar de página, retrato en tarjeta) | fotograma inicial = final = esa foto, labios con veed | primer y último fotograma iguales a la foto (dif. media < 3/255 en cara y busto); sin fundido de vuelta |
+| Un presentador habla a cámara en su propio plano, desde una foto | camino de presentador del motor (`_host_start`) | identidad y ropa constantes, boca cerrada en los extremos |
+| Cambiar a la persona de un clip ya aprobado | Kling vídeo a vídeo sobre el clip existente | solo cambia la persona; encuadre, movimiento y fondo iguales; comparar con la foto del cliente |
+| Arreglar composición, ejes, textos, música | editar la página o el montaje; ninguna generación | medidas antes y después |
+
+Origen: v4 del launch de Cardeleine. Apliqué la regla del móvil de Jana («vídeo dentro de vídeo → Hailuo con referencias») a animar la foto de Isabella, que era el caso de la segunda fila; 2,48 $ en una versión rechazada. Max: «¿por qué no has hecho esto así la primera vez?».
+
+**En todo encargo a una sesión o agente ejecutor** van las tres cosas: la línea del requisito, la técnica de la tabla, y la prueba de aceptación con su número; y esta frase literal: «si la técnica prescrita no cumple el requisito tal como está escrito, dilo antes de gastar». El ejecutor comprueba la prueba de aceptación después de cada paso de pago y antes del siguiente, no al final.
+
 ## Operativa del contenedor
 
 - Scripts siempre desde archivo: `scp` a `/tmp` del VPS, `docker cp /tmp/x.py $C:/app/x.py`, `docker exec -w /app $C python3 x.py` (`C=$(docker ps -q -f name=video-engine_app | head -1)`). Un heredoc a `docker exec` sin `-i` no llega.
