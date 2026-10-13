@@ -1002,3 +1002,5 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-10-13,personal,marca-personal,perfil-fde,sesion,0.7,lista de frases de IA aplicada en el motor a cada borrador y gemelo (ai_tells.py, 63cd01a)
 2026-10-13,personal,operandi,content-engine,sesion,0.8,regla sin datos inventados para todos los clientes: orden en los prompts y comprobador tras escribir (facts.py, 19df3d3); notas en filas 9-11 de Max
 2026-10-12,operandi,rotary,content-engine,sesion,0.2,"Revisión de las publicaciones que quedan en la página del club y comprobaciones del camino de página tras tres redespliegues ajenos"
+2026-10-13,personal,marca-personal,perfil-fde,sesion,0.9,fotos de referencia actuales de Max (Drive Operandi) en el brief, 3 imagenes rehechas, reintentos en imgbb (669e3b6, 8010e7b)
+2026-10-13,kisult,rhp,linus,sesion,1.6,"Tres quejas de Jonas en Heute diagnosticadas y arregladas (aviso que no se iba, Mail ansehen con correo archivado, borrado por plazo de asuntos con obligación abierta), tres guiones e2e nuevos en el canario, main 4a00f2cc desplegado en max-demo con copia previa (aparte ~1,5 h de máquina: suites y guiones)"
