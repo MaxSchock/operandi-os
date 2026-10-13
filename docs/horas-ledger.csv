@@ -997,4 +997,4 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-10-12,operandi,zayd-shah,google-ads-tejador,sesion,0.5,"Análisis de la web de BXL Roof añadido al PDF, envío a Zayd y maqueta de página de destino (HTML, escritorio y móvil)"
 2026-10-13,personal,marca-personal,perfil-fde,sesion,2.4,"Perfil de LinkedIn borrador 4 revisado con Max (titular, About, puestos, Falkenlead fundador), maqueta HTML, métricas actuales de Suritec e imprenta, perfil aplicado por Unipile y brief operandi-canary creado y desplegado"
 2026-10-13,personal,marca-personal,perfil-fde,sesion,1.1,comparativa de los dos briefs y gemelo en castellano de cada post aprobado en el motor (mirror.py; 602c4ea desplegado)
-2026-10-13,falkenlead,gbs-group,web,sesion,0.4,"Página de desinfección: bloque de ReSPR (logo y texto) bajo las cifras y proporción fija del vídeo de beneficios, a petición de Habiba"
+2026-10-13,falkenlead,gbs-group,web,sesion,0.7,"Página de desinfección: bloque de ReSPR y proporción fija del vídeo (Habiba); tarjetas con el texto encima de la foto en Safari de móvil, arreglado en las cuatro páginas"
