@@ -1013,3 +1013,8 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-10-13,operandi,operandi,video-engine,sesion,1.3,M12 Cardeleine v5 avatares first-last (Flux+Kling+veed) y remontaje
 2026-10-14,personal,os,investigacion-reels,sesion,0.6,"Dos reels verificados con fuentes (TypeSafe/Jev, diez herramientas de marketing), informe con recomendación por frente"
 2026-10-14,operandi,operandi,video-engine,sesion,0.4,"Revisión de la v5 avatares (rejillas 4 fps, entrada/salida de clips, diferencia con la foto, cola de audio) y prevención de técnica por analogía (regla + skill sección 7)"
+2026-10-14,operandi,operandi,video-engine,sesion,0.7,Isabella v6 con Kling first-last + veed y pruebas de aceptacion (nada al panel)
+2026-10-14,operandi,operandi,video-engine,sesion,0.9,M12 v7 Isabella: omnihuman descartado y kling ai-avatar probado (pasa 2 y 3, parado antes del puente por tope)
+2026-10-14,operandi,marca-personal,content-engine,sesion,0.8,"Fila 10 salió con «three months» (sin fuente): gemelo ES corregido y movido a 15-10, edición por Unipile no posible (v2); geometría real de la oficina en el brief (cuadro detrás, única ventana enfrente, dos cámaras) y filas 9/11 rehechas"
+2026-10-14,personal,os,investigacion-reels,sesion,0.3,"Jev en local (Kev, Laya) y prueba de humo de Jev por OpenRouter con mensajes inventados"
+2026-10-14,kisult,rhp,linus,sesion,1.3,"T8 de Kartenbau a main (d61836c1), suites de los cuatro paquetes, canario con dos guiones, subida a André y Jonas con copia de cada base; línea de Mavridis restaurada en la demo desde la copia del 10-10"
