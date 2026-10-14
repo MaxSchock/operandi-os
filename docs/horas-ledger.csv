@@ -1019,3 +1019,7 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-10-14,personal,os,investigacion-reels,sesion,0.3,"Jev en local (Kev, Laya) y prueba de humo de Jev por OpenRouter con mensajes inventados"
 2026-10-14,operandi,operandi,video-engine,sesion,1.8,M12 v7 Isabella: omnihuman descartado, kling ai-avatar + puente first-last y remontaje con pruebas (nada al panel)
 2026-10-14,operandi,operandi,video-engine,sesion,0.3,"Revisión de v6 y v7 avatares (hojas de boca a 8 fps, rejillas, puente), encargos v6/v7 y regla+skill con el modelo que funciona"
+2026-10-14,personal,os,investigacion-reels,sesion,0.6,"Jev sobre 1.501 turnos anonimizados de Max: extracción, prueba de aceptación 50, tabla de patrones (0,076 $)"
+2026-10-14,personal,rotary,acta-02oct,sesion,0.5,"Acta de la comida del 02-10 desde el audio de César (plantilla del club, 6 puntos, salto de página), enviada a César en PDF y Word por WhatsApp"
+2026-10-14,personal,os,repaso-canales,sesion,0.6,"Repaso de todos los canales 13-10 09:13 a 14-10 10:45 (WhatsApp con 9 audios, KIsult, Operandi, Falkenlead, personal, LinkedIn, n8n, sesiones abiertas), radar, Rotary publicado como página comprobado"
+2026-10-14,kisult,rhp,linus,sesion,0.3,"Voz nueva (cedar) y lectura de fotos y notas de voz (Gemini, clave KIsult) encendidas en André y Jonas por orden de Max: copia de cada .env y de cada base, redespliegue, variables comprobadas en el contenedor"
