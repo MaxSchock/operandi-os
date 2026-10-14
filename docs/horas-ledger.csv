@@ -1004,3 +1004,9 @@ fecha,entidad,cliente,proyecto,tipo,horas,descripcion
 2026-10-12,operandi,rotary,content-engine,sesion,0.2,"Revisión de las publicaciones que quedan en la página del club y comprobaciones del camino de página tras tres redespliegues ajenos"
 2026-10-13,personal,marca-personal,perfil-fde,sesion,0.9,fotos de referencia actuales de Max (Drive Operandi) en el brief, 3 imagenes rehechas, reintentos en imgbb (669e3b6, 8010e7b)
 2026-10-13,kisult,rhp,linus,sesion,1.6,"Tres quejas de Jonas en Heute diagnosticadas y arregladas (aviso que no se iba, Mail ansehen con correo archivado, borrado por plazo de asuntos con obligación abierta), tres guiones e2e nuevos en el canario, main 4a00f2cc desplegado en max-demo con copia previa (aparte ~1,5 h de máquina: suites y guiones)"
+2026-10-13,operandi,operandi,video-engine,sesion,0.9,"M12 launch v4 con avatares vivos (Isabella y el hombre de azul hablan con voz propia, narrador solo en escenas sin persona): foto limpia, Hailuo 3 x2, veed x2, remontaje y revisión (aparte ~15 min de máquina: renders)"
+2026-10-13,personal,marca-personal,perfil-fde,sesion,1.4,tres videos de Max por WhatsApp (descarga, descifrado del grande), fotogramas de cara y oficina como referencias del motor, registro visual sin papel; el escritor de escenas lee visual_identity para todos (f999a67)
+2026-10-13,personal,os,repaso-canales,sesion,0.6,"Repaso de todos los canales 12-10 a 13-10 (WhatsApp con audios, KIsult, Operandi, Falkenlead, personal, errores n8n) y radar de facturación"
+2026-10-13,personal,marca-personal,perfil-fde,sesion,0.2,"Diagnóstico de los 3 posts que no salían (faltaba el brief en el motor) y encargo a la sesión FDE"
+2026-10-13,falkenlead,gbs-group,google-ads,sesion,0.1,"Campaña de desinfección activada comprobada y línea del cron quitada con copia"
+2026-10-14,personal,os,investigacion-reels,sesion,0.3,"Dos reels de Instagram analizados con Gemini por OpenRouter (0,13 $) y traspaso a la sesión ca"
