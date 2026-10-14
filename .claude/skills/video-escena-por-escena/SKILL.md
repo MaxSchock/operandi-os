@@ -6,6 +6,8 @@ description: Producción manual de un vídeo del motor de Operandi escena por es
 # Vídeo escena por escena (Operandi video-engine, manual)
 
 Protocolo destilado de Cardeleine, 03 a 05-10-2026. Cada regla nació de un error real de esos días.
+
+**Desde el 14-10-2026 el motor hace solo casi todo esto por etapas** (fase 5 del plan de conocimiento de vídeo, `projects/conocimiento-video/propuesta.md`): `fade`, faststart, cola de 0,4 s, revisor que retiene para todos y escucha, tope de gasto por petición, escenarios por cliente con foto base + hoja de cara + mosaico, hoja de cara desde vídeo, medidas de cara/cabeza/boca/mano/bisel con rechazo y un reintento, receta `screen` (clip del cliente dentro del móvil con referencia aprobada) y cambio de persona con Wan sobre la toma aprobada. Este protocolo manual queda para lo que el motor aún no cubre (avatar de página que habla, bloque 9) y para entender qué mide; antes de hacer algo a mano, comprobar si el panel ya lo hace.
 Reglas hermanas ya activas (no repetirlas aquí, se activan solas): `feedback-no-regenerar-imagenes-por-criterio-propio-ni-gastar-sin-max`, `feedback-imagen-final-y-pantalla-con-vida-y-fiel-a-la-referencia`, `feedback-no-meter-avisos-legales-no-pedidos`, `feedback-video-dentro-de-video-siempre-minimax`, `feedback-revisar-video-a-dos-fotogramas-por-segundo-no-muestra`, `feedback-editar-solo-el-clip-pedido-no-regenerar-lo-aprobado`.
 
 ## 0. Antes de tocar nada
@@ -48,16 +50,16 @@ Reglas hermanas ya activas (no repetirlas aquí, se activan solas): `feedback-no
 ## 4. Montaje (ffmpeg solo existe en el contenedor)
 
 - Normalizar cada entrada: `scale=704:1280:force_original_aspect_ratio=increase,crop=704:1280,fps=24,format=yuv420p,setsar=1,settb=AVTB`; `xfade` exige misma resolución, fps y timebase.
-- Transiciones: `xfade=transition=dissolve:duration=0.4` entre planos de la historia, `fadewhite:duration=0.6` al cartel final; audio con `acrossfade` de la misma duración. Sin transición el corte suena a golpe (Max 05-10: «¿tu programa no permite hacer transiciones?»).
-- Recortar el silencio al final de un plano hablado (fin de la voz + 0,5 s), si no quedan segundos muertos.
+- Transiciones: `xfade=transition=fade:duration=0.4` entre planos de la historia (nunca `dissolve`: a tamaño real sale como lluvia de granos, 08-10), `fadewhite:duration=0.6` al cartel final; audio con `acrossfade` de la misma duración; corte seco solo en continuidad y junto a escenas de página launch. Sin transición el corte suena a golpe (Max 05-10: «¿tu programa no permite hacer transiciones?»).
+- Recortar el silencio al final de un plano hablado (fin de la voz + 0,4 s, la misma cifra que `VOICE_TAIL_S` del motor), también en tomas `first-last`; si no quedan segundos muertos.
 - **Música:** automatización fija, no compresor (sidechaincompress solo bajó 2-3 dB): `volume='if(lt(t,T_cartel),0.09,...0.25)'` con `eval=frame`, fade in 1,2 s y fade out 2,7 s. Al 0,35 tapaba la voz.
 - **Subtítulos siempre:** STT del motor (`render.STT_MODEL`, 0,10 $) sobre la pista de voz montada → tiempos por palabra → bloques por frase ≤ 42 caracteres → `ffmpeg.write_srt` → filtro `subtitles` con el `force_style` de `ffmpeg.concat_and_mix`. Corregir la ortografía de marca que el STT invente («Cardelaine»).
 - Cartel final: el texto del cliente (`end_text`) tal cual; el motor lo dibuja con `dialogue.end_card_png`.
-- Antes de entregar: tira de fotogramas (`tile`) y tres fotogramas con subtítulo; medir niveles con `volumedetect` (voz −23 dB media, música bajo voz con máximo ≤ −20 dB).
+- Antes de entregar, la revisión de la regla `feedback-revisar-video-a-dos-fotogramas-por-segundo-no-muestra`, no una muestra: hoja de TODOS los fotogramas a 2 fps (`fps=2,tile=7x3`), un fotograma por escena a tamaño real (720 px) con un solo eje por escena, el vídeo visto en movimiento, y audio transcrito por tramos (texto y sexo del hablante contra el guion); medir niveles con `volumedetect` por tramo (voz −19 a −23 dB media, música bajo voz con máximo ≤ −20 dB) y la cola de los últimos 4 s en pasos de 0,5 s. «Revisado» sin esos números no es revisado.
 
 ## 5. Entrega
 
-1. Copia en `/mnt/c/Users/PC/Downloads/<cliente>-completo-vN-<fecha>.mp4` + `SendUserFile`.
+1. Copia en `/mnt/c/Users/PC/Downloads/<cliente>-completo-vN-<fecha>.mp4` y abrirla a Max en Windows con `~/iamasters-os/scripts/abrir.sh <archivo>` en la misma respuesta (con la hoja de fotogramas y las medidas al lado); una ruta, un adjunto o `SendUserFile` solos no cuentan como entrega (regla `feedback-abrir-archivos-a-max-en-windows`).
 2. WhatsApp al chat propio de Max (`179830280736869@lid`) con la versión `-wa.mp4` (720p, crf 27): `peek` como comando separado ANTES del `send-video` en el mismo turno (el hook bloquea si no).
 3. Panel del cliente: entregar como versión nueva de SU petición (`deliverables/<id>/vN.mp4` + `thumb.jpg`, `video_requests` a `delivered`, fila en `video_assets`), copiando antes la fila a `clients/<empresa>/clients/<cliente>/backups/`. Nunca una fila nueva si la petición del cliente existe.
 4. Al cliente solo se le escribe cuando Max lo pide; borrador en su buzón (Cardeleine: Drafts de `max@falkenlead.com` por IMAP, copia `.eml` en backups), dos o tres frases, sin explicar lo que se cambió por dentro.
@@ -86,7 +88,7 @@ Antes de encargar o pagar cualquier plano, escribir en una línea qué ve el esp
 | Un vídeo real tiene que verse dentro de un marco (pantalla de móvil, ventana) | MiniMax Hailuo 3 con vídeo de referencia y foto de referencia aprobada por Max | contenido dentro del bisel 0-2 px en seis momentos, anatomía del aparato, inclinación |
 | Una foto fija que ya está en la composición cobra vida, dice una frase y vuelve a quedarse (avatar de página, retrato en tarjeta) | habla desde la foto con `fal-ai/kling-video/v1/pro/ai-avatar` (imagen + audio; 0,115 $/s, factura el clip alargado: 7,2 s por 5,2 s de audio) recortado donde la boca se asienta, + puente `kling3-pro-first-last` 3 s (a 2x si el gesto es corto) del último fotograma del habla a la foto. Probado 14-10 (v7 del launch): cabeza < 5 px, boca 2-3,7× en los picos, cerrada en los silencios. OmniHuman 1.5 articula igual de bien pero desplaza el cuerpo 130-170 px y no arranca en la foto: descartado. **No** veed sobre un clip first-last: veed solo retoca la zona de la boca y sobre una foto que sonríe con dientes no cierra ni abre los labios (v5 y v6 del launch, 14-10, «lipsync off») | tras el habla: primer fotograma igual a la foto (dif. media < 3/255 en cara y busto), cabeza < 15 px, abertura de la boca en los picos del audio ≥ 1,5× la inicial y en los silencios ≤ 1,2× (hoja de la boca a 8 fps con tiempo y dB); tras el puente: último fotograma igual a la foto y unión < 3; sin fundido de vuelta |
 | Un presentador habla a cámara en su propio plano, desde una foto | camino de presentador del motor (`_host_start`) | identidad y ropa constantes, boca cerrada en los extremos |
-| Cambiar a la persona de un clip ya aprobado | Kling vídeo a vídeo sobre el clip existente | solo cambia la persona; encuadre, movimiento y fondo iguales; comparar con la foto del cliente |
+| Cambiar a la persona de un clip ya aprobado | Wan 2.2 animate/replace sobre el clip existente (`dialogue.SWAP_MODEL`; ganó el 02-10 frente a Kling O3 edit, que dejó a la mujer original dos veces, y a PixVerse, que dejó una mancha; el 08-10 una toma B de Kling sí cambió cara y complexión, así que Kling es reserva, no defecto); nunca redibujar ni volver a filmar | solo cambia la persona; fuera de su caja, diferencia media frente al clip aprobado < 4/255 en 6 momentos; misma duración ±1 fotograma; comparar con la foto del cliente |
 | Arreglar composición, ejes, textos, música | editar la página o el montaje; ninguna generación | medidas antes y después |
 
 Origen: v4 del launch de Cardeleine. Apliqué la regla del móvil de Jana («vídeo dentro de vídeo → Hailuo con referencias») a animar la foto de Isabella, que era el caso de la segunda fila; 2,48 $ en una versión rechazada. Max: «¿por qué no has hecho esto así la primera vez?».
@@ -97,4 +99,5 @@ Origen: v4 del launch de Cardeleine. Apliqué la regla del móvil de Jana («ví
 
 - Scripts siempre desde archivo: `scp` a `/tmp` del VPS, `docker cp /tmp/x.py $C:/app/x.py`, `docker exec -w /app $C python3 x.py` (`C=$(docker ps -q -f name=video-engine_app | head -1)`). Un heredoc a `docker exec` sin `-i` no llega.
 - Material de trabajo en `/tmp/s1` del contenedor: se pierde al redesplegar. Copia en `/root/backups/video-engine-s1-<fecha>/` antes de `service update`.
+- Antes de `docker service update --force video-engine_app`, comprobar que no hay ninguna petición en `rendering` ni trabajo en `video_jobs` corriendo (un reinicio a mitad de render lo mata y el vigilante lo da por fallido con reembolso, 06-07-2026); `git push` y el `service update` van en comandos separados.
 - Artefactos intermedios en storage bajo `scratch/manual-escenas-<fecha>/`.

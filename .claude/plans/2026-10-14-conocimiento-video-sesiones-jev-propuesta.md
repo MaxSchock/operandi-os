@@ -1,6 +1,6 @@
 # Plan · Recoger el conocimiento de las sesiones de vídeo e imagen, contrastarlo con el motor y proponer mejoras
 
-Estado: EN EJECUCIÓN desde 14-10-2026 16:10 (orden de Max vía sesión iamasters-os-df). Fase 1 hecha 16:23 (561 turnos, Jev se queda con umbral 0,5, 156 correcciones; `projects/conocimiento-video/fase1.md`). Fase 2 hecha 16:35 (145 fichas en 9 temas, `lecciones.md`). Fase 3 hecha 16:47 (19 contradicciones confirmadas, `matriz.md`). Fase 4 en marcha.
+Estado: HECHO 14-10-2026 23:05 (fases 1 a 5 completas; fase 5 ejecutada en la sesión 92 de 18:50 a 23:05: 13 bloques + 3b, main del video-engine en `41071d7`, content-engine en `v20261014-scenes2`, strategist `03b4dea`; pendientes de Max y huecos al pie). Antes: EN EJECUCIÓN desde 14-10-2026 16:10 (orden de Max vía sesión iamasters-os-df). Fase 1 hecha 16:23 (561 turnos, Jev se queda con umbral 0,5, 156 correcciones; `projects/conocimiento-video/fase1.md`). Fase 2 hecha 16:35 (145 fichas en 9 temas, `lecciones.md`). Fase 3 hecha 16:47 (19 contradicciones confirmadas, `matriz.md`). Fase 4 hecha 16:55 (`projects/conocimiento-video/propuesta.md`, abierta a Max). 17:25: Max añadió por la tarde los bloques 10 (mosaicos en imágenes clave), 11 (hoja de cara completa desde vídeo), 12 (mosaicos de salón, jardín y piscina) y 13 (traslado de hallazgos a productos y regla de usar todo el material), más una fase 3b (content-engine, 1 h) por las 26 lecciones de julio-septiembre. FASE 5 EN EJECUCIÓN desde 18:50 (Max dijo «ejecútalo» a las 18:35 en la sesión 78, decisiones recomendadas 1-6; sesión ejecutora 92, orquesta Fable 5.1 con ejecutoras Opus 5.5 por bloque). Orden: 3b, 13, 1-2-3-4-8, 10-11-12, 5-6-7, skill y reglas; estado por bloque al pie de este fichero. Antes: esperaba el «lanza» de Max para ejecutar la fase 5 entera de una vez en una SESIÓN NUEVA (traspaso `clients/operandi/context/handoff-video-conocimiento-fase5-20261014.md`, orden de bloques y decisiones por defecto dentro); nada del motor ni del brief tocado. Material ya preparado y gratis: hoja de cara de 28 ángulos subida (`i.ibb.co/PGkwML9d`), fotogramas de la cara y de la casa en VpsFigura `/root/videos-max/{cara,casa}-frames/`. Horas reales fases 1-4: 1,0 h de sesión más ~45 min de máquina (14 subagentes).
 Entidad: Operandi (motor `video-engine` + Dashboard). Para quién: Max. Para qué: que el motor tenga lo que hemos aprendido desde mediados de septiembre y deje de repetir errores que ya pagamos una vez.
 
 ## Qué hay
@@ -64,3 +64,40 @@ Primer mensaje de Max en la sesión nueva: «Ejecuta el plan `.claude/plans/2026
 ## Horas
 
 Fases 1 a 4: 5 a 6 horas reales de sesión más el tiempo de máquina de la extracción. Se apuntan en el ledger por fase (operandi / operandi / video-engine).
+
+
+## Fase 5 · estado por bloque (sesión 92, 14-10-2026)
+
+| Bloque | Estado | Hora | Notas |
+|---|---|---|---|
+| 3b content-engine | hecho | 19:05 | `fase3b-content-engine.md`: 7 contradicciones C1-C7; se corrigen en el bloque 12 (content-engine); 0,1 h |
+| 13 OS | hecho | 19:00 | productos.md, traslados.md, destilador y salud-os, paso de cierre, regla indexada; 0,1 h |
+| 1 constantes | hecho | 19:10 | commit c351968 desplegado; A: 0 dissolve; B: moov byte 36 < mdat 6.640; C: 13 s con voz a 10,3 sale 10,708 s; D: 0,09 bajo narrador, 0,25 mudo; E: kling v1 pro, 1,18 $ por 5,2 s; F de pago pendiente de Max; 0,15 h |
+| 2 revisor para todos | hecho | 19:50 | 9b6d421 desplegado; A hold con 2 s negro; B all; C compose; D advisory axis 38 px; E frames_seen 8/56 heard false; visión 0,076 $; 0,3 h |
+| 12 activos casa | esperando a Max | 19:30 | 6 activos en `fotos-referencia/casa-2026-10-14/`, abiertos en Windows; Max aprueba o pide otro encuadre; 0,15 h |
+| 12 content-engine | hecho | 19:55 | 2457bf1 v20261014-scenes, 105 tests; escenas salón/jardín/piscina en el brief tras el OK de Max; 0,2 h |
+| 12 cierre | hecho | 20:10 | 74ab419, v20261014-scenes2 desplegada: cuatro escenarios en el brief del canario; queda la parte de `keyframes.py` (bloque 10) |
+| 1F prueba de pago | hecha, NO pasa | 20:25 | 1,164 $; cabeza 19 px (risa ojos cerrados, mano), 1er fotograma 4,17 (nitidez Kling, sin desplazamiento), puente estirado 0,6 % (arreglo: reescalar respetando proporciones, va al bloque 5 con la medida tras cada paso de pago y 1 reintento automático); boca y unión pasan; 0,2 h |
+| 3 montaje que escucha | hecho | 20:40 | c65ed25 desplegado; heard true, 80-100 % por frase, música 0,35 = defecto, mudo sin música falla; F0 por tramo al bloque 5; consecuencia: montaje cuesta 0,10 $ (panel no lo enseña), tipografía sin música no se monta; 0,35 h |
+| 10-11 keyframes y hoja de cara | hecho en rama | 21:05 | commits 6a69124, ac3ae07, d55051e; 8/8 llamadas con [base, hoja, detalles], cliente sin escenarios idéntico byte a byte, inspect rechaza 2 monitores y anillo; hoja automática 28 baldosas (visión 0,29 $) abierta a Max; SQL `sql/20261014_scenarios_face_sheets.sql` por aplicar; fusión y despliegue tras el bloque 4; 0,4 h |
+| 4 gasto con tope | hecho | 21:35 | 8a36f1b + 6a588bb desplegados; tope = máx(3 $, estimación + 15 %): 513b7b8d da 11,01 $; tokens 3 $; sin precio = failed; segunda composición retoma try-3; SQL aplicado con copia; huecos: peticiones sin estimación quedan a 3 $, STT de revisión fuera del tope; 0,35 h |
+| fusión 8 + 10-11 | hecho | 21:50 | main 03b4dea desplegado con cv2; SQL aplicados (4 escenarios del canario, personaje Max con hoja, staged_flow true en 8 clientes); strategist desplegado; 0,15 h |
+| 5 medidas en el revisor | hecho en rama | 22:30 | measure.py; A caza la prueba F (19 px, ojos, mano, reintento 1), B v7 pasa (12 px, 5/5), C v7c/v7d/ref fallan y v7f 0 defectos, D parado 45,9 dB, E 56/56 fotogramas, F voces 87/186 Hz; técnica cambiada con razón: igualar brillo tras ECC (no solo desenfoque), puente por afín ECC, boca por interior oscuro; 0,5 h |
+| 6 móvil con vídeo por etapas | hecho en rama | 22:45 | f21105c + d5bac8b; screen_ref como imagen start (panel sin cambios), homografía y lámina x3, Hailuo con 7 claves, bisel v7f 0 / v7c 17 defectos, 2,00 $ por plano; panel: enseñar lámina y seen (pendiente, otro repo); 0,7 h |
+| fusión 5 + 6 + 7 | hecho | 23:05 | main 41071d7 desplegado; una sola medida del móvil (la del bloque 5); todas las suites pasan (D1 del bloque 8 queda obsoleta a propósito: el 6 ya filma screen); 0,25 h |
+| skill y reglas | hecho | 19:00 | cinco arreglos en la skill (fade, cola 0,4, Wan, abrir.sh, revisión 2 fps, no redesplegar con render); reglas probar-la-via-exacta y reclamo-al-brief indexadas |
+| 7 editar solo el clip | hecho en rama | 22:15 | 25c6c8e + f079c2f; A-F con dobles; fuera de la caja 0,17-0,27/255 con material real, regenerado 58-62 marcado; panel: what=person + person_ref; decisión de Max: segmentación a silueta (otra llamada) o rectángulo; 0,25 h |
+| 8 camino antiguo | hecho en rama | 21:25 | 8d86948; el motor nunca leía video_staged_flow (lo decide brief.flow del panel): corte por fecha en legacy.py, worker desvía, talking_head → dialogue (quien no es personaje listado sale inventado: hueco del bloque 9), screen falla con aviso hasta el bloque 6; 16/16; SQL y eventos del digest pendientes; fusión con 10-11 tras el bloque 4; 0,15 h |
+
+## Fase 5 · cierre (23:05)
+
+Horas reales de la fase 5: 4,4 h de sesión (orquestación 0,5 + bloques) más unas 4 h de máquina de las ejecutoras. Gasto: 1,164 $ (prueba F) + 0,22 $ (STT bloque 3) + 0,076 + 0,031 + 0,29 $ (visión) ≈ 1,8 $.
+
+Pendiente de Max:
+- Prueba F: la foto que habla con Kling v1 pro falla una de dos veces (cabeza, ojos, mano); desde el bloque 5 el motor la rechaza solo y reintenta una vez. ¿Vale el reintento automático con tope de uno, o prefiere ver cada toma?
+- Bloque 7: dentro de la caja de la persona, Wan redibuja el fondo; recortar a la silueta exige un modelo de segmentación (otra llamada de pago). Rectángulo (como está) o segmentación.
+- `LAUNCH_STRICT=1` cuando el canario pase dos launch seguidos sin agotar intentos (hoy en aviso registrado).
+- Bloque 9 (avatar de página como receta, 6 h) cuando haya segundo cliente; mientras, quien habla sin ser personaje registrado sale inventado.
+- Panel (otro repo): precio del montaje 0,10 $; lámina x3 y texto `seen` de la referencia del móvil; `what=person` + `person_ref` y `costs.shots[n].person.total`; `lips.qc` de las tomas.
+- Pruebas de pago pendientes cuando quiera: 8 imágenes clave del canario con escenarios (1,20 $), hoja de cara automática de punta a punta (0,15 $), toma Hailuo con referencia aprobada (2,28 $), sustitución real con Wan (0,97 $).
+- `placement` de los escenarios nombra objetos del lugar (chair, desk, glass table): lo aprobó en el content-engine; en vídeo sale igual. Si quiere la versión estricta, una línea en `scenarios.start_prompt`.
