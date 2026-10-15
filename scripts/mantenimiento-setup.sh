@@ -13,7 +13,13 @@ cd "$REPO" || exit 1
   echo "== $(date '+%F %T')"
   python3 scripts/medir-setup.py --dias 60
   INFORME=$(python3 scripts/medir-setup.py)
+  CORR=$(python3 scripts/medir-correcciones.py 2>&1 | grep -m1 "turnos de Max son correcciones")
   PODA=$(python3 "$HOME/.claude/hooks/podar-reglas.py" --aplicar 2>&1)
+  # Cambios al sistema registrados en docs/cambios-medidos.jsonl: mide los vencidos y deja la tabla en el informe.
+  CAMBIOS=$(python3 scripts/cambios-medidos.py check 2>&1)
+  if [ -f "$INFORME" ] && ! grep -q "^## Cambios medidos abiertos" "$INFORME"; then
+    python3 scripts/cambios-medidos.py tabla >> "$INFORME" 2>&1
+  fi
   python3 "$HOME/.claude/hooks/indexar-reglas.py"
   git fetch --quiet upstream 2>/dev/null
   NUEVOS=$(git rev-list --count "$(cat .claude/.original-aplicado 2>/dev/null)..upstream/main" 2>/dev/null || echo 0)
@@ -32,6 +38,8 @@ if t:
 usadas = set(d["skills"]) | set(d["comandos"])
 print(f"- Skills y comandos usados: {len(usadas)} ({', '.join(sorted(usadas)[:8])})")
 PY
+    [ -n "$CORR" ] && echo "- Correcciones de Max esta semana (Jev): ${CORR#- }"
+    [ -n "$CAMBIOS" ] && [ "$CAMBIOS" != "ninguna revision vencida" ] && echo "- Cambios medidos con revision vencida: informe docs/medicion-setup/cambios-$(date +%F).md (cierra cada uno con scripts/cambios-medidos.py close)."
     [ "${NUEVOS:-0}" -gt 0 ] && echo "- El OS original tiene $NUEVOS commits nuevos."
     [ "${COPIAS:-0}" -gt 20 ] && echo "- Hay $COPIAS copias .bak sueltas en el repo: moverlas a ~/.claude/backups/."
     echo "Lee el informe, compara con el anterior de docs/medicion-setup/ y actua sobre lo que haya empeorado. Borra esta nota al terminar: $NOTA"
