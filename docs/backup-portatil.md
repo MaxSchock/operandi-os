@@ -24,8 +24,8 @@ restic restore latest --tag thinkpad --include /home/max/.claude/CLAUDE.md --tar
 
 ## Tamaño
 
-Primer snapshot (15-10-2026): 7,4 GiB leídos, 4,2 GiB en el repositorio del VPS (compresión 1,8x; lo gordo son las auditorías gz de Hemmersbach, que no comprimen). Las copias diarias añaden unos MB. El VPS pasó del 83 % al 87 % de disco; el tope es el 88 %, así que no hay margen para crecer mucho: vigilar `df` en el VPS cada mes.
+Primer snapshot (15-10-2026): 7,4 GiB leídos, 4,2 GiB en el repositorio del VPS (compresión 1,8x; lo gordo son las auditorías gz de Hemmersbach, que no comprimen). Las copias diarias añaden unos MB. Mientras estuvo en el VPS lo subió del 83 % al 87 % de disco.
 
 Repositorio S3 el 15-10-2026: 4,17 GiB. Los snapshots se copiaron del VPS con `restic copy` (ids nuevos, mismas fechas).
 
-**Copia antigua en el VPS:** `/root/backups/thinkpad-restic` (4,2 GB, sftp) queda como copia antigua sin actualizar hasta que Max dé el OK a borrarla. El 87 % de disco del VPS baja cuando se borre.
+**Copia antigua en el VPS:** borrada el 15-10-2026 a las 16:55 con OK de Max, tras comprobar en S3 los dos snapshots, `restic check --read-data-subset=5%` sin errores y un listado de ficheros. El VPS volvió al 82 %. Solo queda allí la contraseña en `/root/secrets/`.
