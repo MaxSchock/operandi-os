@@ -19,11 +19,12 @@ except IndexError:
 # Assumption: the canonical registry lists repo skills as markdown table rows whose
 # first cell is a backticked skill folder name. The section intentionally stops
 # before plugin-only skills such as docx/xlsx/pdf/pptx.
-registered = set()
-for line in registry.splitlines():
-    match = re.match(r"^\|\s*`([^`]+)`\s*\|", line)
-    if match:
-        registered.add(match.group(1))
+# Since 08-10-2026 the registry is prose (core / own / library lists), not a table:
+# every backticked kebab-case name in the section counts as registered.
+registered = {n for n in re.findall(r"`([a-z0-9][a-z0-9-]*)`", registry) if "-" in n}
+# Archived skills (.claude/skills/_archived/<name>) may be named in the section as archived.
+archived = {q.parent.name for q in Path(".claude/skills/_archived").rglob("SKILL.md")} if Path(".claude/skills/_archived").exists() else set()
+registered -= archived
 
 # Core (siempre instaladas) + biblioteca (instalables con /skills).
 # En el repo del operador puede haber skills de biblioteca instaladas
@@ -36,20 +37,17 @@ for root in (".claude/skills", "skills-library"):
         disk.add(path.parent.name)
 
 missing_on_disk = sorted(registered - disk)
-missing_in_registry = sorted(disk - registered)
+unlisted = sorted(disk - registered)
 
-if missing_on_disk or missing_in_registry:
+# Only ghosts fail. Installed skills are deliberately not listed by name since 08-10-2026
+# (they show up in every session's skill list); the library list in CLAUDE.md is informative.
+if missing_on_disk:
     print("Skills registry drift detected:", file=sys.stderr)
-    if missing_on_disk:
-        print("Listed in CLAUDE.md but missing on disk:", file=sys.stderr)
-        for name in missing_on_disk:
-            print(f"- {name}", file=sys.stderr)
-    if missing_in_registry:
-        print("Present on disk but missing in CLAUDE.md:", file=sys.stderr)
-        for name in missing_in_registry:
-            print(f"- {name}", file=sys.stderr)
+    print("Listed in CLAUDE.md but missing on disk:", file=sys.stderr)
+    for name in missing_on_disk:
+        print(f"- {name}", file=sys.stderr)
     sys.exit(1)
 
-print(f"OK: CLAUDE.md registry matches disk ({len(disk)} skills)")
+print(f"OK: no ghosts in CLAUDE.md registry ({len(disk)} skills on disk, {len(unlisted)} not named in CLAUDE.md)")
 PY
 

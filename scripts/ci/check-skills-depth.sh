@@ -18,7 +18,7 @@ errors, warnings = [], []
 # crea update.sh (guarda la estructura ANTIGUA, anidada, a propósito), vendor/ y
 # cualquier archivado. Sin esto, /doctor y este check dan 🔴 falsos tras cada
 # /actualiza, apuntando a un backup que debe quedarse tal cual.
-SKIP = ("vendor", ".backup", "_archivado", "node_modules", ".git")
+SKIP = ("vendor", ".backup", "_archivado", "node_modules", ".git", ".venv", "venv", "site-packages")
 for root in sorted(Path(".").glob("**/.claude/skills")):
     if any(part in SKIP or part.startswith(".backup") for part in root.parts):
         continue
@@ -28,6 +28,8 @@ for root in sorted(Path(".").glob("**/.claude/skills")):
         rel = path.relative_to(root)
         if any(part.startswith("_archived") for part in rel.parts):
             continue  # anidado a propósito: no debe cargar
+        if any(part in SKIP for part in rel.parts):
+            continue  # entornos virtuales y paquetes dentro de una skill (gitignored)
         if len(rel.parts) != 2:
             errors.append(
                 f"{path}: anidada a {len(rel.parts) - 1} niveles — Claude Code no la indexa. "
