@@ -36,8 +36,8 @@ def find_node(node, target_id):
 async def run(args):
     con = db.connect()
     sql = ("SELECT id, title, url, course FROM posts WHERE kind='lesson' "
-           "AND community='ia-masters-automations'")
-    p = []
+           "AND community=?")
+    p = [args.community]
     if args.course:
         sql += " AND course LIKE ?"
         p.append(f"%{args.course}%")
@@ -56,7 +56,7 @@ async def run(args):
     async with Skool(storage_state=STATE) as sk:
         for i, r in enumerate(rows, 1):
             course_id = r["url"].split("/classroom/")[1].split("?")[0]
-            url = (f"https://www.skool.com/ia-masters-automations/classroom/"
+            url = (f"https://www.skool.com/{args.community}/classroom/"
                    f"{course_id[:8]}?md={r['id']}")
             try:
                 props = await sk.page_props(url, wait_ms=2600)
@@ -97,6 +97,8 @@ async def run(args):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--course", help="filtro por nombre de curso, p.ej. N8N")
+    ap.add_argument("--community", default="ia-masters-automations",
+                    help="slug de la comunidad")
     ap.add_argument("--limit", type=int)
     ap.add_argument("--redo", action="store_true", help="revisita las que ya tienen texto")
     ap.add_argument("--all", action="store_true")

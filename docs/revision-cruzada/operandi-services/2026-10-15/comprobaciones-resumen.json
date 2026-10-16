@@ -1,0 +1,54 @@
+{
+ "repo": "/home/max/src/operandi-services",
+ "nombre": "operandi-services",
+ "ref": "main",
+ "commit": "dab99a5",
+ "fecha": "2026-10-15",
+ "ficheros": 249,
+ "omitidos": [],
+ "total": 183,
+ "por_punto": {
+  "p03": {
+   "alta": 25,
+   "media": 2,
+   "baja": 0,
+   "revisar": 0
+  },
+  "p04": {
+   "alta": 20,
+   "media": 16,
+   "baja": 22,
+   "revisar": 0
+  },
+  "p06": {
+   "alta": 1,
+   "media": 11,
+   "baja": 10,
+   "revisar": 0
+  },
+  "p07": {
+   "alta": 0,
+   "media": 0,
+   "baja": 13,
+   "revisar": 0
+  },
+  "p11": {
+   "alta": 0,
+   "media": 19,
+   "baja": 0,
+   "revisar": 0
+  },
+  "p12": {
+   "alta": 0,
+   "media": 28,
+   "baja": 15,
+   "revisar": 0
+  },
+  "p15": {
+   "alta": 0,
+   "media": 0,
+   "baja": 0,
+   "revisar": 1
+  }
+ }
+}

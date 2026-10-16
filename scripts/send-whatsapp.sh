@@ -3,7 +3,7 @@
 #
 # Uso:
 #   send-whatsapp.sh resolve "<nombre parcial de grupo/chat>"   -> lista JIDs que matchean
-#   send-whatsapp.sh peek <jid>                                 -> ultimos 8 mensajes del hilo
+#   send-whatsapp.sh peek <jid> [n]                             -> ultimos n mensajes del hilo (8 por defecto)
 #   send-whatsapp.sh send-file <jid> <archivo local> [caption]  -> envia documento
 #   send-whatsapp.sh send-video <jid> <video local> [caption]   -> envia video reproducible
 #   send-whatsapp.sh send-text <jid> "<texto>"                  -> envia texto
@@ -44,8 +44,8 @@ case "$CMD" in
     pg "SELECT \\\"remoteJid\\\"||' | '||COALESCE(name,'') FROM \\\"Chat\\\" WHERE name ILIKE '%${NAME}%' ORDER BY \\\"updatedAt\\\" DESC LIMIT 10;"
     ;;
   peek)
-    JID="${2:?jid}"; LID=$(lid_of "$JID" || true)
-    pg "SELECT to_timestamp(\\\"messageTimestamp\\\")::timestamp||' | '||CASE WHEN (key->>'fromMe')::bool THEN 'YO' ELSE COALESCE(\\\"pushName\\\",'?') END||' | '||left(COALESCE(message->>'conversation', message->'extendedTextMessage'->>'text', message->'documentMessage'->>'fileName', \\\"messageType\\\"),120) FROM \\\"Message\\\" WHERE key->>'remoteJid' IN ('${JID}','${LID:-_}') ORDER BY \\\"messageTimestamp\\\" DESC LIMIT 8;"
+    JID="${2:?jid}"; N="${3:-8}"; LID=$(lid_of "$JID" || true)
+    pg "SELECT to_timestamp(\\\"messageTimestamp\\\")::timestamp||' | '||CASE WHEN (key->>'fromMe')::bool THEN 'YO' ELSE COALESCE(\\\"pushName\\\",'?') END||' | '||left(COALESCE(message->>'conversation', message->'extendedTextMessage'->>'text', message->'documentMessage'->>'fileName', \\\"messageType\\\"),120) FROM \\\"Message\\\" WHERE key->>'remoteJid' IN ('${JID}','${LID:-_}') ORDER BY \\\"messageTimestamp\\\" DESC LIMIT ${N};"
     ;;
   send-file|send-video)
     JID=$(target "${2:?jid}"); FILE="${3:?archivo}"; CAPTION="${4:-}"

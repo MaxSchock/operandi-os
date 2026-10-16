@@ -40,7 +40,7 @@ Hecho el 14-10-2026 por un agente de lectura (Opus) sobre: los «Why» de las ~6
 11. **Medio cablear.** (1) exportaciones sin llamadas fuera de tests; acciones del prompt o manifiesto sin ejecutor; rutas tapadas por el middleware. (2) ¿Lo prometido tiene camino alcanzable hasta el efecto?
 12. **Destinatario.** (1) origen de `to|chat_id|recipient|thread|inReplyTo`: si sale de `req.body` o del modelo, marcar. (2) ¿Puede acabar en el propio usuario, en un grupo, en un tercero citado o desde el dominio de otra entidad?
 13. **Palabras clave.** (1) `new Set([...kind`, `kind === "`, `/\b(ja|nein|yes|no)\b/i`, nombres de carpeta con `endsWith`. (2) ¿Qué entrada válida nueva se queda fuera?
-14. **Secretos.** (1) `sk-|at-|ghp_|xox[bp]-|AIza|eyJ|sb_secret_`, `console.log(.*(token|key|secret|pass)`, `print(os.environ`, `redis-cli -a`, cuerpos enteros en registros. (2) ¿Algún registro, error o prompt puede llevar una credencial o datos de otro cliente?
+14. **Secretos.** (1) `sk-|at-|ghp\\_|xox[bp]-|AIza|eyJ|sb\\_secret\\_`, `console.log(.*(token|key|secret|pass)`, `print(os.environ`, `redis-cli -a`, cuerpos enteros en registros. (2) ¿Algún registro, error o prompt puede llevar una credencial o datos de otro cliente?
 15. **Autorización.** (1) rutas sin sesión; `where id =` sin dueño; redirecciones; webhooks que confían en ids del cuerpo; tablas sin RLS. (2) ¿Quién puede llamar esto y sobre qué filas? ¿Rechazar y deshacer miran el dueño igual que aprobar?
 16. **Sin techo.** (1) `fetch(` sin `signal`, `requests.` sin `timeout=`, bucles sobre entradas externas sin límite. (2) ¿Qué cota tiene en tiempo, memoria y llamadas con la peor entrada realista?
 

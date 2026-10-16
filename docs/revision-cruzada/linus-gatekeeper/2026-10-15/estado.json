@@ -1,0 +1,57 @@
+{
+ "repo": "/home/max/max-assistent-kartenbau/packages/gatekeeper/src",
+ "nombre": "linus-gatekeeper",
+ "fecha": "2026-10-15",
+ "modelo": "deepseek/deepseek-v3.2",
+ "ext": [
+  ".ts",
+  ".tsx"
+ ],
+ "commit": "f09996d2fe326492600c1b735454413476d7814d",
+ "cambios_sin_commit": false,
+ "tope": 0.5,
+ "fuente_tarifa": "OpenRouter /models (0.259 $/M entrada, 0.800 $/M salida); el coste real sale de usage.cost",
+ "total": 4,
+ "hechos": [
+  "gatekeeper.ts:1-274:69b57e9569",
+  "index.ts:1-3:7834268cd8",
+  "layer1.ts:1-371:78aec2105e",
+  "layer2-ner.ts:1-113:9fd1e5294e"
+ ],
+ "costes": {
+  "gatekeeper.ts:1-274:69b57e9569": {
+   "fichero": "gatekeeper.ts",
+   "in": 10484,
+   "out": 1139,
+   "usd": 0.003626556,
+   "estimado": false
+  },
+  "index.ts:1-3:7834268cd8": {
+   "fichero": "index.ts",
+   "in": 1077,
+   "out": 1,
+   "usd": 0.000279743,
+   "estimado": false
+  },
+  "layer1.ts:1-371:78aec2105e": {
+   "fichero": "layer1.ts",
+   "in": 7240,
+   "out": 842,
+   "usd": 0.00254876,
+   "estimado": false
+  },
+  "layer2-ner.ts:1-113:9fd1e5294e": {
+   "fichero": "layer2-ner.ts",
+   "in": 7493,
+   "out": 1027,
+   "usd": 0.002061615,
+   "estimado": false
+  }
+ },
+ "gastado": 0.008516674000000002,
+ "fallos": 0,
+ "completo": true,
+ "parado": null,
+ "iniciado": "2026-10-15T00:12:02",
+ "terminado": "2026-10-15T00:14:33"
+}

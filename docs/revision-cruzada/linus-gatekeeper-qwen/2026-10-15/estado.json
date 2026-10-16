@@ -1,0 +1,57 @@
+{
+ "repo": "/home/max/max-assistent-kartenbau/packages/gatekeeper/src",
+ "nombre": "linus-gatekeeper-qwen",
+ "fecha": "2026-10-15",
+ "modelo": "qwen/qwen3-coder",
+ "ext": [
+  ".ts",
+  ".tsx"
+ ],
+ "commit": "3472651a9156cdb0eeca3a203de63168c4f0b53f",
+ "cambios_sin_commit": false,
+ "tope": 0.5,
+ "fuente_tarifa": "OpenRouter /models (0.300 $/M entrada, 1.000 $/M salida); el coste real sale de usage.cost",
+ "total": 4,
+ "hechos": [
+  "gatekeeper.ts:1-274:69b57e9569",
+  "index.ts:1-3:7834268cd8",
+  "layer1.ts:1-371:78aec2105e",
+  "layer2-ner.ts:1-113:9fd1e5294e"
+ ],
+ "costes": {
+  "gatekeeper.ts:1-274:69b57e9569": {
+   "fichero": "gatekeeper.ts",
+   "in": 11407,
+   "out": 446,
+   "usd": 0.00331234,
+   "estimado": false
+  },
+  "index.ts:1-3:7834268cd8": {
+   "fichero": "index.ts",
+   "in": 1415,
+   "out": 2,
+   "usd": 0.0003149,
+   "estimado": false
+  },
+  "layer1.ts:1-371:78aec2105e": {
+   "fichero": "layer1.ts",
+   "in": 8532,
+   "out": 637,
+   "usd": 0.00302364,
+   "estimado": false
+  },
+  "layer2-ner.ts:1-113:9fd1e5294e": {
+   "fichero": "layer2-ner.ts",
+   "in": 7998,
+   "out": 413,
+   "usd": 0.00250296,
+   "estimado": false
+  }
+ },
+ "gastado": 0.00915384,
+ "fallos": 0,
+ "completo": true,
+ "parado": null,
+ "iniciado": "2026-10-15T00:22:02",
+ "terminado": "2026-10-15T00:22:47"
+}

@@ -1,0 +1,13 @@
+modo seco (no se ha llamado al modelo) · /home/max/max-assistent-kartenbau/packages/gatekeeper/src
+modelo: deepseek/deepseek-v3.2
+tarifa: OpenRouter /models (0.259 $/M entrada, 0.800 $/M salida); el coste real sale de usage.cost
+ficheros: 4 · trozos: 4 · tokens de entrada estimados: 24968
+(estimación por caracteres: 3.5 car./token)
+
+  gatekeeper.ts: 1 trozo(s), ~10360 tokens
+  index.ts: 1 trozo(s), ~1017 tokens
+  layer1.ts: 1 trozo(s), ~6452 tokens
+  layer2-ner.ts: 1 trozo(s), ~7139 tokens
+
+coste estimado: 0.0090 $ (salida típica 800 tok/trozo), techo 0.0193 $ (salida 4000 tok/trozo)
+tope pedido: 3.00 $ -> cabe

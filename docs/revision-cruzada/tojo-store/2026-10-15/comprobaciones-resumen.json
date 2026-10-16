@@ -1,0 +1,42 @@
+{
+ "repo": "/home/max/iamasters-os/clients/falkenlead/google-ads/tojo-store",
+ "nombre": "tojo-store",
+ "ref": null,
+ "commit": "dc53705",
+ "fecha": "2026-10-15",
+ "ficheros": 51,
+ "omitidos": [],
+ "total": 6,
+ "por_punto": {
+  "p04": {
+   "alta": 1,
+   "media": 0,
+   "baja": 0,
+   "revisar": 0
+  },
+  "p07": {
+   "alta": 0,
+   "media": 1,
+   "baja": 1,
+   "revisar": 0
+  },
+  "p11": {
+   "alta": 0,
+   "media": 1,
+   "baja": 0,
+   "revisar": 0
+  },
+  "p12": {
+   "alta": 0,
+   "media": 1,
+   "baja": 0,
+   "revisar": 0
+  },
+  "p15": {
+   "alta": 0,
+   "media": 0,
+   "baja": 0,
+   "revisar": 1
+  }
+ }
+}

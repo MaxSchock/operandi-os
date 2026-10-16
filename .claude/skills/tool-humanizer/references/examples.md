@@ -50,6 +50,8 @@
 
 ### Cambios principales
 
+> Nota 15-10-2026: la versión anterior de este ejemplo llevaba negritas y rótulos de sección («Qué te entrego», «Inversión»), que la lista única `~/.claude/hooks/frases-ia.json` bloquea en mensajes (M9, B2). Un correo a un cliente va en prosa, sin anunciar lo que la frase ya dice.
+
 - Eliminado emoji al inicio
 - "In today's fast-paced world" → contexto personal específico ("Llevo 3 años...")
 - Verbos abstractos → verbos concretos ("aterrice", "pelear", "ahorra")
@@ -104,20 +106,13 @@
 
 > Hola Juan,
 >
-> Tras nuestra reunión del martes, he aterrizado la propuesta. Te la resumo en lo que importa:
+> Tras la reunión del martes he aterrizado la propuesta.
 >
-> **Qué te entrego**
-> 1. Implementación del sistema de IA para tu proceso de admisión (4 semanas)
-> 2. Formación a tu equipo de 5 personas (2 sesiones de 2h)
-> 3. Soporte de 30 días post-go-live (Slack + 1 llamada semanal)
+> Te entrego la implementación del sistema de IA para el proceso de admisión en 4 semanas, dos sesiones de formación de 2 h para tu equipo de 5 personas y 30 días de soporte después de la puesta en marcha (Slack y una llamada semanal). No incluye la migración de datos antiguos (si la necesitas, va en presupuesto aparte) ni la integración con tu CRM actual, que evaluamos en la semana 2.
 >
-> **Qué no incluye** (para que no haya sorpresas):
-> - Migración de datos antiguos (presupuesto aparte si lo necesitas)
-> - Integración con tu CRM actual (lo evaluamos en semana 2)
+> Son 8.500 € más IVA, la mitad al empezar y la otra mitad al arrancar.
 >
-> **Inversión**: 8.500€ + IVA. Pagable 50% al inicio + 50% al go-live.
->
-> Si te encaja, te paso el contrato esta semana. Si tienes dudas, responde a este email o llámame al 600 123 456.
+> Si te encaja, te paso el contrato esta semana. Si tienes dudas, contéstame o llámame al 600 123 456.
 >
 > Un abrazo,
 > [Nombre]

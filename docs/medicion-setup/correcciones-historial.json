@@ -1,0 +1,285 @@
+{
+ "semanas": [
+  {
+   "desde": "2026-09-07",
+   "hasta": "2026-09-13",
+   "turnos": 88,
+   "correcciones": 18,
+   "sesiones": 2,
+   "sesiones_con_correccion": 2,
+   "errores": 0,
+   "coste": 0.0042,
+   "patrones": {
+    "unverified_claim": {
+     "turnos": 8,
+     "sesiones": 2,
+     "graves": 0
+    },
+    "ignored_instruction": {
+     "turnos": 3,
+     "sesiones": 1,
+     "graves": 0
+    },
+    "asks_instead_of_doing": {
+     "turnos": 1,
+     "sesiones": 1,
+     "graves": 0
+    },
+    "poor_output_quality": {
+     "turnos": 1,
+     "sesiones": 1,
+     "graves": 0
+    },
+    "other_mistake": {
+     "turnos": 1,
+     "sesiones": 1,
+     "graves": 0
+    },
+    "scope_creep": {
+     "turnos": 1,
+     "sesiones": 1,
+     "graves": 0
+    },
+    "wrong_account_or_entity": {
+     "turnos": 2,
+     "sesiones": 1,
+     "graves": 0
+    },
+    "ai_style_writing": {
+     "turnos": 1,
+     "sesiones": 1,
+     "graves": 0
+    }
+   }
+  },
+  {
+   "desde": "2026-09-14",
+   "hasta": "2026-09-20",
+   "turnos": 259,
+   "correcciones": 42,
+   "sesiones": 25,
+   "sesiones_con_correccion": 13,
+   "errores": 0,
+   "coste": 0.0125,
+   "patrones": {
+    "asks_instead_of_doing": {
+     "turnos": 5,
+     "sesiones": 5,
+     "graves": 0
+    },
+    "unverified_claim": {
+     "turnos": 17,
+     "sesiones": 8,
+     "graves": 1
+    },
+    "ignored_instruction": {
+     "turnos": 10,
+     "sesiones": 7,
+     "graves": 0
+    },
+    "patching_symptoms": {
+     "turnos": 2,
+     "sesiones": 1,
+     "graves": 0
+    },
+    "poor_output_quality": {
+     "turnos": 5,
+     "sesiones": 4,
+     "graves": 0
+    },
+    "risky_action": {
+     "turnos": 1,
+     "sesiones": 1,
+     "graves": 0
+    },
+    "forgot_context": {
+     "turnos": 1,
+     "sesiones": 1,
+     "graves": 0
+    },
+    "scope_creep": {
+     "turnos": 1,
+     "sesiones": 1,
+     "graves": 0
+    }
+   }
+  },
+  {
+   "desde": "2026-09-21",
+   "hasta": "2026-09-27",
+   "turnos": 270,
+   "correcciones": 46,
+   "sesiones": 29,
+   "sesiones_con_correccion": 20,
+   "errores": 0,
+   "coste": 0.013,
+   "patrones": {
+    "wrong_account_or_entity": {
+     "turnos": 3,
+     "sesiones": 2,
+     "graves": 0
+    },
+    "ai_style_writing": {
+     "turnos": 4,
+     "sesiones": 4,
+     "graves": 0
+    },
+    "poor_output_quality": {
+     "turnos": 6,
+     "sesiones": 3,
+     "graves": 0
+    },
+    "forgot_context": {
+     "turnos": 7,
+     "sesiones": 5,
+     "graves": 0
+    },
+    "risky_action": {
+     "turnos": 2,
+     "sesiones": 2,
+     "graves": 0
+    },
+    "ignored_instruction": {
+     "turnos": 7,
+     "sesiones": 6,
+     "graves": 1
+    },
+    "unverified_claim": {
+     "turnos": 8,
+     "sesiones": 7,
+     "graves": 0
+    },
+    "scope_creep": {
+     "turnos": 4,
+     "sesiones": 3,
+     "graves": 0
+    },
+    "asks_instead_of_doing": {
+     "turnos": 5,
+     "sesiones": 5,
+     "graves": 0
+    }
+   }
+  },
+  {
+   "desde": "2026-09-28",
+   "hasta": "2026-10-04",
+   "turnos": 402,
+   "correcciones": 71,
+   "sesiones": 37,
+   "sesiones_con_correccion": 25,
+   "errores": 0,
+   "coste": 0.0191,
+   "patrones": {
+    "forgot_context": {
+     "turnos": 8,
+     "sesiones": 8,
+     "graves": 0
+    },
+    "ignored_instruction": {
+     "turnos": 10,
+     "sesiones": 9,
+     "graves": 2
+    },
+    "ai_style_writing": {
+     "turnos": 6,
+     "sesiones": 6,
+     "graves": 0
+    },
+    "poor_output_quality": {
+     "turnos": 17,
+     "sesiones": 8,
+     "graves": 1
+    },
+    "asks_instead_of_doing": {
+     "turnos": 10,
+     "sesiones": 8,
+     "graves": 1
+    },
+    "unverified_claim": {
+     "turnos": 14,
+     "sesiones": 10,
+     "graves": 1
+    },
+    "scope_creep": {
+     "turnos": 3,
+     "sesiones": 3,
+     "graves": 0
+    },
+    "wrong_account_or_entity": {
+     "turnos": 1,
+     "sesiones": 1,
+     "graves": 0
+    },
+    "patching_symptoms": {
+     "turnos": 2,
+     "sesiones": 2,
+     "graves": 0
+    }
+   }
+  },
+  {
+   "desde": "2026-10-05",
+   "hasta": "2026-10-11",
+   "turnos": 391,
+   "correcciones": 92,
+   "sesiones": 31,
+   "sesiones_con_correccion": 22,
+   "errores": 0,
+   "coste": 0.0188,
+   "patrones": {
+    "poor_output_quality": {
+     "turnos": 17,
+     "sesiones": 5,
+     "graves": 1
+    },
+    "ignored_instruction": {
+     "turnos": 15,
+     "sesiones": 9,
+     "graves": 1
+    },
+    "asks_instead_of_doing": {
+     "turnos": 10,
+     "sesiones": 9,
+     "graves": 0
+    },
+    "wrong_account_or_entity": {
+     "turnos": 2,
+     "sesiones": 2,
+     "graves": 0
+    },
+    "unverified_claim": {
+     "turnos": 17,
+     "sesiones": 12,
+     "graves": 0
+    },
+    "ai_style_writing": {
+     "turnos": 10,
+     "sesiones": 6,
+     "graves": 0
+    },
+    "forgot_context": {
+     "turnos": 14,
+     "sesiones": 10,
+     "graves": 0
+    },
+    "risky_action": {
+     "turnos": 2,
+     "sesiones": 2,
+     "graves": 2
+    },
+    "scope_creep": {
+     "turnos": 4,
+     "sesiones": 2,
+     "graves": 0
+    },
+    "patching_symptoms": {
+     "turnos": 1,
+     "sesiones": 1,
+     "graves": 0
+    }
+   }
+  }
+ ],
+ "marca": "2026-10-11"
+}

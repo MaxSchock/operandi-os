@@ -58,6 +58,9 @@ async def run(args):
     if args.course:
         sql += " AND p.course LIKE ?"
         params.append(f"%{args.course}%")
+    if args.lesson:
+        sql += " AND p.title LIKE ?"
+        params.append(f"%{args.lesson}%")
     if not args.redo:
         sql += " AND (r.local_path IS NULL OR r.local_path = '')"
     sql += " ORDER BY p.course, p.module, p.title"
@@ -98,6 +101,7 @@ async def run(args):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--course")
+    ap.add_argument("--lesson", help="trozo del titulo de la leccion")
     ap.add_argument("--limit", type=int, help="numero de lecciones, no de ficheros")
     ap.add_argument("--redo", action="store_true")
     args = ap.parse_args()

@@ -1,0 +1,42 @@
+{
+ "repo": "/mnt/c/Users/PC/operandi-dashboardln",
+ "nombre": "operandi-dashboardln",
+ "ref": "main",
+ "commit": "7816f1f",
+ "fecha": "2026-10-15",
+ "ficheros": 135,
+ "omitidos": [],
+ "total": 157,
+ "por_punto": {
+  "p04": {
+   "alta": 3,
+   "media": 7,
+   "baja": 34,
+   "revisar": 0
+  },
+  "p07": {
+   "alta": 0,
+   "media": 7,
+   "baja": 29,
+   "revisar": 0
+  },
+  "p10": {
+   "alta": 0,
+   "media": 0,
+   "baja": 1,
+   "revisar": 0
+  },
+  "p11": {
+   "alta": 0,
+   "media": 3,
+   "baja": 0,
+   "revisar": 0
+  },
+  "p12": {
+   "alta": 0,
+   "media": 28,
+   "baja": 45,
+   "revisar": 0
+  }
+ }
+}

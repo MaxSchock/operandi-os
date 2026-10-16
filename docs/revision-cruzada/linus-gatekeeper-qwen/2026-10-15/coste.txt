@@ -1,0 +1,13 @@
+modelo: qwen/qwen3-coder
+tope: 0.50 $
+tarifa: OpenRouter /models (0.300 $/M entrada, 1.000 $/M salida); el coste real sale de usage.cost
+
+fichero                                                         tok_in  tok_out    dólares
+gatekeeper.ts                                                    11407      446     0.0033
+index.ts                                                          1415        2     0.0003
+layer1.ts                                                         8532      637     0.0030
+layer2-ner.ts                                                     7998      413     0.0025
+
+TOTAL                                                            29352     1498     0.0092
+trozos hechos: 4 de 4
+fallos guardados: 0

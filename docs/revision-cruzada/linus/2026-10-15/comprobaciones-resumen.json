@@ -1,0 +1,54 @@
+{
+ "repo": "/home/max/max-assistent",
+ "nombre": "linus",
+ "ref": "main",
+ "commit": "2d5ddac2",
+ "fecha": "2026-10-15",
+ "ficheros": 1111,
+ "omitidos": [],
+ "total": 909,
+ "por_punto": {
+  "p03": {
+   "alta": 0,
+   "media": 2,
+   "baja": 0,
+   "revisar": 0
+  },
+  "p04": {
+   "alta": 245,
+   "media": 29,
+   "baja": 298,
+   "revisar": 0
+  },
+  "p06": {
+   "alta": 0,
+   "media": 10,
+   "baja": 59,
+   "revisar": 0
+  },
+  "p07": {
+   "alta": 0,
+   "media": 5,
+   "baja": 80,
+   "revisar": 0
+  },
+  "p11": {
+   "alta": 0,
+   "media": 9,
+   "baja": 0,
+   "revisar": 0
+  },
+  "p12": {
+   "alta": 0,
+   "media": 13,
+   "baja": 139,
+   "revisar": 0
+  },
+  "p15": {
+   "alta": 0,
+   "media": 0,
+   "baja": 0,
+   "revisar": 20
+  }
+ }
+}

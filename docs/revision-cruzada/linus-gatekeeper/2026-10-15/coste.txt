@@ -1,0 +1,13 @@
+modelo: deepseek/deepseek-v3.2
+tope: 0.50 $
+tarifa: OpenRouter /models (0.259 $/M entrada, 0.800 $/M salida); el coste real sale de usage.cost
+
+fichero                                                         tok_in  tok_out    dólares
+gatekeeper.ts                                                    10484     1139     0.0036
+index.ts                                                          1077        1     0.0003
+layer1.ts                                                         7240      842     0.0025
+layer2-ner.ts                                                     7493     1027     0.0021
+
+TOTAL                                                            26294     3009     0.0085
+trozos hechos: 4 de 4
+fallos guardados: 0
